@@ -3,8 +3,10 @@ import pygame
 pygame.init()
 screen = pygame.display.set_mode([1500, 1000], flags=pygame.FULLSCREEN)
 exit_game = False
-
+tile_list = [[]]
+clock = pygame.time.Clock()
 assets_path = 'C:\Users\erela\OneDrive\Documents\GitHub\Final_Project\Assets'
+save_path = 'C:\Users\erela\OneDrive\Documents\GitHub\Final_Project\Saves'
 
 
 class Tile:
@@ -22,7 +24,14 @@ class RoadTile(Tile):
 
     def __init__(self, x: int, y: int, orientation: str):
         self.set_location(x, y)
-        self.set_texture(orientation)
+        self.set_texture(orientation)  # Can be cross, vertical, horizontal, T_down, T_left, T_right and T_up
+
+
+def create_new_save(name: str):
+    
+
+
+def load_save():
 
 
 def event_handler():
@@ -30,6 +39,10 @@ def event_handler():
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             exit_game = True
+
+
+def main_menu():  # Display settings and save select
+
 
 
 def close_game():
@@ -44,4 +57,5 @@ def gameloop():
 
 
 if __name__ == '__main__':
+    main_menu()
     gameloop()
