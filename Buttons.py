@@ -1,6 +1,11 @@
 import pygame
 
 
+def add_button(btn_list: [], _location: [int, int, int, int], _text, _default_color, _hover_color, on_press):
+    new_btn = Button(_location, _text, _default_color, _hover_color, on_press)
+    btn_list.append(new_btn)
+
+
 class Button:
     location = [0, 0, 0, 0]
     location_2 = [0, 0, 0, 0]
@@ -10,7 +15,8 @@ class Button:
     active_color = None
     hover = False
     func_press = None
-    text_pos = [0, 0]
+    text_pos_x = 0
+    text_pos_y = 0
 
     def __init__(self, _location: [int, int, int, int], _text, _default_color, _hover_color, on_press):
         self.location = _location[:]
@@ -21,12 +27,8 @@ class Button:
         self.default_color = self.active_color = _default_color
         self.hover_color = _hover_color
         self.func_press = on_press
-        self.text_pos[0] = (((self.location[2] - self.location[0]) - self.text.get_width()) / 2) + self.location[0]
-        self.text_pos[1] = (((self.location[3] - self.location[1]) - self.text.get_height()) / 2) + self.location[1]
-        print(self.location)
-        print(self.text.get_width())
-        print(self.text.get_height())
-        print(self.text_pos)
+        self.text_pos_x = (((self.location[2] - self.location[0]) - self.text.get_width()) / 2) + self.location[0]
+        self.text_pos_y = (((self.location[3] - self.location[1]) - self.text.get_height()) / 2) + self.location[1]
 
     def check_hover(self, mouse_location: [int, int]):
         if self.location[0] <= mouse_location[0] <= self.location[2] and \
@@ -51,4 +53,4 @@ class Button:
 
     def draw(self, screen):
         pygame.draw.rect(screen, self.active_color, self.location_2)
-        screen.blit(self.text, (self.text_pos[0], self.text_pos[1]))
+        screen.blit(self.text, (self.text_pos_x, self.text_pos_y))

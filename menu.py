@@ -2,13 +2,22 @@ import pygame
 import sys
 import Buttons
 
+
+def existing_game():
+    print('need to implement')
+
+
+def new_game():
+    print('need to implement')
+
+
 pygame.init()
 screen = pygame.display.set_mode((1500, 800))
 
 width = screen.get_width()
 height = screen.get_height()
 
-smallfont = pygame.font.SysFont('Corbel', 35)
+smallfont = pygame.font.SysFont('Narcissism', 35)
 
 color_light = (170, 170, 170)
 
@@ -16,10 +25,23 @@ color_dark = (100, 100, 100)
 
 mouse = [0, 0]
 
-text = smallfont.render('quit', True, (255, 255, 255))
+text_quit = smallfont.render('quit', True, (255, 255, 255))
+text_saved_game = smallfont.render('load existing game', True, (255, 255, 255))
+text_new_game = smallfont.render('create new save', True, (255, 255, 255))
 
-buttons = [Buttons.Button([width / 2, height / 2, (width / 2) + 140, (height / 2) + 40], text, color_dark, color_light,
-                          pygame.quit)]
+buttons = []
+
+# new game button
+Buttons.add_button(buttons, [width - 400, round(height / 3) - 200, width - 25, round(height / 3) - 150],
+                   text_new_game, color_dark, color_light, new_game)
+
+# play from save button
+Buttons.add_button(buttons, [width - 400, round(height / 3) - 100, width - 25, round(height / 3) - 50],
+                   text_saved_game, color_dark, color_light, existing_game)
+
+# quit button
+Buttons.add_button(buttons, [width - 400, round(height / 3), width - 25, round(height / 3) + 50], text_quit,
+                   color_dark, color_light, sys.exit)
 
 while True:
     screen.fill((255, 198, 41))
@@ -38,7 +60,5 @@ while True:
             for btn in buttons:
                 if btn.get_hover():
                     btn.press()
-
-    # screen.blit(text, (width / 2 + 50, height / 2))
 
     pygame.display.update()
