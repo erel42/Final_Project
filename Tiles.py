@@ -1,10 +1,15 @@
+import Buttons
+
 assets_path = 'Assets'
 
 
 class Tile:
     type = ''
-    grid_location = [0, 0]
     texture = None
+    btn = None
+
+    def __init__(self, x: int, y: int):
+        self.grid_location = [x, y]
 
     def set_location(self, x: int, y: int):
         self.grid_location = [x, y]
@@ -19,6 +24,7 @@ class Tile:
 class RoadTile(Tile):
 
     def __init__(self, x: int, y: int, orientation: str = None, texture: str = None):
+        super().__init__(x, y)
         if orientation is None and texture is None:
             print('failed to create road tile')
         else:
@@ -41,9 +47,6 @@ class RoadTile(Tile):
 
 
 class Chunk:
-    grid_location = [0, 0]
-    tiles = [[]]
-
     def __init__(self, x: int, y: int):
         self.grid_location = [x, y]
 
