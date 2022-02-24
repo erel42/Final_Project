@@ -7,7 +7,7 @@ import menu
 pygame.init()
 screen = pygame.display.set_mode([1500, 1000])
 exit_game = False
-chunk_list = [[]]
+tile_list = [[]]
 clock = pygame.time.Clock()
 save_path = 'Saves'
 cur_game_save_path = None
@@ -17,9 +17,7 @@ offset_change_speed = 10
 Tile_list = None
 
 # Some parameters
-chunkSize = 10
 tile_size = screen.get_size()[0] / 8
-max_offset = screen.get_size()[0]
 
 scroll_dic = {
     'right': scroll_chunk_right,
@@ -32,27 +30,6 @@ scroll_dic = {
 def draw_tiles(surface, _list):
     for tile in _list():
         tile.draw(surface)
-
-
-# Returns the correct chunk ids
-def calc_chunk(x: int, y: int):
-    chunk_x = x / chunkSize
-    chunk_y = y / chunkSize
-    return chunk_x, chunk_y
-
-
-# Loads a chunk file, chunk is a 10X10 tiles
-def scroll_chunk(direction: int):
-    scroll_dic[direction]()
-
-
-def scroll_chunk_right():
-    chunk_list[0][0] = chunk_list[0][1]
-    chunk_list[1][0] = chunk_list[1][1]
-    _x, _y = Tiles.Chunk.get_location(chunk_list[1][0])
-    _x = _x - 1
-    chunk_list[0][0] = Tiles.Chunk(_x, _y)
-    chunk_list[0][1] = Tiles.Chunk(_x, _y)
 
 
 # Generates the starting map, 4 chunks exactly
@@ -84,7 +61,7 @@ def event_handler():
             offset[1] -= offset_change_speed
         if event.type == pygame.K_RIGHT:
             offset[0] += offset_change_speed
-        if event.type == pygame.K_DOWN:
+        if event.type == pygame.K_LEFT:
             offset[0] -= offset_change_speed
 
 

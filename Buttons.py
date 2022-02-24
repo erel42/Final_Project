@@ -54,3 +54,43 @@ class Button:
     def draw(self, screen):
         pygame.draw.rect(screen, self.active_color, self.location_2)
         screen.blit(self.text, (self.text_pos_x, self.text_pos_y))
+
+
+class ButtonImg:
+    location = [0, 0, 0, 0]
+    location_2 = [0, 0, 0, 0]
+    default_img = None
+    hover_img = None
+    active_img = None
+    hover = False
+    func_press = None
+
+    def __init__(self, _location: [int, int, int, int], _default_img, _hover_img, on_press):
+        self.location = _location[:]
+        _location[2] = _location[2] - _location[0]
+        _location[3] = _location[3] - _location[1]
+        self.location_2 = _location[:]
+        self.default_img = self.active_img = _default_img
+        self.hover_img = _hover_img
+        self.func_press = on_press
+
+    def check_hover(self, mouse_location: [int, int]):
+        if self.location[0] <= mouse_location[0] <= self.location[2] and \
+                self.location[1] <= mouse_location[1] <= self.location[3]:
+            self.active_img = self.hover_img
+            self.hover = True
+        else:
+            self.active_img = self.default_img
+            self.hover = False
+
+    def get_pos(self):
+        return self.location
+
+    def get_hover(self):
+        return self.hover
+
+    def press(self):
+        self.func_press()
+
+    def draw(self, screen):
+        pygame.Surface.blit(self.active_img, screen, self.location_2)

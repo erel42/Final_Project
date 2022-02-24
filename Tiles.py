@@ -45,13 +45,5 @@ class RoadTile(Tile):
         }
         return data
 
+    def draw(self, surface, offset, tile_size):
 
-class Chunk:
-    def __init__(self, x: int, y: int):
-        self.grid_location = [x, y]
-
-    def get_location(self):
-        return self.grid_location[0], self.grid_location[1]
-
-    def load_from_json(self, data: str):
-        print('Need to implement')
