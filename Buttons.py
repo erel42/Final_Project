@@ -66,13 +66,16 @@ class ButtonImg:
     func_press = None
 
     def __init__(self, _location: [int, int, int, int], _default_img, _hover_img, on_press):
+        self.set_pos(_location)
+        self.default_img = self.active_img = _default_img
+        self.hover_img = _hover_img
+        self.func_press = on_press
+
+    def set_pos(self, _location: [int, int, int, int]):
         self.location = _location[:]
         _location[2] = _location[2] - _location[0]
         _location[3] = _location[3] - _location[1]
         self.location_2 = _location[:]
-        self.default_img = self.active_img = _default_img
-        self.hover_img = _hover_img
-        self.func_press = on_press
 
     def check_hover(self, mouse_location: [int, int]):
         if self.location[0] <= mouse_location[0] <= self.location[2] and \

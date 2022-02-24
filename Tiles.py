@@ -7,6 +7,7 @@ class Tile:
     type = ''
     texture = None
     btn = None
+    size = [0, 0]
 
     def __init__(self, x: int, y: int):
         self.grid_location = [x, y]
@@ -19,6 +20,9 @@ class Tile:
 
     def set_type(self, _type: str):
         self.type = _type
+
+    def set_size(self, _size: [int, int]):
+        self.size = _size[:]
 
 
 class RoadTile(Tile):
@@ -35,6 +39,8 @@ class RoadTile(Tile):
                 self.set_texture(assets_path + '\\Roads\\' + orientation)
             else:
                 self.set_texture(texture)
+        btn = Buttons.ButtonImg([x, y, x + self.size[0], y + self.size[1]], texture + '.png', texture + 'Hover.png',
+                                self.show_memu)
 
     def json_ready(self):
         data = {
@@ -45,5 +51,7 @@ class RoadTile(Tile):
         }
         return data
 
-    def draw(self, surface, offset, tile_size):
+    def show_memu(self):
+        print('needToImplement')
 
+    def draw(self, surface, offset, tile_size):
