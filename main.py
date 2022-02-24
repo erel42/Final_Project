@@ -15,16 +15,10 @@ left_upper_corner = [0, 0]
 offset = [0, 0]
 offset_change_speed = 10
 Tile_list = None
+show_overlay = False
 
 # Some parameters
 tile_size = screen.get_size()[0] / 8
-
-scroll_dic = {
-    'right': scroll_chunk_right,
-    'left': scroll_chunk_left,
-    'up': scroll_chunk_up,
-    'down': scroll_chunk_down
-}
 
 
 def draw_tiles(surface, _list):
