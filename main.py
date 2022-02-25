@@ -26,7 +26,6 @@ def draw_tiles(surface, _list):
         tile.draw(surface)
 
 
-# Generates the starting map, 4 chunks exactly
 def generate_base_tiles():
     print('need to implement')
 
