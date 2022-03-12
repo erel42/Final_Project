@@ -41,7 +41,7 @@ def show_menu(screen=pygame.display.set_mode((1500, 800))):
 
     # new game button
     Buttons.add_button(buttons, [width - 400, round(height / 3) - 200, width - 25, round(height / 3) - 150],
-                       text_new_game, color_dark, color_light, new_game)
+                       text_new_game, color_dark, color_light, return_to_game)
 
     # play from save button
     Buttons.add_button(buttons, [width - 400, round(height / 3) - 100, width - 25, round(height / 3) - 50],
@@ -51,7 +51,7 @@ def show_menu(screen=pygame.display.set_mode((1500, 800))):
     Buttons.add_button(buttons, [width - 400, round(height / 3), width - 25, round(height / 3) + 50], text_quit,
                        color_dark, color_light, sys.exit)
 
-    while True:
+    while not exit_menu:
         screen.fill((255, 198, 41))
         mouse = pygame.mouse.get_pos()
 

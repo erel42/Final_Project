@@ -1,4 +1,5 @@
 import Buttons
+import pygame
 
 assets_path = 'Assets'
 
@@ -39,8 +40,11 @@ class RoadTile(Tile):
                 self.set_texture(assets_path + '\\Roads\\' + orientation)
             else:
                 self.set_texture(texture)
-        btn = Buttons.ButtonImg([x, y, x + self.size[0], y + self.size[1]], texture + '.png', texture + 'Hover.png',
-                                self.show_memu)
+        picture = pygame.image.load(self.texture + '.png')
+        picture = pygame.transform.scale(picture, (200, 200))
+        picture_hover = pygame.image.load(self.texture + 'Hover.png')
+        picture_hover = pygame.transform.scale(picture_hover, (200, 200))
+        self.btn = Buttons.ButtonImg([x, y], picture, picture_hover, self.show_memu)
 
     def json_ready(self):
         data = {
@@ -54,4 +58,5 @@ class RoadTile(Tile):
     def show_memu(self):
         print('needToImplement')
 
-    def draw(self, surface, offset, tile_size):
+    def draw(self, surface, mouse, press, offset):
+        self.btn.draw(surface, mouse, press, offset)
