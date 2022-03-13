@@ -75,9 +75,9 @@ class ButtonImg:
     def set_pos(self, _location: [int, int]):
         self.location = self.location_2 = _location[:]
 
-    def check_hover(self, mouse_location: [int, int], press):
-        if self.location_2[0] <= mouse_location[0] <= self.location_2[0] + 200 and \
-                self.location_2[1] <= mouse_location[1] <= self.location_2[1] + 200:
+    def check_hover(self, mouse_location: [int, int], press, size):
+        if self.location_2[0] <= mouse_location[0] <= self.location_2[0] + size and \
+                self.location_2[1] <= mouse_location[1] <= self.location_2[1] + size:
             self.active_img = self.hover_img
             self.hover = True
             if press:
@@ -95,7 +95,7 @@ class ButtonImg:
     def press(self):
         self.func_press()
 
-    def draw(self, screen, mouse, press, offset):
-        self.check_hover(mouse, press)
+    def draw(self, screen, mouse, press, offset, size):
         self.location_2 = [self.location[0] + offset[0], self.location[1] + offset[1]]
+        self.check_hover(mouse, press, size)
         screen.blit(self.active_img, (self.location[0] + offset[0], self.location[1] + offset[1]))
