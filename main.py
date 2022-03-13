@@ -63,8 +63,8 @@ def event_handler():
                 offset[0] += offset_change_speed
             if event.key == pygame.K_LEFT:
                 offset[0] -= offset_change_speed
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                check_press = True
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            check_press = True
 
 
 def close_game():
@@ -79,7 +79,6 @@ def game_loop():
         draw_tiles(screen, tile_list)
 
         pygame.display.update()
-        print(offset)
     close_game()
 
 
