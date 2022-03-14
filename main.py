@@ -16,7 +16,7 @@ save_path = 'Saves'
 cur_game_save_path = None
 left_lower_corner = [-3, -3]
 offset = [0, 0]
-offset_change_speed = 10
+offset_change_speed = 30
 Tile_list = None
 show_overlay = False
 
