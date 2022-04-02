@@ -88,7 +88,7 @@ class RestaurantTile(Tile):
         }
         return data
 
-    def show_memu(self):
+    def show_menu(self):
         print('needToImplement')
 
     def draw(self, surface, mouse, press, offset):
@@ -119,7 +119,7 @@ class ParkingTile(Tile):
         }
         return data
 
-    def show_memu(self):
+    def show_menu(self):
         print('needToImplement')
 
     def draw(self, surface, mouse, press, offset):
