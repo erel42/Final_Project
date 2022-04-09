@@ -25,7 +25,7 @@ def show_menu(screen=pygame.display.set_mode((1500, 800))):
     width = screen.get_width()
     height = screen.get_height()
 
-    smallfont = pygame.font.SysFont('Narcissism', 35)
+    smallfont = pygame.font.SysFont('Narkisim', 35)
 
     color_light = (170, 170, 170)
 
