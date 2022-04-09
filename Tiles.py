@@ -2,16 +2,20 @@ import Buttons
 import pygame
 
 assets_path = 'Assets'
+tile_map = []  # all the tiles in the game
+active_tiles = []  # 7x7 tiles representing the tiles that can be seen on screen
 
 
 class Tile:
     type = ''
     texture = None
     btn = None
-    size = [0, 0]
 
-    def __init__(self, x: int, y: int):
+    def __init__(self, x: int, y: int, size: int):
         self.grid_location = [x, y]
+        self.set_location(x * size, y * size)
+        self.pos = [x, y]
+        self.tile_size = size
 
     def set_location(self, x: int, y: int):
         self.grid_location = [x, y]
@@ -22,26 +26,23 @@ class Tile:
     def set_type(self, _type: str):
         self.type = _type
 
-    def set_size(self, _size: [int, int]):
-        self.size = _size[:]
+    def draw(self, surface, mouse, press, offset):
+        self.btn.draw(surface, mouse, press, offset, self.tile_size)
 
 
 class RoadTile(Tile):
 
     def __init__(self, x: int, y: int, orientation: str = None, texture: str = None, size=100):
-        super().__init__(x, y)
+        super().__init__(x, y, size)
         if orientation is None and texture is None:
             print('failed to create road tile')
         else:
-            self.set_location(x * size, y * size)
-            self.pos = [x, y]
             # Can be cross, vertical, horizontal, T_down, T_left, T_right and T_up
             self.set_type('road')
             if texture is None:
                 self.set_texture(assets_path + '\\Roads\\' + orientation)
             else:
                 self.set_texture(texture)
-        self.tile_size = size
         picture = pygame.image.load(self.texture + '.png')
         picture = pygame.transform.scale(picture, (self.tile_size, self.tile_size))
         picture_hover = pygame.image.load(self.texture + 'Hover.png')
@@ -60,19 +61,13 @@ class RoadTile(Tile):
     def show_memu(self):
         print('needToImplement')
 
-    def draw(self, surface, mouse, press, offset):
-        self.btn.draw(surface, mouse, press, offset, self.tile_size)
-
 
 class RestaurantTile(Tile):
 
     def __init__(self, x: int, y: int, texture: str = '1', size=100):
-        super().__init__(x, y)
-        self.set_location(x * size, y * size)
-        self.pos = [x, y]
+        super().__init__(x, y, size)
         self.set_type('restaurant')
         self.set_texture(assets_path + '\\Resturants\\' + texture)
-        self.tile_size = size
         picture = pygame.image.load(self.texture + '.png')
         picture = pygame.transform.scale(picture, (self.tile_size, self.tile_size))
         picture_hover = pygame.image.load(self.texture + 'Hover.png')
@@ -90,20 +85,17 @@ class RestaurantTile(Tile):
 
     def show_menu(self):
         print('needToImplement')
-
-    def draw(self, surface, mouse, press, offset):
-        self.btn.draw(surface, mouse, press, offset, self.tile_size)
 
 
 class ParkingTile(Tile):
 
+    def show_menu(self):
+        print('needToImplement')
+
     def __init__(self, x: int, y: int, texture: str = '1', size=100):
-        super().__init__(x, y)
-        self.set_location(x * size, y * size)
-        self.pos = [x, y]
+        super().__init__(x, y, size)
         self.set_type('restaurant')
         self.set_texture(assets_path + '\\Parking\\' + texture)
-        self.tile_size = size
         picture = pygame.image.load(self.texture + '.png')
         picture = pygame.transform.scale(picture, (self.tile_size, self.tile_size))
         picture_hover = pygame.image.load(self.texture + 'Hover.png')
@@ -119,8 +111,23 @@ class ParkingTile(Tile):
         }
         return data
 
-    def show_menu(self):
-        print('needToImplement')
+
+class GeneratorTile(Tile):
+
+    def __init__(self, x: int, y: int, direction: str, size=100):
+        super().__init__(x, y, size)
+        self.direction = direction
 
     def draw(self, surface, mouse, press, offset):
-        self.btn.draw(surface, mouse, press, offset, self.tile_size)
+        if self.direction == 'up':
+            center = self.grid_location[:]
+            center[1] = center[1] - 3
+        elif self.direction == 'down':
+            center = self.grid_location[:]
+            center[1] = center[1] + 3
+        elif self.direction == 'right':
+            center = self.grid_location[:]
+            center[0] = center[0] + 3
+        elif self.direction == 'right':
+            center = self.grid_location[:]
+            center[0] = center[0] - 3
