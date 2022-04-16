@@ -72,7 +72,7 @@ class RestaurantTile(Tile):
         picture = pygame.transform.scale(picture, (self.tile_size, self.tile_size))
         picture_hover = pygame.image.load(self.texture + 'Hover.png')
         picture_hover = pygame.transform.scale(picture_hover, (self.tile_size, self.tile_size))
-        self.btn = Buttons.ButtonImg(self.grid_location[:], picture, picture_hover, self.show_memu)
+        self.btn = Buttons.ButtonImg(self.grid_location[:], picture, picture_hover, self.show_menu)
 
     def json_ready(self):
         data = {
@@ -100,7 +100,7 @@ class ParkingTile(Tile):
         picture = pygame.transform.scale(picture, (self.tile_size, self.tile_size))
         picture_hover = pygame.image.load(self.texture + 'Hover.png')
         picture_hover = pygame.transform.scale(picture_hover, (self.tile_size, self.tile_size))
-        self.btn = Buttons.ButtonImg(self.grid_location[:], picture, picture_hover, self.show_memu)
+        self.btn = Buttons.ButtonImg(self.grid_location[:], picture, picture_hover, self.show_menu)
 
     def json_ready(self):
         data = {
