@@ -16,12 +16,13 @@ save_path = 'Saves'
 cur_game_save_path = None
 left_lower_corner = [-3, -3]
 offset = [0, 0]
-offset_change_speed = 30
+offset_change_speed = 10
 Tile_list = None
 show_overlay = False
 
 # Some parameters
 tile_size = screen.get_size()[0] / 8
+move_up = move_down = move_right = move_left = False
 
 
 def draw_tiles(surface, _list):
@@ -85,7 +86,7 @@ def load_save(name: str):
 
 
 def event_handler():
-    global exit_game, offset, mouse_pos, check_press
+    global exit_game, offset, mouse_pos, check_press, move_up, move_down, move_right, move_left
     mouse_pos = pygame.mouse.get_pos()
     check_press = False
     for event in pygame.event.get():
@@ -93,15 +94,34 @@ def event_handler():
             exit_game = True
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_DOWN:
-                offset[1] -= offset_change_speed
+                move_down = True
             if event.key == pygame.K_UP:
-                offset[1] += offset_change_speed
+                move_up = True
             if event.key == pygame.K_RIGHT:
-                offset[0] -= offset_change_speed
+                move_right = True
             if event.key == pygame.K_LEFT:
-                offset[0] += offset_change_speed
+                move_left = True
+        if event.type == pygame.KEYUP:
+            if event.key == pygame.K_DOWN:
+                move_down = False
+            if event.key == pygame.K_UP:
+                move_up = False
+            if event.key == pygame.K_RIGHT:
+                move_right = False
+            if event.key == pygame.K_LEFT:
+                move_left = False
         if event.type == pygame.MOUSEBUTTONDOWN:
             check_press = True
+
+    if move_up:
+        offset[1] += offset_change_speed
+    if move_down:
+        offset[1] -= offset_change_speed
+    if move_right:
+        offset[0] -= offset_change_speed
+    if move_left:
+        offset[0] += offset_change_speed
+
 
 
 def close_game():
