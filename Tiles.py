@@ -143,15 +143,4 @@ class GeneratorTile(Tile):
         self.direction = direction
 
     def draw(self, surface, mouse, press, offset):
-        if self.direction == 'up':
-            center = self.grid_location[:]
-            center[1] = center[1] - 3
-        elif self.direction == 'down':
-            center = self.grid_location[:]
-            center[1] = center[1] + 3
-        elif self.direction == 'right':
-            center = self.grid_location[:]
-            center[0] = center[0] + 3
-        elif self.direction == 'right':
-            center = self.grid_location[:]
-            center[0] = center[0] - 3
+        pass

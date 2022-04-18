@@ -1,4 +1,5 @@
 import Tiles
+import random
 
 
 # 3 X 3 placements
@@ -6,6 +7,18 @@ import Tiles
 
 def restaurant_3x3_var_1(x: int, y: int):
     print('need to implement')
+
+
+def generate_restaurant(tile_list, x, y):
+    pass
+
+
+def generate_house(tile_list, x, y):
+    pass
+
+
+def generate_blank(tile_list, x, y):
+    pass
 
 
 # Sets a chunk to only roads, for debug purposes
@@ -57,3 +70,17 @@ def generate_base_tiles(_list, x, y):
     row_list.append(Tiles.RoadTile(4, 4, 'center', size=150))
     finished_list.append(row_list)
     _list[x][y] = finished_list
+
+
+restaurant_odds = 5
+house_odds = 25
+
+
+def generate_chunk(tile_list, x, y):
+    result = random.randint(1, 100)
+    if result < restaurant_odds:
+        generate_restaurant(tile_list, x, y)
+    elif result < house_odds:
+        generate_house(tile_list, x, y)
+    else:
+        generate_blank(tile_list, x, y)
