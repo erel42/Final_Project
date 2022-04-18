@@ -22,7 +22,7 @@ offset = [0, 0]
 offset_change_speed = 10
 Tile_list = None
 show_overlay = False
-money = 0
+last_money_value = money = 0
 
 # Some parameters
 tile_size = screen.get_size()[0] / 8
@@ -99,12 +99,14 @@ def update_money():
 
 
 def game_loop():
-    global chunk_list
+    global chunk_list, money_gui, last_money_value, money
     while not exit_game:
         event_handler()
         screen.fill((255, 255, 255))
         draw_tiles(screen, chunk_list)
-
+        if last_money_value != money:
+            update_money()
+            last_money_value = money
         screen.blit(money_gui, (20, 20))
         pygame.display.update()
     close_game()
