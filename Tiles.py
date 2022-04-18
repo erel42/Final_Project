@@ -3,7 +3,31 @@ import pygame
 
 assets_path = 'Assets'
 chunk_map = [[None]]  # all the tiles in the game
-active_chunks = []  # 3x3 chunks representing the tiles that can be seen on screen
+active_chunks = [[None]]  # 3x3 chunks representing the tiles that can be seen on screen
+chunk_map_x_bounds = [0, 0]
+chunk_map_y_bounds = [0, 0]
+
+
+def chunk_map_x(row):
+    global chunk_map
+    while row > chunk_map_x_bounds[1]:
+        chunk_map.append([None] * (chunk_map_y_bounds[1] - chunk_map_y_bounds[0]))
+        chunk_map_x_bounds[1] = chunk_map_x_bounds[1] + 1
+    while row < chunk_map_x_bounds[0]:
+        chunk_map.insert(0, [None] * (chunk_map_y_bounds[1] - chunk_map_y_bounds[0]))
+        chunk_map_x_bounds[0] = chunk_map_x_bounds[0] - 1
+
+
+def chunk_map_y(col):
+    global chunk_map
+    while col > chunk_map_y_bounds[1]:
+        for row in chunk_map:
+            row.append(None)
+        chunk_map_y_bounds[1] = chunk_map_y_bounds[1] + 1
+    while col < chunk_map_y_bounds[0]:
+        for row in chunk_map:
+            row.insert(0, None)
+        chunk_map_y_bounds[0] = chunk_map_y_bounds[0] - 1
 
 
 class Tile:

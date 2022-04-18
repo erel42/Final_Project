@@ -29,9 +29,10 @@ move_up = move_down = move_right = move_left = False
 def draw_tiles(surface, _list):
     for sub_list in _list:
         for chunk in sub_list:
-            for _sub_list in chunk:
-                for tile in _sub_list:
-                    tile.draw(surface, mouse_pos, check_press, offset)
+            if chunk is not None:
+                for _sub_list in chunk:
+                    for tile in _sub_list:
+                        tile.draw(surface, mouse_pos, check_press, offset)
 
 
 def create_new_save(name: str):
@@ -103,6 +104,6 @@ def game_loop():
 if __name__ == '__main__':
     menu.show_menu(screen)
     Gen.generate_base_tiles(chunk_list, 0, 0)
-    chunk_list[0].append([])
-    Gen.init_chunk(chunk_list, 0, 1)
+    Tiles.chunk_map_y(-2)
+    Gen.init_chunk(chunk_list, 0, -2)
     game_loop()

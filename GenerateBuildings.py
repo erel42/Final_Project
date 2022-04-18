@@ -16,7 +16,7 @@ def init_chunk(tile_list, x, y):
         for j in range(1, 6):
             new_list.append(Tiles.RoadTile(5*x + (i - 1), 5*y + (j - 1), 'vertical', size=150))
         _list.append(new_list)
-    tile_list[x][y] = _list
+    tile_list[x - Tiles.chunk_map_x_bounds[0]][y - Tiles.chunk_map_y_bounds[0]] = _list
 
 
 def generate_base_tiles(_list, x, y):
