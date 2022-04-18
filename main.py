@@ -1,12 +1,13 @@
 import pygame
 import os
 import Tiles
-import GenerateBuildings as gen
+import GenerateBuildings as Gen
 import menu
 import time
 
 pygame.init()
-tile_list = []
+chunk_list = Tiles.chunk_map
+active_chunks = Tiles.active_chunks
 check_press = False
 mouse_pos = [0, 0]
 screen = pygame.display.set_mode([750, 750])
@@ -27,49 +28,10 @@ move_up = move_down = move_right = move_left = False
 
 def draw_tiles(surface, _list):
     for sub_list in _list:
-        for tile in sub_list:
-            tile.draw(surface, mouse_pos, check_press, offset)
-
-
-def generate_base_tiles():
-    finished_list = []
-    row_list = []
-    row_list.append(Tiles.RoadTile(0, 0, 'center', size=150))
-    for i in range(1, 4):
-        row_list.append(Tiles.RoadTile(i, 0, 'horizontal', size=150))
-    row_list.append(Tiles.RoadTile(4, 0, 'center', size=150))
-    finished_list.append(row_list)
-    row_list = [
-        Tiles.RoadTile(0, 1, 'vertical', size=150),
-        Tiles.ParkingTile(1, 1, size=150),
-        Tiles.ParkingTile(2, 1, size=150),
-        Tiles.ParkingTile(3, 1, size=150),
-        Tiles.RoadTile(4, 1, 'vertical', size=150)
-    ]
-    finished_list.append(row_list)
-    row_list = [
-        Tiles.RoadTile(0, 2, 'vertical', size=150),
-        Tiles.ParkingTile(1, 2, size=150),
-        Tiles.RestaurantTile(2, 2, size=150),
-        Tiles.ParkingTile(3, 2, size=150),
-        Tiles.RoadTile(4, 2, 'vertical', size=150)
-    ]
-    finished_list.append(row_list)
-    row_list = [
-        Tiles.RoadTile(0, 3, 'vertical', size=150),
-        Tiles.ParkingTile(1, 3, size=150),
-        Tiles.ParkingTile(2, 3, size=150),
-        Tiles.ParkingTile(3, 3, size=150),
-        Tiles.RoadTile(4, 3, 'vertical', size=150)
-    ]
-    finished_list.append(row_list)
-    row_list = []
-    row_list.append(Tiles.RoadTile(0, 4, 'center', size=150))
-    for i in range(1, 4):
-        row_list.append(Tiles.RoadTile(i, 4, 'horizontal', size=150))
-    row_list.append(Tiles.RoadTile(4, 4, 'center', size=150))
-    finished_list.append(row_list)
-    return finished_list
+        for chunk in sub_list:
+            for _sub_list in chunk:
+                for tile in _sub_list:
+                    tile.draw(surface, mouse_pos, check_press, offset)
 
 
 def create_new_save(name: str):
@@ -77,7 +39,7 @@ def create_new_save(name: str):
     # Creating a new directory
     cur_game_save_path = save_path + '\\' + name
     os.mkdir(cur_game_save_path)
-    generate_base_tiles()
+    # generate_base_tiles()
 
 
 def load_save(name: str):
@@ -123,17 +85,16 @@ def event_handler():
         offset[0] += offset_change_speed
 
 
-
 def close_game():
     print('Exiting game without saving')
 
 
 def game_loop():
-    global tile_list
+    global chunk_list
     while not exit_game:
         event_handler()
         screen.fill((255, 255, 255))
-        draw_tiles(screen, tile_list)
+        draw_tiles(screen, chunk_list)
 
         pygame.display.update()
     close_game()
@@ -141,10 +102,7 @@ def game_loop():
 
 if __name__ == '__main__':
     menu.show_menu(screen)
-    for i in range(0, 7):
-        new_list = []
-        for j in range(0, 7):
-            new_list.append(Tiles.RoadTile((i - 1), (j - 1), 'vertical', size=150))
-        tile_list.append(new_list)
-    tile_list = generate_base_tiles()[:]
+    Gen.generate_base_tiles(chunk_list, 0, 0)
+    chunk_list[0].append([])
+    Gen.init_chunk(chunk_list, 0, 1)
     game_loop()

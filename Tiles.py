@@ -2,8 +2,8 @@ import Buttons
 import pygame
 
 assets_path = 'Assets'
-tile_map = []  # all the tiles in the game
-active_tiles = []  # 7x7 tiles representing the tiles that can be seen on screen
+chunk_map = [[None]]  # all the tiles in the game
+active_chunks = []  # 3x3 chunks representing the tiles that can be seen on screen
 
 
 class Tile:
