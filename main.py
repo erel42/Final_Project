@@ -19,7 +19,8 @@ offset = [0, 0]
 offset_change_speed = 30
 Tile_list = None
 show_overlay = False
-
+money = 0
+font = pygame.font.SysFont(None, 24)
 # Some parameters
 tile_size = screen.get_size()[0] / 8
 
@@ -110,11 +111,16 @@ def close_game():
 
 def game_loop():
     global tile_list
+
+
     while not exit_game:
         event_handler()
         screen.fill((255, 255, 255))
         draw_tiles(screen, tile_list)
 
+        img = font.render('money:' + str(money), True, (41, 210, 22))
+        screen.blit(img, (20, 20))
+        self.btn.draw(surface, mouse, press, offset, self.tile_size)
         pygame.display.update()
     close_game()
 
