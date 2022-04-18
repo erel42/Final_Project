@@ -12,6 +12,8 @@ check_press = False
 mouse_pos = [0, 0]
 screen = pygame.display.set_mode([750, 750])
 exit_game = False
+money_gui = None
+font = pygame.font.SysFont(None, 24)
 clock = pygame.time.Clock()
 save_path = 'Saves'
 cur_game_save_path = None
@@ -91,15 +93,19 @@ def close_game():
     print('Exiting game without saving')
 
 
+def update_money():
+    global money_gui
+    money_gui = font.render('money:' + str(money), True, (41, 210, 22))
+
+
 def game_loop():
     global chunk_list
-    font = pygame.font.SysFont(None, 24)
     while not exit_game:
         event_handler()
         screen.fill((255, 255, 255))
         draw_tiles(screen, chunk_list)
-        img = font.render('money:' + str(money), True, (41, 210, 22))
-        screen.blit(img, (20, 20))
+
+        screen.blit(money_gui, (20, 20))
         pygame.display.update()
     close_game()
 
@@ -109,4 +115,5 @@ if __name__ == '__main__':
     Gen.generate_base_tiles(chunk_list, 0, 0)
     Tiles.chunk_map_y(-2)
     Gen.init_chunk(chunk_list, 0, -2)
+    update_money()
     game_loop()
