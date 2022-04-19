@@ -83,7 +83,7 @@ class RoadTile(Tile):
         return data
 
     def show_memu(self):
-        print('needToImplement')
+        pass
 
 
 class RestaurantTile(Tile):
@@ -114,7 +114,7 @@ class RestaurantTile(Tile):
 class ParkingTile(Tile):
 
     def show_menu(self):
-        print('needToImplement')
+        pass
 
     def __init__(self, x: int, y: int, texture: str = '1', size=100):
         super().__init__(x, y, size)
