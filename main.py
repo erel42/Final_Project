@@ -116,6 +116,6 @@ if __name__ == '__main__':
     menu.show_menu(screen)
     Gen.generate_base_tiles(chunk_list, 0, 0)
     Tiles.chunk_map_y(-2)
-    Gen.init_chunk(chunk_list, 0, -2)
+    Gen.demo_chunk(chunk_list, 0, -2)
     update_money()
     game_loop()
