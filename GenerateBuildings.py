@@ -95,13 +95,19 @@ def generate_base_tiles(chunk_list, x, y):
     chunk_list[x][y][3][2] = Tiles.ParkingTile(2, 3, size=150)
     chunk_list[x][y][3][3] = Tiles.ParkingTile(3, 3, size=150)
 
+    chunk_list[x][y][2][0] = Tiles.GeneratorTile(0, 2, "left")
+
 
 restaurant_odds = 5
 house_odds = 25
 
 
 def generate_chunk(tile_list, x, y):
-    init_chunk(tile_list, x, y)
+    # init_chunk(tile_list, x, y)
+    Tiles.chunk_map_x(x)
+    Tiles.chunk_map_y(y)
+    demo_chunk(tile_list, x, y)
+    """
     result = random.randint(1, 100)
     if result < restaurant_odds:
         generate_restaurant(tile_list, x, y)
@@ -109,3 +115,4 @@ def generate_chunk(tile_list, x, y):
         generate_house(tile_list, x, y)
     else:
         generate_blank(tile_list, x, y)
+    """
