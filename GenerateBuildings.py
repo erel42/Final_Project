@@ -6,42 +6,47 @@ def init_chunk(chunk_list, x: int, y: int):
     Tiles.chunk_map_x(x)
     Tiles.chunk_map_y(y)
     finished_list = []
-    row_list = [Tiles.RoadTile(0, 0, 'center', size=150)]
-    for i in range(1, 4):
-        row_list.append(Tiles.RoadTile(i, 0, 'horizontal', size=150))
-    row_list.append(Tiles.RoadTile(4, 0, 'center', size=150))
-    finished_list.append(row_list)
     row_list = [
-        Tiles.RoadTile(0, 1, 'vertical', size=150),
-        None,
-        None,
-        None,
-        Tiles.RoadTile(4, 1, 'vertical', size=150)
+        Tiles.RoadTile(5 * x, 5 * y, 'center', size=150),
+        Tiles.RoadTile(5 * x + 1, 5 * y, 'horizontal', size=150),
+        Tiles.GeneratorTile(5 * x + 2, 5 * y, "up", size=150),
+        Tiles.RoadTile(5 * x + 3, 5 * y, 'horizontal', size=150),
+        Tiles.RoadTile(5 * x + 4, 5 * y, 'center', size=150)
     ]
     finished_list.append(row_list)
     row_list = [
-        Tiles.RoadTile(0, 2, 'vertical', size=150),
+        Tiles.RoadTile(5 * x, 5 * y + 1, 'vertical', size=150),
         None,
         None,
         None,
-        Tiles.RoadTile(4, 2, 'vertical', size=150)
+        Tiles.RoadTile(5 * x + 4, 5 * y + 1, 'vertical', size=150)
     ]
     finished_list.append(row_list)
     row_list = [
-        Tiles.RoadTile(0, 3, 'vertical', size=150),
+        Tiles.GeneratorTile(5 * x, 5 * y + 2, "left", size=150),
         None,
         None,
         None,
-        Tiles.RoadTile(4, 3, 'vertical', size=150)
+        Tiles.GeneratorTile(5 * x + 4, 5 * y + 2, "right", size=150)
     ]
     finished_list.append(row_list)
-    row_list = []
-    row_list.append(Tiles.RoadTile(0, 4, 'center', size=150))
-    for i in range(1, 4):
-        row_list.append(Tiles.RoadTile(i, 4, 'horizontal', size=150))
-    row_list.append(Tiles.RoadTile(4, 4, 'center', size=150))
+    row_list = [
+        Tiles.RoadTile(5 * x, 5 * y + 3, 'vertical', size=150),
+        None,
+        None,
+        None,
+        Tiles.RoadTile(5 * x + 4, 5 * y + 3, 'vertical', size=150)
+    ]
     finished_list.append(row_list)
-    chunk_list[x][y] = finished_list
+    row_list = [
+        Tiles.RoadTile(5 * x, 5 * y + 4, 'center', size=150),
+        Tiles.RoadTile(5 * x + 1, 5 * y + 4, 'horizontal', size=150),
+        Tiles.GeneratorTile(5 * x + 2, 5 * y + 4, "down", size=150),
+        Tiles.RoadTile(5 * x + 3, 5 * y + 4, 'horizontal', size=150),
+        Tiles.RoadTile(5 * x + 4, 5 * y + 4, 'center', size=150)
+    ]
+    finished_list.append(row_list)
+    chunk_list[x - Tiles.chunk_map_x_bounds[0]][y - Tiles.chunk_map_y_bounds[0]] = finished_list
 
 
 # 3 X 3 placements
@@ -62,12 +67,28 @@ def generate_restaurant(tile_list, x, y):
     restaurant_dic[random.randint(1, restaurant_dic_size)](tile_list, x, y)
 
 
-def generate_house(tile_list, x, y):
+def generate_house(chunk_list, x, y):
     pass
 
 
-def generate_blank(tile_list, x, y):
-    pass
+def generate_blank(chunk_list, x, y):
+    chunk_list[x - Tiles.chunk_map_x_bounds[0]][y - Tiles.chunk_map_y_bounds[0]][1][1] = Tiles.EmptyTile(5 * x + 1, 5 * y + 1, size=150)
+    chunk_list[x - Tiles.chunk_map_x_bounds[0]][y - Tiles.chunk_map_y_bounds[0]][1][2] = Tiles.EmptyTile(5 * x + 2, 5 * y + 1, size=150)
+    chunk_list[x - Tiles.chunk_map_x_bounds[0]][y - Tiles.chunk_map_y_bounds[0]][1][3] = Tiles.EmptyTile(5 * x + 3, 5 * y + 1, size=150)
+
+    chunk_list[x - Tiles.chunk_map_x_bounds[0]][y - Tiles.chunk_map_y_bounds[0]][2][1] = Tiles.EmptyTile(5 * x + 1, 5 * y + 2, size=150)
+    chunk_list[x - Tiles.chunk_map_x_bounds[0]][y - Tiles.chunk_map_y_bounds[0]][2][2] = Tiles.EmptyTile(5 * x + 2, 5 * y + 2, size=150)
+    chunk_list[x - Tiles.chunk_map_x_bounds[0]][y - Tiles.chunk_map_y_bounds[0]][2][3] = Tiles.EmptyTile(5 * x + 3, 5 * y + 2, size=150)
+
+    chunk_list[x - Tiles.chunk_map_x_bounds[0]][y - Tiles.chunk_map_y_bounds[0]][3][1] = Tiles.EmptyTile(5 * x + 1, 5 * y + 3, size=150)
+    chunk_list[x - Tiles.chunk_map_x_bounds[0]][y - Tiles.chunk_map_y_bounds[0]][3][2] = Tiles.EmptyTile(5 * x + 2, 5 * y + 3, size=150)
+    chunk_list[x - Tiles.chunk_map_x_bounds[0]][y - Tiles.chunk_map_y_bounds[0]][3][3] = Tiles.EmptyTile(5 * x + 3, 5 * y + 3, size=150)
+
+    chunk_list[x - Tiles.chunk_map_x_bounds[0]][y - Tiles.chunk_map_y_bounds[0]][0][2] = Tiles.RoadTile(5 * x + 2, 5 * y, "horizontal", size=150)
+    chunk_list[x - Tiles.chunk_map_x_bounds[0]][y - Tiles.chunk_map_y_bounds[0]][2][0] = Tiles.RoadTile(5 * x, 5 * y + 2, "vertical", size=150)
+    chunk_list[x - Tiles.chunk_map_x_bounds[0]][y - Tiles.chunk_map_y_bounds[0]][2][4] = Tiles.RoadTile(5 * x + 4, 5 * y + 2, "vertical", size=150)
+    chunk_list[x - Tiles.chunk_map_x_bounds[0]][y - Tiles.chunk_map_y_bounds[0]][4][2] = Tiles.RoadTile(5 * x + 2, 5 * y + 4, "horizontal", size=150)
+    
 
 
 # Sets a chunk to only roads, for debug purposes
@@ -83,36 +104,33 @@ def demo_chunk(tile_list, x, y):
 
 def generate_base_tiles(chunk_list, x, y):
     init_chunk(chunk_list, x, y)
-    chunk_list[x][y][1][1] = Tiles.ParkingTile(1, 1, size=150)
-    chunk_list[x][y][1][2] = Tiles.ParkingTile(2, 1, size=150)
-    chunk_list[x][y][1][3] = Tiles.ParkingTile(3, 1, size=150)
+    chunk_list[x - Tiles.chunk_map_x_bounds[0]][y - Tiles.chunk_map_y_bounds[0]][1][1] = Tiles.ParkingTile(1, 1, size=150)
+    chunk_list[x - Tiles.chunk_map_x_bounds[0]][y - Tiles.chunk_map_y_bounds[0]][1][2] = Tiles.ParkingTile(2, 1, size=150)
+    chunk_list[x - Tiles.chunk_map_x_bounds[0]][y - Tiles.chunk_map_y_bounds[0]][1][3] = Tiles.ParkingTile(3, 1, size=150)
 
-    chunk_list[x][y][2][1] = Tiles.ParkingTile(1, 2, size=150)
-    chunk_list[x][y][2][2] = Tiles.RestaurantTile(2, 2, size=150)
-    chunk_list[x][y][2][3] = Tiles.ParkingTile(3, 2, size=150)
+    chunk_list[x - Tiles.chunk_map_x_bounds[0]][y - Tiles.chunk_map_y_bounds[0]][2][1] = Tiles.ParkingTile(1, 2, size=150)
+    chunk_list[x - Tiles.chunk_map_x_bounds[0]][y - Tiles.chunk_map_y_bounds[0]][2][2] = Tiles.RestaurantTile(2, 2, size=150)
+    chunk_list[x - Tiles.chunk_map_x_bounds[0]][y - Tiles.chunk_map_y_bounds[0]][2][3] = Tiles.ParkingTile(3, 2, size=150)
 
-    chunk_list[x][y][3][1] = Tiles.ParkingTile(1, 3, size=150)
-    chunk_list[x][y][3][2] = Tiles.ParkingTile(2, 3, size=150)
-    chunk_list[x][y][3][3] = Tiles.ParkingTile(3, 3, size=150)
-
-    chunk_list[x][y][2][0] = Tiles.GeneratorTile(0, 2, "left")
+    chunk_list[x - Tiles.chunk_map_x_bounds[0]][y - Tiles.chunk_map_y_bounds[0]][3][1] = Tiles.ParkingTile(1, 3, size=150)
+    chunk_list[x - Tiles.chunk_map_x_bounds[0]][y - Tiles.chunk_map_y_bounds[0]][3][2] = Tiles.ParkingTile(2, 3, size=150)
+    chunk_list[x - Tiles.chunk_map_x_bounds[0]][y - Tiles.chunk_map_y_bounds[0]][3][3] = Tiles.ParkingTile(3, 3, size=150)
 
 
-restaurant_odds = 5
-house_odds = 25
+restaurant_odds = 0
+house_odds = 0
 
 
-def generate_chunk(tile_list, x, y):
-    # init_chunk(tile_list, x, y)
-    Tiles.chunk_map_x(x)
-    Tiles.chunk_map_y(y)
-    demo_chunk(tile_list, x, y)
+def generate_chunk(chunk_list, x, y):
+    init_chunk(chunk_list, x, y)
+    # demo_chunk(chunk_list, x, y)
+    generate_blank(chunk_list, x, y)
     """
     result = random.randint(1, 100)
     if result < restaurant_odds:
-        generate_restaurant(tile_list, x, y)
+        generate_restaurant(chunk_list, x, y)
     elif result < house_odds:
-        generate_house(tile_list, x, y)
+        generate_house(chunk_list, x, y)
     else:
-        generate_blank(tile_list, x, y)
+        generate_blank(chunk_list, x, y)
     """

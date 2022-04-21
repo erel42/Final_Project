@@ -65,7 +65,7 @@ class RoadTile(Tile):
         if orientation is None and texture is None:
             print('failed to create road tile')
         else:
-            # Can be cross, vertical, horizontal, T_down, T_left, T_right and T_up
+            # Can be center, vertical, horizontal
             self.set_type('road')
             if texture is None:
                 self.set_texture(assets_path + '\\Roads\\' + orientation)
@@ -134,6 +134,28 @@ class ParkingTile(Tile):
         return data
 
 
+class EmptyTile(Tile):
+
+    def __init__(self, x: int, y: int, texture: str = '1', size=100):
+        super().__init__(x, y, size)
+        self.set_type('empty')
+        self.set_texture(assets_path + '\\Empty\\' + texture)
+        picture = pygame.image.load(self.texture + '.png')
+        picture = pygame.transform.scale(picture, (self.tile_size, self.tile_size))
+        picture_hover = pygame.image.load(self.texture + 'Hover.png')
+        picture_hover = pygame.transform.scale(picture_hover, (self.tile_size, self.tile_size))
+        self.btn = Buttons.ButtonImg(self.grid_location[:], picture, picture_hover, self.show_menu)
+
+    def json_ready(self):
+        data = {
+            'type': self.type,
+            'x': self.grid_location[0],
+            'y': self.grid_location[1],
+            'texture': self.texture
+        }
+        return data
+
+
 class GeneratorTile(Tile):
 
     def __init__(self, x: int, y: int, direction: str, size=100):
@@ -142,11 +164,18 @@ class GeneratorTile(Tile):
 
     def draw(self, surface, mouse, press, offset):
         if self.direction == "up":
-            GenerateBuildings.generate_chunk(chunk_map, int(self.pos[0]/5), int(self.pos[1]/5) - 1)
+            GenerateBuildings.generate_chunk(chunk_map, int(self.pos[0] / 5), int(self.pos[1] / 5) - 1)
         elif self.direction == "down":
-            GenerateBuildings.generate_chunk(chunk_map, int(self.pos[0]/5), int(self.pos[1]/5) + 1)
+            GenerateBuildings.generate_chunk(chunk_map, int(self.pos[0] / 5), int(self.pos[1] / 5) + 1)
         elif self.direction == "right":
-            GenerateBuildings.generate_chunk(chunk_map, int(self.pos[0]/5) + 1, int(self.pos[1]/5))
+            GenerateBuildings.generate_chunk(chunk_map, int(self.pos[0] / 5) + 1, int(self.pos[1] / 5))
         elif self.direction == "left":
-            GenerateBuildings.generate_chunk(chunk_map, int(self.pos[0]/5) - 1, int(self.pos[1]/5))
-        chunk_map[int(self.pos[0] / 5) - chunk_map_x_bounds[0]][int(self.pos[1] / 5) - chunk_map_y_bounds[0]][self.pos[1] % 5][self.pos[0] % 5] = RoadTile(int(self.pos[0] % 5), int(self.pos[1] % 5), 'vertical', size=150)
+            GenerateBuildings.generate_chunk(chunk_map, int(self.pos[0] / 5) - 1, int(self.pos[1] / 5))
+        if self.direction == "up" or self.direction == "down":
+            chunk_map[int(self.pos[0] / 5) - chunk_map_x_bounds[0]][int(self.pos[1] / 5) - chunk_map_y_bounds[0]][
+                self.pos[1] % 5][self.pos[0] % 5] = RoadTile(int(self.pos[0] % 5), int(self.pos[1] % 5), 'horizontal',
+                                                             size=150)
+        else:
+            chunk_map[int(self.pos[0] / 5) - chunk_map_x_bounds[0]][int(self.pos[1] / 5) - chunk_map_y_bounds[0]][
+                self.pos[1] % 5][self.pos[0] % 5] = RoadTile(int(self.pos[0] % 5), int(self.pos[1] % 5), 'vertical',
+                                                             size=150)

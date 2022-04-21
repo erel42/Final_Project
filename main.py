@@ -27,13 +27,26 @@ last_money_value = money = 0
 # Some parameters
 tile_size = screen.get_size()[0] / 8
 move_up = move_down = move_right = move_left = False
+center_chunk_x = center_chunk_y = 0
+
+
+def update_active_chunks():
+    global center_chunk_x, center_chunk_y
+    center_chunk_x = -int((offset[0] / 150) / 5) - Tiles.chunk_map_x_bounds[0]
+    center_chunk_y = -int((offset[1] / 150) / 5) - Tiles.chunk_map_y_bounds[0]
+    Tiles.chunk_map_y(center_chunk_y + 1)
+    Tiles.chunk_map_y(center_chunk_y - 1)
+    Tiles.chunk_map_x(center_chunk_x + 1)
+    Tiles.chunk_map_x(center_chunk_x - 1)
+    center_chunk_x = -int((offset[0] / 150) / 5) - Tiles.chunk_map_x_bounds[0]
+    center_chunk_y = -int((offset[1] / 150) / 5) - Tiles.chunk_map_y_bounds[0]
 
 
 def draw_tiles(surface, _list):
-    for sub_list in _list:
-        for chunk in sub_list:
-            if chunk is not None:
-                for _sub_list in chunk:
+    for i in range(center_chunk_x - 1, center_chunk_x + 2):
+        for j in range(center_chunk_y - 1, center_chunk_y + 2):
+            if _list[i][j] is not None:
+                for _sub_list in _list[i][j]:
                     for tile in _sub_list:
                         tile.draw(surface, mouse_pos, check_press, offset)
 
@@ -101,6 +114,7 @@ def update_money():
 def game_loop():
     global chunk_list, money_gui, last_money_value, money
     while not exit_game:
+        update_active_chunks()
         event_handler()
         screen.fill((255, 255, 255))
         draw_tiles(screen, chunk_list)
