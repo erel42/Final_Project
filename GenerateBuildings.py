@@ -119,9 +119,6 @@ house_odds = 0
 
 def generate_chunk(chunk_list, x, y):
     init_chunk(chunk_list, x, y)
-    # demo_chunk(chunk_list, x, y)
-    generate_blank(chunk_list, x, y)
-    """
     result = random.randint(1, 100)
     if result < restaurant_odds:
         generate_restaurant(chunk_list, x, y)
@@ -129,4 +126,3 @@ def generate_chunk(chunk_list, x, y):
         generate_house(chunk_list, x, y)
     else:
         generate_blank(chunk_list, x, y)
-    """
