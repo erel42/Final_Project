@@ -23,11 +23,18 @@ offset_change_speed = 10
 Tile_list = None
 show_overlay = False
 last_money_value = money = 0
+revenue = 0
 
 # Some parameters
 tile_size = screen.get_size()[0] / 8
 move_up = move_down = move_right = move_left = False
 center_chunk_x = center_chunk_y = 0
+
+
+def draw_rect_alpha(surface, color, rect):
+    shape_surf = pygame.Surface(pygame.Rect(rect).size, pygame.SRCALPHA)
+    pygame.draw.rect(shape_surf, color, shape_surf.get_rect())
+    surface.blit(shape_surf, rect)
 
 
 def update_active_chunks():
@@ -122,9 +129,11 @@ def game_loop():
         event_handler()
         screen.fill((255, 255, 255))
         draw_tiles(screen, chunk_list)
+        money += revenue
         if last_money_value != money:
             update_money()
             last_money_value = money
+        draw_rect_alpha(screen, (40, 40, 40, 160), (0, 0, 750, 750))
         screen.blit(money_gui, (20, 20))
         pygame.display.update()
     close_game()
