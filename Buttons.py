@@ -1,5 +1,7 @@
 import pygame
 
+disable_buttons = False
+
 
 def add_button(btn_list: [], _location: [int, int, int, int], _text, _default_color, _hover_color, on_press):
     new_btn = Button(_location, _text, _default_color, _hover_color, on_press)
@@ -18,8 +20,9 @@ class Button:
     text_pos_x = 0
     text_pos_y = 0
 
-    def __init__(self, _location: [int, int, int, int], _text, _default_color, _hover_color, on_press):
+    def __init__(self, _location: [int, int, int, int], _text, _default_color, _hover_color, on_press, listen_disable=True):
         self.location = _location[:]
+        self.listen = listen_disable
         _location[2] = _location[2] - _location[0]
         _location[3] = _location[3] - _location[1]
         self.location_2 = _location[:]
@@ -31,6 +34,8 @@ class Button:
         self.text_pos_y = (((self.location[3] - self.location[1]) - self.text.get_height()) / 2) + self.location[1]
 
     def check_hover(self, mouse_location: [int, int]):
+        if self.listen and disable_buttons:
+            return
         if self.location[0] <= mouse_location[0] <= self.location[2] and \
                 self.location[1] <= mouse_location[1] <= self.location[3]:
             self.active_color = self.hover_color
@@ -66,8 +71,9 @@ class ButtonImg:
     hover = False
     func_press = None
 
-    def __init__(self, _location: [int, int], _default_img, _hover_img, on_press):
+    def __init__(self, _location: [int, int], _default_img, _hover_img, on_press, listen_disable=True):
         self.set_pos(_location)
+        self.listen = listen_disable
         self.default_img = self.active_img = _default_img
         self.hover_img = _hover_img
         self.func_press = on_press
@@ -76,6 +82,8 @@ class ButtonImg:
         self.location = self.location_2 = _location[:]
 
     def check_hover(self, mouse_location: [int, int], press, size):
+        if self.listen and disable_buttons:
+            return
         if self.location_2[0] <= mouse_location[0] <= self.location_2[0] + size and \
                 self.location_2[1] <= mouse_location[1] <= self.location_2[1] + size:
             self.active_img = self.hover_img

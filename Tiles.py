@@ -114,7 +114,16 @@ class RestaurantTile(Tile):
         return data
 
     def show_menu(self):
-        print('needToImplement')
+        global menu_function
+        if menu_function is None:
+            menu_function = self.menu_draw
+            Buttons.disable_buttons = True
+        else:
+            Buttons.disable_buttons = False
+            menu_function = None
+
+    def menu_draw(self):
+        pass
 
     def upgrade(self):
         global money
