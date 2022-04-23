@@ -1,12 +1,14 @@
 import Buttons
 import pygame
-import GenerateBuildings
 
 assets_path = 'Assets'
 chunk_map = [[None]]  # all the tiles in the game
 active_chunks = [[None]]  # 3x3 chunks representing the tiles that can be seen on screen
 chunk_map_x_bounds = [0, 0]
 chunk_map_y_bounds = [0, 0]
+menu_function = None
+res_list = []
+money = 0
 
 
 def chunk_map_x(row):
@@ -98,6 +100,9 @@ class RestaurantTile(Tile):
         picture_hover = pygame.image.load(self.texture + 'Hover.png')
         picture_hover = pygame.transform.scale(picture_hover, (self.tile_size, self.tile_size))
         self.btn = Buttons.ButtonImg(self.grid_location[:], picture, picture_hover, self.show_menu)
+        self.income = 1
+        self.level = 0
+        res_list.append(self)
 
     def json_ready(self):
         data = {
@@ -110,6 +115,13 @@ class RestaurantTile(Tile):
 
     def show_menu(self):
         print('needToImplement')
+
+    def upgrade(self):
+        global money
+        if money > 30 * pow(2, self.level):
+            money -= 30 * pow(2, self.level)
+            self.income *= 1.5
+            self.level += 1
 
 
 class ParkingTile(Tile):

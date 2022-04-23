@@ -21,8 +21,7 @@ left_lower_corner = [-3, -3]
 offset = [0, 0]
 offset_change_speed = 10
 Tile_list = None
-show_overlay = False
-last_money_value = money = 0
+last_money_value = 0
 revenue = 0
 
 # Some parameters
@@ -119,21 +118,23 @@ def close_game():
 
 def update_money():
     global money_gui
-    money_gui = font.render('money:' + str(money), True, (41, 210, 22))
+    money_gui = font.render('money:' + str(Tiles.money), True, (41, 210, 22))
 
 
 def game_loop():
-    global chunk_list, money_gui, last_money_value, money
+    global chunk_list, money_gui, last_money_value
     while not exit_game:
         update_active_chunks()
         event_handler()
         screen.fill((255, 255, 255))
         draw_tiles(screen, chunk_list)
-        money += revenue
-        if last_money_value != money:
+        Tiles.money += revenue
+        if last_money_value != Tiles.money:
             update_money()
-            last_money_value = money
-        draw_rect_alpha(screen, (40, 40, 40, 160), (0, 0, 750, 750))
+            last_money_value = Tiles.money
+        if Tiles.menu_function is not None:
+            draw_rect_alpha(screen, (40, 40, 40, 160), (0, 0, 750, 750))
+            Tiles.menu_function()
         screen.blit(money_gui, (20, 20))
         pygame.display.update()
     close_game()
