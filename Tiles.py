@@ -173,9 +173,9 @@ class GeneratorTile(Tile):
             GenerateBuildings.generate_chunk(chunk_map, int(self.pos[0] / 5) - 1, int(self.pos[1] / 5))
         if self.direction == "up" or self.direction == "down":
             chunk_map[int(self.pos[0] / 5) - chunk_map_x_bounds[0]][int(self.pos[1] / 5) - chunk_map_y_bounds[0]][
-                self.pos[1] % 5][self.pos[0] % 5] = RoadTile(int(self.pos[0] % 5), int(self.pos[1] % 5), 'horizontal',
+                self.pos[1] % 5][self.pos[0] % 5] = RoadTile(self.pos[0], self.pos[1], 'horizontal',
                                                              size=150)
         else:
             chunk_map[int(self.pos[0] / 5) - chunk_map_x_bounds[0]][int(self.pos[1] / 5) - chunk_map_y_bounds[0]][
-                self.pos[1] % 5][self.pos[0] % 5] = RoadTile(int(self.pos[0] % 5), int(self.pos[1] % 5), 'vertical',
+                self.pos[1] % 5][self.pos[0] % 5] = RoadTile(self.pos[0], self.pos[1], 'vertical',
                                                              size=150)
