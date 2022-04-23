@@ -154,28 +154,3 @@ class EmptyTile(Tile):
             'texture': self.texture
         }
         return data
-
-
-class GeneratorTile(Tile):
-
-    def __init__(self, x: int, y: int, direction: str, size=100):
-        super().__init__(x, y, size)
-        self.direction = direction
-
-    def draw(self, surface, mouse, press, offset):
-        if self.direction == "up":
-            GenerateBuildings.generate_chunk(chunk_map, int(self.pos[0] / 5), int(self.pos[1] / 5) - 1)
-        elif self.direction == "down":
-            GenerateBuildings.generate_chunk(chunk_map, int(self.pos[0] / 5), int(self.pos[1] / 5) + 1)
-        elif self.direction == "right":
-            GenerateBuildings.generate_chunk(chunk_map, int(self.pos[0] / 5) + 1, int(self.pos[1] / 5))
-        elif self.direction == "left":
-            GenerateBuildings.generate_chunk(chunk_map, int(self.pos[0] / 5) - 1, int(self.pos[1] / 5))
-        if self.direction == "up" or self.direction == "down":
-            chunk_map[int(self.pos[0] / 5) - chunk_map_x_bounds[0]][int(self.pos[1] / 5) - chunk_map_y_bounds[0]][
-                self.pos[1] % 5][self.pos[0] % 5] = RoadTile(self.pos[0], self.pos[1], 'horizontal',
-                                                             size=150)
-        else:
-            chunk_map[int(self.pos[0] / 5) - chunk_map_x_bounds[0]][int(self.pos[1] / 5) - chunk_map_y_bounds[0]][
-                self.pos[1] % 5][self.pos[0] % 5] = RoadTile(self.pos[0], self.pos[1], 'vertical',
-                                                             size=150)

@@ -11,12 +11,10 @@ def init_chunk(chunk_list, x: int, y: int):
     row_list = [
         Tiles.RoadTile(5 * x, 5 * y, 'center', size=150),
         Tiles.RoadTile(5 * x + 1, 5 * y, 'horizontal', size=150),
-        Tiles.GeneratorTile(5 * x + 2, 5 * y, "up", size=150),
+        Tiles.RoadTile(5 * x + 2, 5 * y, 'horizontal', size=150),
         Tiles.RoadTile(5 * x + 3, 5 * y, 'horizontal', size=150),
         Tiles.RoadTile(5 * x + 4, 5 * y, 'center', size=150)
     ]
-    if chunk_list[x - Tiles.chunk_map_x_bounds[0]][y-1 - Tiles.chunk_map_y_bounds[0]] is not None:
-        row_list[2] = Tiles.RoadTile(5 * x + 2, 5 * y, 'horizontal', size=150)
     finished_list.append(row_list)
     row_list = [
         Tiles.RoadTile(5 * x, 5 * y + 1, 'vertical', size=150),
@@ -27,16 +25,12 @@ def init_chunk(chunk_list, x: int, y: int):
     ]
     finished_list.append(row_list)
     row_list = [
-        Tiles.GeneratorTile(5 * x, 5 * y + 2, "left", size=150),
+        Tiles.RoadTile(5 * x, 5 * y + 2, 'vertical', size=150),
         None,
         None,
         None,
-        Tiles.GeneratorTile(5 * x + 4, 5 * y + 2, "right", size=150)
+        Tiles.RoadTile(5 * x + 4, 5 * y + 2, 'vertical', size=150)
     ]
-    if chunk_list[x + 1 - Tiles.chunk_map_x_bounds[0]][y - Tiles.chunk_map_y_bounds[0]] is not None:
-        row_list[4] = Tiles.RoadTile(5 * x + 4, 5 * y + 2, 'vertical', size=150)
-    if chunk_list[x - 1 - Tiles.chunk_map_x_bounds[0]][y - Tiles.chunk_map_y_bounds[0]] is not None:
-        row_list[0] = Tiles.RoadTile(5 * x, 5 * y + 2, 'vertical', size=150)
     finished_list.append(row_list)
     row_list = [
         Tiles.RoadTile(5 * x, 5 * y + 3, 'vertical', size=150),
@@ -49,12 +43,10 @@ def init_chunk(chunk_list, x: int, y: int):
     row_list = [
         Tiles.RoadTile(5 * x, 5 * y + 4, 'center', size=150),
         Tiles.RoadTile(5 * x + 1, 5 * y + 4, 'horizontal', size=150),
-        Tiles.GeneratorTile(5 * x + 2, 5 * y + 4, "down", size=150),
+        Tiles.RoadTile(5 * x + 2, 5 * y + 4, 'horizontal', size=150),
         Tiles.RoadTile(5 * x + 3, 5 * y + 4, 'horizontal', size=150),
         Tiles.RoadTile(5 * x + 4, 5 * y + 4, 'center', size=150)
     ]
-    if chunk_list[x - Tiles.chunk_map_x_bounds[0]][y + 1 - Tiles.chunk_map_y_bounds[0]] is not None:
-        row_list[2] = Tiles.RoadTile(5 * x + 2, 5 * y + 4, 'horizontal', size=150)
     finished_list.append(row_list)
     chunk_list[x - Tiles.chunk_map_x_bounds[0]][y - Tiles.chunk_map_y_bounds[0]] = finished_list
 
@@ -94,12 +86,6 @@ def generate_blank(chunk_list, x, y):
     chunk_list[x - Tiles.chunk_map_x_bounds[0]][y - Tiles.chunk_map_y_bounds[0]][3][2] = Tiles.EmptyTile(5 * x + 2, 5 * y + 3, size=150)
     chunk_list[x - Tiles.chunk_map_x_bounds[0]][y - Tiles.chunk_map_y_bounds[0]][3][3] = Tiles.EmptyTile(5 * x + 3, 5 * y + 3, size=150)
 
-""""
-    chunk_list[x - Tiles.chunk_map_x_bounds[0]][y - Tiles.chunk_map_y_bounds[0]][0][2] = Tiles.RoadTile(5 * x + 2, 5 * y, "horizontal", size=150)
-    chunk_list[x - Tiles.chunk_map_x_bounds[0]][y - Tiles.chunk_map_y_bounds[0]][2][0] = Tiles.RoadTile(5 * x, 5 * y + 2, "vertical", size=150)
-    chunk_list[x - Tiles.chunk_map_x_bounds[0]][y - Tiles.chunk_map_y_bounds[0]][2][4] = Tiles.RoadTile(5 * x + 4, 5 * y + 2, "vertical", size=150)
-    chunk_list[x - Tiles.chunk_map_x_bounds[0]][y - Tiles.chunk_map_y_bounds[0]][4][2] = Tiles.RoadTile(5 * x + 2, 5 * y + 4, "horizontal", size=150)
-"""
 
 # Sets a chunk to only roads, for debug purposes
 def demo_chunk(tile_list, x, y):

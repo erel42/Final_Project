@@ -38,6 +38,10 @@ def update_active_chunks():
     Tiles.chunk_map_y(center_chunk_y - 1)
     Tiles.chunk_map_x(center_chunk_x + 1)
     Tiles.chunk_map_x(center_chunk_x - 1)
+    for i in range(center_chunk_x - 1, center_chunk_x + 2):
+        for j in range(center_chunk_y - 1, center_chunk_y + 2):
+            if chunk_list[i][j] is None:
+                Gen.generate_chunk(chunk_list, i + Tiles.chunk_map_x_bounds[0], j + Tiles.chunk_map_y_bounds[0])
     center_chunk_x = -int((offset[0] / 150) / 5) - Tiles.chunk_map_x_bounds[0]
     center_chunk_y = -int((offset[1] / 150) / 5) - Tiles.chunk_map_y_bounds[0]
 
