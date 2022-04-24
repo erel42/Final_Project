@@ -98,6 +98,9 @@ def event_handler():
                 move_right = True
             if event.key == pygame.K_LEFT:
                 move_left = True
+            if event.key == pygame.K_r:
+                offset[0] = 0
+                offset[1] = 0
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_DOWN:
                 move_down = False

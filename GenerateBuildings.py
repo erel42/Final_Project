@@ -55,7 +55,35 @@ def init_chunk(chunk_list, x: int, y: int):
 # All possible structure placements
 
 def restaurant_3x3_var_1(chunk_list, x: int, y: int):
-    print('need to implement')
+    chunk_list[x - Tiles.chunk_map_x_bounds[0]][y - Tiles.chunk_map_y_bounds[0]][1][1] = Tiles.EmptyTile(5 * x + 1,
+                                                                                                         5 * y + 1,
+                                                                                                         size=150)
+    chunk_list[x - Tiles.chunk_map_x_bounds[0]][y - Tiles.chunk_map_y_bounds[0]][1][2] = Tiles.ParkingTile(5 * x + 2,
+                                                                                                         5 * y + 1,
+                                                                                                         size=150)
+    chunk_list[x - Tiles.chunk_map_x_bounds[0]][y - Tiles.chunk_map_y_bounds[0]][1][3] = Tiles.EmptyTile(5 * x + 3,
+                                                                                                         5 * y + 1,
+                                                                                                         size=150)
+
+    chunk_list[x - Tiles.chunk_map_x_bounds[0]][y - Tiles.chunk_map_y_bounds[0]][2][1] = Tiles.ParkingTile(5 * x + 1,
+                                                                                                         5 * y + 2,
+                                                                                                         size=150)
+    chunk_list[x - Tiles.chunk_map_x_bounds[0]][y - Tiles.chunk_map_y_bounds[0]][2][2] = Tiles.RestaurantTile(5 * x + 2,
+                                                                                                         5 * y + 2,
+                                                                                                         size=150)
+    chunk_list[x - Tiles.chunk_map_x_bounds[0]][y - Tiles.chunk_map_y_bounds[0]][2][3] = Tiles.ParkingTile(5 * x + 3,
+                                                                                                         5 * y + 2,
+                                                                                                         size=150)
+
+    chunk_list[x - Tiles.chunk_map_x_bounds[0]][y - Tiles.chunk_map_y_bounds[0]][3][1] = Tiles.EmptyTile(5 * x + 1,
+                                                                                                         5 * y + 3,
+                                                                                                         size=150)
+    chunk_list[x - Tiles.chunk_map_x_bounds[0]][y - Tiles.chunk_map_y_bounds[0]][3][2] = Tiles.ParkingTile(5 * x + 2,
+                                                                                                         5 * y + 3,
+                                                                                                         size=150)
+    chunk_list[x - Tiles.chunk_map_x_bounds[0]][y - Tiles.chunk_map_y_bounds[0]][3][3] = Tiles.EmptyTile(5 * x + 3,
+                                                                                                         5 * y + 3,
+                                                                                                         size=150)
 
 
 restaurant_dic = {
@@ -113,7 +141,7 @@ def generate_base_tiles(chunk_list, x, y):
     chunk_list[x - Tiles.chunk_map_x_bounds[0]][y - Tiles.chunk_map_y_bounds[0]][3][3] = Tiles.ParkingTile(3, 3, size=150)
 
 
-restaurant_odds = 0
+restaurant_odds = 5
 house_odds = 0
 
 
