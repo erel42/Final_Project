@@ -57,7 +57,7 @@ def update_revenue():
     global revenue
     revenue = 0
     for res in Tiles.res_list:
-        revenue += res.income
+        revenue += res.get_income()
 
 
 def draw_tiles(surface, _list):

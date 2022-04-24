@@ -173,6 +173,9 @@ class RestaurantTile(Tile):
         Buttons.disable_buttons = True
         active_resturaunt = self
 
+    def get_income(self):
+        return self.income
+
     def upgrade(self):
         global money
         if money >= self.price_to_upgrade:
