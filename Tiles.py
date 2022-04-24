@@ -1,6 +1,7 @@
 import Buttons
 import pygame
 
+pygame.init()
 assets_path = 'Assets'
 chunk_map = [[None]]  # all the tiles in the game
 active_chunks = [[None]]  # 3x3 chunks representing the tiles that can be seen on screen
@@ -8,8 +9,9 @@ chunk_map_x_bounds = [0, 0]
 chunk_map_y_bounds = [0, 0]
 menu_function = None
 res_list = []
-money = 0
+money = 50
 active_resturaunt = None
+gui_font = pygame.font.SysFont('Narkisim', 26)
 
 
 def close_menu():
@@ -18,24 +20,38 @@ def close_menu():
     menu_function = None
 
 
+def upgrade_res():
+    active_resturaunt.upgrade()
+
+
 exit_btn_size = 100
-exit_pic_hover = pygame.image.load('Assets\\GUI\\close_hover.png')
-exit_pic = pygame.image.load('Assets\\GUI\\close.png')
+exit_pic_hover = pygame.image.load(assets_path + '\\GUI\\close_hover.png')
+exit_pic = pygame.image.load(assets_path + '\\GUI\\close.png')
 exit_pic = pygame.transform.scale(exit_pic, (exit_btn_size, exit_btn_size))
 exit_pic_hover = pygame.transform.scale(exit_pic_hover, (exit_btn_size, exit_btn_size))
 exit_menu_button = Buttons.ButtonImg([750 - exit_btn_size, 0], exit_pic, exit_pic_hover, close_menu, listen_disable=False)
 
 upgrade_btn_size = 150
-upgrade_hover = pygame.image.load('Assets\\GUI\\upgrade_hover.png')
-upgrade_pic = pygame.image.load('Assets\\GUI\\upgrade.png')
+upgrade_hover = pygame.image.load(assets_path + '\\GUI\\upgrade_hover.png')
+upgrade_pic = pygame.image.load(assets_path + '\\GUI\\upgrade.png')
 upgrade_pic = pygame.transform.scale(upgrade_pic, (upgrade_btn_size, upgrade_btn_size))
 upgrade_hover = pygame.transform.scale(upgrade_hover, (upgrade_btn_size, upgrade_btn_size))
-upgrade_menu_button = Buttons.ButtonImg([425, 300], upgrade_pic, upgrade_hover, close_menu, listen_disable=False)
+upgrade_menu_button = Buttons.ButtonImg([425, 300], upgrade_pic, upgrade_hover, upgrade_res, listen_disable=False)
+
+restock_btn_size = 150
+restock_hover = pygame.image.load(assets_path + '\\GUI\\upgrade_hover.png')
+restock_pic = pygame.image.load(assets_path + '\\GUI\\upgrade.png')
+restock_pic = pygame.transform.scale(restock_pic, (restock_btn_size, restock_btn_size))
+restock_hover = pygame.transform.scale(restock_hover, (restock_btn_size, restock_btn_size))
+restock_menu_button = Buttons.ButtonImg([175, 300], restock_pic, restock_hover, close_menu, listen_disable=False)
 
 
 def draw_menu(surface, mouse, press):
     exit_menu_button.draw(surface, mouse, press, [0, 0], exit_btn_size)
+    price_upgrade = gui_font.render('Cost: ' + str(active_resturaunt.price_to_upgrade), True, (255, 70, 50))
     upgrade_menu_button.draw(surface, mouse, press, [0, 0], upgrade_btn_size)
+    surface.blit(price_upgrade,  (425, 460))
+    restock_menu_button.draw(surface, mouse, press, [0, 0], restock_btn_size)
 
 
 def chunk_map_x(row):
@@ -130,6 +146,7 @@ class RestaurantTile(Tile):
         self.income = 1
         self.level = 0
         res_list.append(self)
+        self.price_to_upgrade = 30 * pow(2, self.level)
 
     def json_ready(self):
         data = {
@@ -148,10 +165,11 @@ class RestaurantTile(Tile):
 
     def upgrade(self):
         global money
-        if money > 30 * pow(2, self.level):
-            money -= 30 * pow(2, self.level)
+        if money >= self.price_to_upgrade:
+            money -= self.price_to_upgrade
             self.income *= 1.5
             self.level += 1
+            self.price_to_upgrade = 30 * pow(2, self.level)
 
 
 class ParkingTile(Tile):

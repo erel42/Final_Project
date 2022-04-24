@@ -23,6 +23,7 @@ offset_change_speed = 10
 Tile_list = None
 last_money_value = 0
 revenue = 0
+income_timer = 60
 
 # Some parameters
 tile_size = screen.get_size()[0] / 8
@@ -50,6 +51,13 @@ def update_active_chunks():
                 Gen.generate_chunk(chunk_list, i + Tiles.chunk_map_x_bounds[0], j + Tiles.chunk_map_y_bounds[0])
     center_chunk_x = -int((offset[0] / 150) / 5) - Tiles.chunk_map_x_bounds[0]
     center_chunk_y = -int((offset[1] / 150) / 5) - Tiles.chunk_map_y_bounds[0]
+
+
+def update_revenue():
+    global revenue
+    revenue = 0
+    for res in Tiles.res_list:
+        revenue += res.income
 
 
 def draw_tiles(surface, _list):
@@ -101,15 +109,15 @@ def event_handler():
                 move_left = False
         if event.type == pygame.MOUSEBUTTONDOWN:
             check_press = True
-
-    if move_up:
-        offset[1] += offset_change_speed
-    if move_down:
-        offset[1] -= offset_change_speed
-    if move_right:
-        offset[0] -= offset_change_speed
-    if move_left:
-        offset[0] += offset_change_speed
+    if Tiles.menu_function is None:
+        if move_up:
+            offset[1] += offset_change_speed
+        if move_down:
+            offset[1] -= offset_change_speed
+        if move_right:
+            offset[0] -= offset_change_speed
+        if move_left:
+            offset[0] += offset_change_speed
 
 
 def close_game():
@@ -123,16 +131,19 @@ def update_money():
 
 def game_loop():
     clock.tick(60)
-    global chunk_list, money_gui, last_money_value
+    global chunk_list, money_gui, last_money_value, income_timer
     while not exit_game:
         update_active_chunks()
         event_handler()
         screen.fill((255, 255, 255))
         draw_tiles(screen, chunk_list)
-        Tiles.money += revenue
-        if last_money_value != Tiles.money:
-            update_money()
-            last_money_value = Tiles.money
+        income_timer -= 1
+        if income_timer == 0:
+            income_timer = 120
+            update_revenue()
+            Tiles.money += revenue
+        update_money()
+        last_money_value = Tiles.money
         if Tiles.menu_function is not None:
             draw_rect_alpha(screen, (40, 40, 40, 160), (0, 0, 750, 750))
             Tiles.menu_function(screen, mouse_pos, check_press)
