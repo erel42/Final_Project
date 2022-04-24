@@ -122,6 +122,7 @@ def update_money():
 
 
 def game_loop():
+    clock.tick(60)
     global chunk_list, money_gui, last_money_value
     while not exit_game:
         update_active_chunks()
@@ -134,7 +135,7 @@ def game_loop():
             last_money_value = Tiles.money
         if Tiles.menu_function is not None:
             draw_rect_alpha(screen, (40, 40, 40, 160), (0, 0, 750, 750))
-            Tiles.menu_function()
+            Tiles.menu_function(screen, mouse_pos, check_press)
         screen.blit(money_gui, (20, 20))
         pygame.display.update()
     close_game()

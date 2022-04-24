@@ -9,6 +9,33 @@ chunk_map_y_bounds = [0, 0]
 menu_function = None
 res_list = []
 money = 0
+active_resturaunt = None
+
+
+def close_menu():
+    global menu_function
+    Buttons.disable_buttons = False
+    menu_function = None
+
+
+exit_btn_size = 100
+exit_pic_hover = pygame.image.load('Assets\\GUI\\close_hover.png')
+exit_pic = pygame.image.load('Assets\\GUI\\close.png')
+exit_pic = pygame.transform.scale(exit_pic, (exit_btn_size, exit_btn_size))
+exit_pic_hover = pygame.transform.scale(exit_pic_hover, (exit_btn_size, exit_btn_size))
+exit_menu_button = Buttons.ButtonImg([750 - exit_btn_size, 0], exit_pic, exit_pic_hover, close_menu, listen_disable=False)
+
+upgrade_btn_size = 150
+upgrade_hover = pygame.image.load('Assets\\GUI\\upgrade_hover.png')
+upgrade_pic = pygame.image.load('Assets\\GUI\\upgrade.png')
+upgrade_pic = pygame.transform.scale(upgrade_pic, (upgrade_btn_size, upgrade_btn_size))
+upgrade_hover = pygame.transform.scale(upgrade_hover, (upgrade_btn_size, upgrade_btn_size))
+upgrade_menu_button = Buttons.ButtonImg([425, 300], upgrade_pic, upgrade_hover, close_menu, listen_disable=False)
+
+
+def draw_menu(surface, mouse, press):
+    exit_menu_button.draw(surface, mouse, press, [0, 0], exit_btn_size)
+    upgrade_menu_button.draw(surface, mouse, press, [0, 0], upgrade_btn_size)
 
 
 def chunk_map_x(row):
@@ -114,16 +141,10 @@ class RestaurantTile(Tile):
         return data
 
     def show_menu(self):
-        global menu_function
-        if menu_function is None:
-            menu_function = self.menu_draw
-            Buttons.disable_buttons = True
-        else:
-            Buttons.disable_buttons = False
-            menu_function = None
-
-    def menu_draw(self):
-        pass
+        global menu_function, active_resturaunt
+        menu_function = draw_menu
+        Buttons.disable_buttons = True
+        active_resturaunt = self
 
     def upgrade(self):
         global money

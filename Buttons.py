@@ -83,6 +83,8 @@ class ButtonImg:
 
     def check_hover(self, mouse_location: [int, int], press, size):
         if self.listen and disable_buttons:
+            self.active_img = self.default_img
+            self.hover = False
             return
         if self.location_2[0] <= mouse_location[0] <= self.location_2[0] + size and \
                 self.location_2[1] <= mouse_location[1] <= self.location_2[1] + size:
