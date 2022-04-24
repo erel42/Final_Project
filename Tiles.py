@@ -38,6 +38,13 @@ upgrade_pic = pygame.transform.scale(upgrade_pic, (upgrade_btn_size, upgrade_btn
 upgrade_hover = pygame.transform.scale(upgrade_hover, (upgrade_btn_size, upgrade_btn_size))
 upgrade_menu_button = Buttons.ButtonImg([425, 300], upgrade_pic, upgrade_hover, upgrade_res, listen_disable=False)
 
+buy_btn_size = 150
+buy_hover = pygame.image.load(assets_path + '\\GUI\\buy_hover.png')
+buy_pic = pygame.image.load(assets_path + '\\GUI\\buy.png')
+buy_pic = pygame.transform.scale(buy_pic, (buy_btn_size, buy_btn_size))
+buy_hover = pygame.transform.scale(buy_hover, (buy_btn_size, buy_btn_size))
+buy_menu_button = Buttons.ButtonImg([425, 300], buy_pic, buy_hover, upgrade_res, listen_disable=False)
+
 restock_btn_size = 150
 restock_hover = pygame.image.load(assets_path + '\\GUI\\upgrade_hover.png')
 restock_pic = pygame.image.load(assets_path + '\\GUI\\upgrade.png')
@@ -49,7 +56,10 @@ restock_menu_button = Buttons.ButtonImg([175, 300], restock_pic, restock_hover, 
 def draw_menu(surface, mouse, press):
     exit_menu_button.draw(surface, mouse, press, [0, 0], exit_btn_size)
     price_upgrade = gui_font.render('Cost: ' + str(active_resturaunt.price_to_upgrade), True, (255, 70, 50))
-    upgrade_menu_button.draw(surface, mouse, press, [0, 0], upgrade_btn_size)
+    if active_resturaunt.level == 0:
+        buy_menu_button.draw(surface, mouse, press, [0, 0], buy_btn_size)
+    else:
+        upgrade_menu_button.draw(surface, mouse, press, [0, 0], upgrade_btn_size)
     surface.blit(price_upgrade,  (425, 460))
     restock_menu_button.draw(surface, mouse, press, [0, 0], restock_btn_size)
 
@@ -143,7 +153,7 @@ class RestaurantTile(Tile):
         picture_hover = pygame.image.load(self.texture + 'Hover.png')
         picture_hover = pygame.transform.scale(picture_hover, (self.tile_size, self.tile_size))
         self.btn = Buttons.ButtonImg(self.grid_location[:], picture, picture_hover, self.show_menu)
-        self.income = 1
+        self.income = 0
         self.level = 0
         res_list.append(self)
         self.price_to_upgrade = 30 * pow(2, self.level)
@@ -167,9 +177,9 @@ class RestaurantTile(Tile):
         global money
         if money >= self.price_to_upgrade:
             money -= self.price_to_upgrade
-            self.income *= 1.5
+            self.income = self.income * 2 + 1
             self.level += 1
-            self.price_to_upgrade = 30 * pow(2, self.level)
+            self.price_to_upgrade = 10 * self.level * pow(2, self.level)
 
 
 class ParkingTile(Tile):

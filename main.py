@@ -139,7 +139,7 @@ def game_loop():
         draw_tiles(screen, chunk_list)
         income_timer -= 1
         if income_timer == 0:
-            income_timer = 120
+            income_timer = 60
             update_revenue()
             Tiles.money += revenue
         update_money()
