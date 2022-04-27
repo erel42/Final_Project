@@ -3,7 +3,6 @@ import os
 import Tiles
 import GenerateBuildings as Gen
 import menu
-import time
 
 pygame.init()
 chunk_list = Tiles.chunk_map

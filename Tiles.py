@@ -25,32 +25,24 @@ def upgrade_res():
 
 
 exit_btn_size = 100
-exit_pic_hover = pygame.image.load(assets_path + '\\GUI\\close_hover.png')
 exit_pic = pygame.image.load(assets_path + '\\GUI\\close.png')
 exit_pic = pygame.transform.scale(exit_pic, (exit_btn_size, exit_btn_size))
-exit_pic_hover = pygame.transform.scale(exit_pic_hover, (exit_btn_size, exit_btn_size))
-exit_menu_button = Buttons.ButtonImg([750 - exit_btn_size, 0], exit_pic, exit_pic_hover, close_menu, listen_disable=False)
+exit_menu_button = Buttons.ButtonImg([750 - exit_btn_size, 0], exit_pic, close_menu, listen_disable=False)
 
 upgrade_btn_size = 150
-upgrade_hover = pygame.image.load(assets_path + '\\GUI\\upgrade_hover.png')
 upgrade_pic = pygame.image.load(assets_path + '\\GUI\\upgrade.png')
 upgrade_pic = pygame.transform.scale(upgrade_pic, (upgrade_btn_size, upgrade_btn_size))
-upgrade_hover = pygame.transform.scale(upgrade_hover, (upgrade_btn_size, upgrade_btn_size))
-upgrade_menu_button = Buttons.ButtonImg([425, 300], upgrade_pic, upgrade_hover, upgrade_res, listen_disable=False)
+upgrade_menu_button = Buttons.ButtonImg([425, 300], upgrade_pic, upgrade_res, listen_disable=False)
 
 buy_btn_size = 150
-buy_hover = pygame.image.load(assets_path + '\\GUI\\buy_hover.png')
 buy_pic = pygame.image.load(assets_path + '\\GUI\\buy.png')
 buy_pic = pygame.transform.scale(buy_pic, (buy_btn_size, buy_btn_size))
-buy_hover = pygame.transform.scale(buy_hover, (buy_btn_size, buy_btn_size))
-buy_menu_button = Buttons.ButtonImg([425, 300], buy_pic, buy_hover, upgrade_res, listen_disable=False)
+buy_menu_button = Buttons.ButtonImg([425, 300], buy_pic, upgrade_res, listen_disable=False)
 
 restock_btn_size = 150
-restock_hover = pygame.image.load(assets_path + '\\GUI\\upgrade_hover.png')
 restock_pic = pygame.image.load(assets_path + '\\GUI\\upgrade.png')
 restock_pic = pygame.transform.scale(restock_pic, (restock_btn_size, restock_btn_size))
-restock_hover = pygame.transform.scale(restock_hover, (restock_btn_size, restock_btn_size))
-restock_menu_button = Buttons.ButtonImg([175, 300], restock_pic, restock_hover, close_menu, listen_disable=False)
+restock_menu_button = Buttons.ButtonImg([175, 300], restock_pic, close_menu, listen_disable=False)
 
 
 def draw_menu(surface, mouse, press):
@@ -128,9 +120,7 @@ class RoadTile(Tile):
                 self.set_texture(texture)
         picture = pygame.image.load(self.texture + '.png')
         picture = pygame.transform.scale(picture, (self.tile_size, self.tile_size))
-        picture_hover = pygame.image.load(self.texture + 'Hover.png')
-        picture_hover = pygame.transform.scale(picture_hover, (self.tile_size, self.tile_size))
-        self.btn = Buttons.ButtonImg(self.grid_location[:], picture, picture_hover, self.show_menu)
+        self.btn = Buttons.ButtonImg(self.grid_location[:], picture, self.show_menu)
 
     def json_ready(self):
         data = {
@@ -150,11 +140,12 @@ class RestaurantTile(Tile):
         self.set_texture(assets_path + '\\Resturants\\' + texture)
         picture = pygame.image.load(self.texture + '.png')
         picture = pygame.transform.scale(picture, (self.tile_size, self.tile_size))
-        picture_hover = pygame.image.load(self.texture + 'Hover.png')
-        picture_hover = pygame.transform.scale(picture_hover, (self.tile_size, self.tile_size))
-        self.btn = Buttons.ButtonImg(self.grid_location[:], picture, picture_hover, self.show_menu)
+        self.btn = Buttons.ButtonImg(self.grid_location[:], picture, self.show_menu)
         self.income = 0
         self.level = 0
+        self.people_arr = []
+        self.potential_costumers = 0
+        self.space = 0
         res_list.append(self)
         self.price_to_upgrade = 30 * pow(2, self.level)
 
@@ -181,6 +172,7 @@ class RestaurantTile(Tile):
         if money >= self.price_to_upgrade:
             money -= self.price_to_upgrade
             self.income = self.income * 2 + 1
+            self.space = self.space * 2 + 1
             self.level += 1
             self.price_to_upgrade = 10 * self.level * pow(2, self.level)
 
@@ -193,9 +185,27 @@ class ParkingTile(Tile):
         self.set_texture(assets_path + '\\Parking\\' + texture)
         picture = pygame.image.load(self.texture + '.png')
         picture = pygame.transform.scale(picture, (self.tile_size, self.tile_size))
-        picture_hover = pygame.image.load(self.texture + 'Hover.png')
-        picture_hover = pygame.transform.scale(picture_hover, (self.tile_size, self.tile_size))
-        self.btn = Buttons.ButtonImg(self.grid_location[:], picture, picture_hover, self.show_menu)
+        self.btn = Buttons.ButtonImg(self.grid_location[:], picture, self.show_menu)
+
+    def json_ready(self):
+        data = {
+            'type': self.type,
+            'x': self.grid_location[0],
+            'y': self.grid_location[1],
+            'texture': self.texture
+        }
+        return data
+
+
+class ParkTile(Tile):
+
+    def __init__(self, x: int, y: int, texture: str = '1', size=100):
+        super().__init__(x, y, size)
+        self.set_type('restaurant')
+        self.set_texture(assets_path + '\\Parking\\' + texture)
+        picture = pygame.image.load(self.texture + '.png')
+        picture = pygame.transform.scale(picture, (self.tile_size, self.tile_size))
+        self.btn = Buttons.ButtonImg(self.grid_location[:], picture, self.show_menu)
 
     def json_ready(self):
         data = {
@@ -215,9 +225,7 @@ class EmptyTile(Tile):
         self.set_texture(assets_path + '\\Empty\\' + texture)
         picture = pygame.image.load(self.texture + '.png')
         picture = pygame.transform.scale(picture, (self.tile_size, self.tile_size))
-        picture_hover = pygame.image.load(self.texture + 'Hover.png')
-        picture_hover = pygame.transform.scale(picture_hover, (self.tile_size, self.tile_size))
-        self.btn = Buttons.ButtonImg(self.grid_location[:], picture, picture_hover, self.show_menu)
+        self.btn = Buttons.ButtonImg(self.grid_location[:], picture, self.show_menu)
 
     def json_ready(self):
         data = {

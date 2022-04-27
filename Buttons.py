@@ -1,6 +1,14 @@
 import pygame
 
+pygame.init()
+
 disable_buttons = False
+
+
+def draw_rect_alpha(surface, color, rect):
+    shape_surf = pygame.Surface(pygame.Rect(rect).size, pygame.SRCALPHA)
+    pygame.draw.rect(shape_surf, color, shape_surf.get_rect())
+    surface.blit(shape_surf, rect)
 
 
 def add_button(btn_list: [], _location: [int, int, int, int], _text, _default_color, _hover_color, on_press):
@@ -71,11 +79,10 @@ class ButtonImg:
     hover = False
     func_press = None
 
-    def __init__(self, _location: [int, int], _default_img, _hover_img, on_press, listen_disable=True):
+    def __init__(self, _location: [int, int], _default_img, on_press, listen_disable=True):
         self.set_pos(_location)
         self.listen = listen_disable
-        self.default_img = self.active_img = _default_img
-        self.hover_img = _hover_img
+        self.default_img = _default_img
         self.func_press = on_press
 
     def set_pos(self, _location: [int, int]):
@@ -83,17 +90,14 @@ class ButtonImg:
 
     def check_hover(self, mouse_location: [int, int], press, size):
         if self.listen and disable_buttons:
-            self.active_img = self.default_img
             self.hover = False
             return
         if self.location_2[0] <= mouse_location[0] <= self.location_2[0] + size and \
                 self.location_2[1] <= mouse_location[1] <= self.location_2[1] + size:
-            self.active_img = self.hover_img
             self.hover = True
             if press:
                 self.press()
         else:
-            self.active_img = self.default_img
             self.hover = False
 
     def get_pos(self):
@@ -108,4 +112,10 @@ class ButtonImg:
     def draw(self, screen, mouse, press, offset, size):
         self.location_2 = [self.location[0] + offset[0], self.location[1] + offset[1]]
         self.check_hover(mouse, press, size)
-        screen.blit(self.active_img, (self.location[0] + offset[0], self.location[1] + offset[1]))
+        screen.blit(self.default_img, (self.location[0] + offset[0], self.location[1] + offset[1]))
+        if self.hover:
+            if self.location_2[0] < 0:
+                self.location_2[0] = 0
+            if self.location_2[1] < 0:
+                self.location_2[1] = 0
+            draw_rect_alpha(screen, (125, 125, 125, 160), (self.location_2[0], self.location_2[1], size, size))
