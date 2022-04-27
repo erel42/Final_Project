@@ -97,6 +97,7 @@ def generate_restaurant(tile_list, x, y):
     restaurant_dic[random.randint(1, restaurant_dic_size)](tile_list, x, y)
 
 
+# Incorrect need to fix!
 def house_3x3_var_1(chunk_list, x: int, y: int):
     chunk_list[x - Tiles.chunk_map_x_bounds[0]][y - Tiles.chunk_map_y_bounds[0]][1][1] = Tiles.EmptyTile(5 * x + 1,
                                                                                                          5 * y + 1,
