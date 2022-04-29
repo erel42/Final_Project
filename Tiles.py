@@ -9,7 +9,7 @@ chunk_map_x_bounds = [0, 0]
 chunk_map_y_bounds = [0, 0]
 menu_function = None
 res_list = []
-money = 50
+money = 50000000
 active_resturaunt = None
 gui_font = pygame.font.SysFont('Narkisim', 26)
 tile_size = 100
@@ -105,6 +105,9 @@ class Tile:
     def show_menu(self):
         pass
 
+    def update_tile(self):
+        pass
+
 
 class RoadTile(Tile):
 
@@ -144,11 +147,12 @@ class RestaurantTile(Tile):
         picture = pygame.image.load(self.texture + '.png')
         picture = pygame.transform.scale(picture, (tile_size, tile_size))
         self.btn = Buttons.ButtonImg(self.grid_location[:], picture, self.show_menu)
-        self.income = 0
+        self.max_costumers = 0
         self.level = 0
         self.people_arr = []
-        self.potential_costumers = 0
         self.space = 0
+        self.demand = 5
+        self.costumers = 0
         res_list.append(self)
         self.price_to_upgrade = 30 * pow(2, self.level)
 
@@ -168,16 +172,45 @@ class RestaurantTile(Tile):
         active_resturaunt = self
 
     def get_income(self):
-        return self.income
+        return self.costumers
+
+    def check_demand(self):
+        _demand = 5
+        if self.pos[0] / 5 < 0:
+            offset_x = -1
+        else:
+            offset_x = 0
+        if self.pos[1] / 5 < 0:
+            offset_y = -1
+        else:
+            offset_y = 0
+        for i in range(-2, 3):
+            for j in range(-2, 3):
+                try:
+                    _demand += chunk_map[int(self.pos[0] / 5) - chunk_map_x_bounds[0] + offset_x + i][int(self.pos[1] / 5) - chunk_map_y_bounds[0] + offset_y + j][2][2].get_pop()
+                except:
+                    pass
+        self.demand = _demand
+
+    def calc_costumers(self):
+        if self.demand < self.max_costumers:
+            self.costumers = self.demand
+        else:
+            self.costumers = self.max_costumers
 
     def upgrade(self):
         global money
         if money >= self.price_to_upgrade:
             money -= self.price_to_upgrade
-            self.income = self.income * 2 + 1
+            self.max_costumers = self.max_costumers * 2 + 1
             self.space = self.space * 2 + 1
             self.level += 1
             self.price_to_upgrade = 10 * self.level * pow(2, self.level)
+            self.calc_costumers()
+
+    def update_tile(self):
+        self.check_demand()
+        self.calc_costumers()
 
 
 class ParkingTile(Tile):

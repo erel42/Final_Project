@@ -124,6 +124,10 @@ house_dic_size = len(house_dic)
 
 def generate_house(chunk_list, x, y):
     house_dic[random.randint(1, house_dic_size)](chunk_list, x, y)
+    for i in range(-2, 3):
+        for j in range(-2, 3):
+            if Tiles.chunk_map[x - Tiles.chunk_map_x_bounds[0] + i][y - Tiles.chunk_map_y_bounds[0] + j]is not None:
+                Tiles.chunk_map[x - Tiles.chunk_map_x_bounds[0] + i][y - Tiles.chunk_map_y_bounds[0] + j][2][2].update_tile()
 
 
 def generate_blank(chunk_list, x, y):
