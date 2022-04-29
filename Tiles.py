@@ -12,6 +12,7 @@ res_list = []
 money = 50
 active_resturaunt = None
 gui_font = pygame.font.SysFont('Narkisim', 26)
+tile_size = 100
 
 
 def close_menu():
@@ -83,11 +84,11 @@ class Tile:
     texture = None
     btn = None
 
-    def __init__(self, x: int, y: int, size: int):
+    def __init__(self, x: int, y: int):
+        global tile_size
         self.grid_location = [x, y]
-        self.set_location(x * size, y * size)
+        self.set_location(x * tile_size, y * tile_size)
         self.pos = [x, y]
-        self.tile_size = size
 
     def set_location(self, x: int, y: int):
         self.grid_location = [x, y]
@@ -99,7 +100,7 @@ class Tile:
         self.type = _type
 
     def draw(self, surface, mouse, press, offset):
-        self.btn.draw(surface, mouse, press, offset, self.tile_size)
+        self.btn.draw(surface, mouse, press, offset, tile_size)
 
     def show_menu(self):
         pass
@@ -107,8 +108,9 @@ class Tile:
 
 class RoadTile(Tile):
 
-    def __init__(self, x: int, y: int, orientation: str = None, texture: str = None, size=100):
-        super().__init__(x, y, size)
+    def __init__(self, x: int, y: int, orientation: str = None, texture: str = None):
+        super().__init__(x, y)
+        global tile_size
         if orientation is None and texture is None:
             print('failed to create road tile')
         else:
@@ -119,7 +121,7 @@ class RoadTile(Tile):
             else:
                 self.set_texture(texture)
         picture = pygame.image.load(self.texture + '.png')
-        picture = pygame.transform.scale(picture, (self.tile_size, self.tile_size))
+        picture = pygame.transform.scale(picture, (tile_size, tile_size))
         self.btn = Buttons.ButtonImg(self.grid_location[:], picture, self.show_menu)
 
     def json_ready(self):
@@ -134,12 +136,13 @@ class RoadTile(Tile):
 
 class RestaurantTile(Tile):
 
-    def __init__(self, x: int, y: int, texture: str = '1', size=100):
-        super().__init__(x, y, size)
+    def __init__(self, x: int, y: int, texture: str = '1'):
+        super().__init__(x, y)
+        global tile_size
         self.set_type('restaurant')
         self.set_texture(assets_path + '\\Resturants\\' + texture)
         picture = pygame.image.load(self.texture + '.png')
-        picture = pygame.transform.scale(picture, (self.tile_size, self.tile_size))
+        picture = pygame.transform.scale(picture, (tile_size, tile_size))
         self.btn = Buttons.ButtonImg(self.grid_location[:], picture, self.show_menu)
         self.income = 0
         self.level = 0
@@ -179,12 +182,13 @@ class RestaurantTile(Tile):
 
 class ParkingTile(Tile):
 
-    def __init__(self, x: int, y: int, texture: str = '1', size=100):
-        super().__init__(x, y, size)
+    def __init__(self, x: int, y: int, texture: str = '1'):
+        super().__init__(x, y)
+        global tile_size
         self.set_type('parking')
         self.set_texture(assets_path + '\\Parking\\' + texture)
         picture = pygame.image.load(self.texture + '.png')
-        picture = pygame.transform.scale(picture, (self.tile_size, self.tile_size))
+        picture = pygame.transform.scale(picture, (tile_size, tile_size))
         self.btn = Buttons.ButtonImg(self.grid_location[:], picture, self.show_menu)
 
     def json_ready(self):
@@ -199,13 +203,14 @@ class ParkingTile(Tile):
 
 class ParkTile(Tile):
 
-    def __init__(self, x: int, y: int, texture: str = '1', size=100):
-        super().__init__(x, y, size)
+    def __init__(self, x: int, y: int, texture: str = '1'):
+        super().__init__(x, y)
+        global tile_size
         self.set_type('park')
         self.population = 0
         self.set_texture(assets_path + '\\Parks\\' + texture)
         picture = pygame.image.load(self.texture + '.png')
-        picture = pygame.transform.scale(picture, (self.tile_size, self.tile_size))
+        picture = pygame.transform.scale(picture, (tile_size, tile_size))
         self.btn = Buttons.ButtonImg(self.grid_location[:], picture, self.show_menu)
         self.update_pop()
 
@@ -243,13 +248,14 @@ class ParkTile(Tile):
 
 class HouseTile(Tile):
 
-    def __init__(self, x: int, y: int, population: int, texture: str = '1', size=100):
-        super().__init__(x, y, size)
+    def __init__(self, x: int, y: int, population: int, texture: str = '1'):
+        super().__init__(x, y)
+        global tile_size
         self.set_type('house')
         self.population = population
         self.set_texture(assets_path + '\\Houses\\' + texture)
         picture = pygame.image.load(self.texture + '.png')
-        picture = pygame.transform.scale(picture, (self.tile_size, self.tile_size))
+        picture = pygame.transform.scale(picture, (tile_size, tile_size))
         self.btn = Buttons.ButtonImg(self.grid_location[:], picture, self.show_menu)
 
     def json_ready(self):
@@ -267,12 +273,13 @@ class HouseTile(Tile):
 
 class EmptyTile(Tile):
 
-    def __init__(self, x: int, y: int, texture: str = '1', size=100):
-        super().__init__(x, y, size)
+    def __init__(self, x: int, y: int, texture: str = '1'):
+        super().__init__(x, y)
+        global tile_size
         self.set_type('empty')
         self.set_texture(assets_path + '\\Empty\\' + texture)
         picture = pygame.image.load(self.texture + '.png')
-        picture = pygame.transform.scale(picture, (self.tile_size, self.tile_size))
+        picture = pygame.transform.scale(picture, (tile_size, tile_size))
         self.btn = Buttons.ButtonImg(self.grid_location[:], picture, self.show_menu)
 
     def json_ready(self):
