@@ -52,7 +52,7 @@ def draw_menu(surface, mouse, press):
         buy_menu_button.draw(surface, mouse, press, [0, 0], buy_btn_size)
     else:
         upgrade_menu_button.draw(surface, mouse, press, [0, 0], upgrade_btn_size)
-    surface.blit(price_upgrade,  (425, 460))
+    surface.blit(price_upgrade, (425, 460))
     restock_menu_button.draw(surface, mouse, press, [0, 0], restock_btn_size)
 
 
@@ -181,7 +181,7 @@ class ParkingTile(Tile):
 
     def __init__(self, x: int, y: int, texture: str = '1', size=100):
         super().__init__(x, y, size)
-        self.set_type('restaurant')
+        self.set_type('parking')
         self.set_texture(assets_path + '\\Parking\\' + texture)
         picture = pygame.image.load(self.texture + '.png')
         picture = pygame.transform.scale(picture, (self.tile_size, self.tile_size))
@@ -201,8 +201,53 @@ class ParkTile(Tile):
 
     def __init__(self, x: int, y: int, texture: str = '1', size=100):
         super().__init__(x, y, size)
-        self.set_type('restaurant')
-        self.set_texture(assets_path + '\\Parking\\' + texture)
+        self.set_type('park')
+        self.population = 0
+        self.set_texture(assets_path + '\\Parks\\' + texture)
+        picture = pygame.image.load(self.texture + '.png')
+        picture = pygame.transform.scale(picture, (self.tile_size, self.tile_size))
+        self.btn = Buttons.ButtonImg(self.grid_location[:], picture, self.show_menu)
+        self.update_pop()
+
+    def json_ready(self):
+        data = {
+            'type': self.type,
+            'x': self.grid_location[0],
+            'y': self.grid_location[1],
+            'texture': self.texture
+        }
+        return data
+
+    def update_pop(self):
+        self.population = 0
+        if self.pos[0] / 5 < 0:
+            offset_x = -1
+        else:
+            offset_x = 0
+        if self.pos[1] / 5 < 0:
+            offset_y = -1
+        else:
+            offset_y = 0
+        for i in range(1, 4):
+            for j in range(1, 4):
+                if i == 2 and j == 2:
+                    pass
+                elif chunk_map[int(self.pos[0] / 5) - chunk_map_x_bounds[0] + offset_x][
+                    int(self.pos[1] / 5) - chunk_map_y_bounds[0] + offset_y][i][j].type == 'house':
+                    self.population += chunk_map[int(self.pos[0] / 5) - chunk_map_x_bounds[0] + offset_x][
+                        int(self.pos[1] / 5) - chunk_map_y_bounds[0] + offset_y][i][j].get_pop()
+
+    def get_pop(self):
+        return self.population
+
+
+class HouseTile(Tile):
+
+    def __init__(self, x: int, y: int, population: int, texture: str = '1', size=100):
+        super().__init__(x, y, size)
+        self.set_type('house')
+        self.population = population
+        self.set_texture(assets_path + '\\Houses\\' + texture)
         picture = pygame.image.load(self.texture + '.png')
         picture = pygame.transform.scale(picture, (self.tile_size, self.tile_size))
         self.btn = Buttons.ButtonImg(self.grid_location[:], picture, self.show_menu)
@@ -215,6 +260,9 @@ class ParkTile(Tile):
             'texture': self.texture
         }
         return data
+
+    def get_pop(self):
+        return self.population
 
 
 class EmptyTile(Tile):
