@@ -144,7 +144,6 @@ def game_loop():
             income_timer = 60
             update_revenue()
             Tiles.money += revenue
-            print(revenue)
         update_money()
         last_money_value = Tiles.money
         if Tiles.menu_function is not None:
