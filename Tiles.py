@@ -10,7 +10,7 @@ chunk_map_y_bounds = [0, 0]
 menu_function = None
 res_list = []
 money = 50000000
-active_resturaunt = None
+active_restaurant = None
 gui_font = pygame.font.SysFont('Narkisim', 26)
 tile_size = 100
 
@@ -22,7 +22,7 @@ def close_menu():
 
 
 def upgrade_res():
-    active_resturaunt.upgrade()
+    active_restaurant.upgrade()
 
 
 exit_btn_size = 100
@@ -48,8 +48,8 @@ restock_menu_button = Buttons.ButtonImg([175, 300], restock_pic, close_menu, lis
 
 def draw_menu(surface, mouse, press):
     exit_menu_button.draw(surface, mouse, press, [0, 0], exit_btn_size)
-    price_upgrade = gui_font.render('Cost: ' + str(active_resturaunt.price_to_upgrade), True, (255, 70, 50))
-    if active_resturaunt.level == 0:
+    price_upgrade = gui_font.render('Cost: ' + str(active_restaurant.price_to_upgrade), True, (255, 70, 50))
+    if active_restaurant.level == 0:
         buy_menu_button.draw(surface, mouse, press, [0, 0], buy_btn_size)
     else:
         upgrade_menu_button.draw(surface, mouse, press, [0, 0], upgrade_btn_size)
@@ -138,6 +138,8 @@ class RoadTile(Tile):
 
 
 class RestaurantTile(Tile):
+    ingredients_array = [0, 0, 0]
+    # for now 3 ingredients
 
     def __init__(self, x: int, y: int, texture: str = '1'):
         super().__init__(x, y)
@@ -166,10 +168,10 @@ class RestaurantTile(Tile):
         return data
 
     def show_menu(self):
-        global menu_function, active_resturaunt
+        global menu_function, active_restaurant
         menu_function = draw_menu
         Buttons.disable_buttons = True
-        active_resturaunt = self
+        active_restaurant = self
 
     def get_income(self):
         return self.costumers
@@ -187,7 +189,8 @@ class RestaurantTile(Tile):
         for i in range(-2, 3):
             for j in range(-2, 3):
                 try:
-                    _demand += chunk_map[int(self.pos[0] / 5) - chunk_map_x_bounds[0] + offset_x + i][int(self.pos[1] / 5) - chunk_map_y_bounds[0] + offset_y + j][2][2].get_pop()
+                    _demand += chunk_map[int(self.pos[0] / 5) - chunk_map_x_bounds[0] + offset_x + i][
+                        int(self.pos[1] / 5) - chunk_map_y_bounds[0] + offset_y + j][2][2].get_pop()
                 except:
                     pass
         self.demand = _demand
