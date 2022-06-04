@@ -25,6 +25,10 @@ def upgrade_res():
     active_restaurant.upgrade()
 
 
+def restock_menu_res():
+    active_restaurant.restock_menu()
+
+
 exit_btn_size = 100
 exit_pic = pygame.image.load(assets_path + '\\GUI\\close.png')
 exit_pic = pygame.transform.scale(exit_pic, (exit_btn_size, exit_btn_size))
@@ -43,7 +47,7 @@ buy_menu_button = Buttons.ButtonImg([425, 300], buy_pic, upgrade_res, listen_dis
 restock_btn_size = 150
 restock_pic = pygame.image.load(assets_path + '\\GUI\\upgrade.png')
 restock_pic = pygame.transform.scale(restock_pic, (restock_btn_size, restock_btn_size))
-restock_menu_button = Buttons.ButtonImg([175, 300], restock_pic, close_menu, listen_disable=False)
+restock_menu_button = Buttons.ButtonImg([175, 300], restock_pic, restock_menu_res, listen_disable=False)
 
 
 def draw_menu(surface, mouse, press):
@@ -55,6 +59,10 @@ def draw_menu(surface, mouse, press):
         upgrade_menu_button.draw(surface, mouse, press, [0, 0], upgrade_btn_size)
     surface.blit(price_upgrade, (425, 460))
     restock_menu_button.draw(surface, mouse, press, [0, 0], restock_btn_size)
+
+
+def draw_restock_menu(surface, mouse, press):
+    exit_menu_button.draw(surface, mouse, press, [0, 0], exit_btn_size)
 
 
 def chunk_map_x(row):
@@ -139,6 +147,7 @@ class RoadTile(Tile):
 
 class RestaurantTile(Tile):
     ingredients_array = [0, 0, 0]
+
     # for now 3 ingredients
 
     def __init__(self, x: int, y: int, texture: str = '1'):
@@ -214,6 +223,12 @@ class RestaurantTile(Tile):
     def update_tile(self):
         self.check_demand()
         self.calc_costumers()
+
+    def restock_menu(self):
+        global menu_function, active_restaurant
+        menu_function = draw_restock_menu
+        Buttons.disable_buttons = True
+        active_restaurant = self
 
 
 class ParkingTile(Tile):
