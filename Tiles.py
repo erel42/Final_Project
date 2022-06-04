@@ -29,6 +29,14 @@ def restock_menu_res():
     active_restaurant.restock_menu()
 
 
+def restock_pasta_res():
+    active_restaurant.restock_item(0)
+
+
+def restock_pizza_res():
+    active_restaurant.restock_item(1)
+
+
 exit_btn_size = 100
 exit_pic = pygame.image.load(assets_path + '\\GUI\\close.png')
 exit_pic = pygame.transform.scale(exit_pic, (exit_btn_size, exit_btn_size))
@@ -49,6 +57,16 @@ restock_pic = pygame.image.load(assets_path + '\\GUI\\upgrade.png')
 restock_pic = pygame.transform.scale(restock_pic, (restock_btn_size, restock_btn_size))
 restock_menu_button = Buttons.ButtonImg([175, 300], restock_pic, restock_menu_res, listen_disable=False)
 
+pasta_btn_size = 150
+pasta_pic = pygame.image.load(assets_path + '\\GUI\\upgrade.png')  # need to change later!!
+pasta_pic = pygame.transform.scale(pasta_pic, (pasta_btn_size, pasta_btn_size))
+pasta_button = Buttons.ButtonImg([0, 100], pasta_pic, restock_pasta_res, listen_disable=False)
+
+pizza_btn_size = 150
+pizza_pic = pygame.image.load(assets_path + '\\GUI\\upgrade.png')  # need to change later!!
+pizza_pic = pygame.transform.scale(pizza_pic, (restock_btn_size, pizza_btn_size))
+pizza_button = Buttons.ButtonImg([0, 300], pizza_pic, restock_pizza_res, listen_disable=False)
+
 
 def draw_menu(surface, mouse, press):
     exit_menu_button.draw(surface, mouse, press, [0, 0], exit_btn_size)
@@ -63,6 +81,9 @@ def draw_menu(surface, mouse, press):
 
 def draw_restock_menu(surface, mouse, press):
     exit_menu_button.draw(surface, mouse, press, [0, 0], exit_btn_size)
+    pasta_button.draw(surface, mouse, press, [0, 0], pasta_btn_size)
+    pizza_button.draw(surface, mouse, press, [0, 0], pizza_btn_size)
+    surface.blit(active_restaurant.ingredients, (425, 460))
 
 
 def chunk_map_x(row):
@@ -229,6 +250,10 @@ class RestaurantTile(Tile):
         menu_function = draw_restock_menu
         Buttons.disable_buttons = True
         active_restaurant = self
+
+    def restock_item(self, index):
+        self.ingredients_array[index]+=1
+
 
 
 class ParkingTile(Tile):
