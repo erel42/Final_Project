@@ -83,7 +83,10 @@ def draw_restock_menu(surface, mouse, press):
     exit_menu_button.draw(surface, mouse, press, [0, 0], exit_btn_size)
     pasta_button.draw(surface, mouse, press, [0, 0], pasta_btn_size)
     pizza_button.draw(surface, mouse, press, [0, 0], pizza_btn_size)
-    surface.blit(active_restaurant.ingredients, (425, 460))
+    ingredients_upgrade = gui_font.render('in stock: ' + str(active_restaurant.ingredients_array[0]), True, (255, 70, 50))
+    surface.blit(ingredients_upgrade, (200, 100))
+    pizza_upgrade = gui_font.render('in stock: ' + str(active_restaurant.ingredients_array[1]), True, (255, 70, 50))
+    surface.blit(pizza_upgrade, (200, 300))
 
 
 def chunk_map_x(row):
@@ -167,9 +170,6 @@ class RoadTile(Tile):
 
 
 class RestaurantTile(Tile):
-    ingredients_array = [0, 0, 0]
-
-    # for now 3 ingredients
 
     def __init__(self, x: int, y: int, texture: str = '1'):
         super().__init__(x, y)
@@ -187,6 +187,7 @@ class RestaurantTile(Tile):
         self.costumers = 0
         res_list.append(self)
         self.price_to_upgrade = 30 * pow(2, self.level)
+        self.ingredients_array = [0, 0, 0]  # 3 ingredients, each one with a corresponding index
 
     def json_ready(self):
         data = {
@@ -252,8 +253,7 @@ class RestaurantTile(Tile):
         active_restaurant = self
 
     def restock_item(self, index):
-        self.ingredients_array[index]+=1
-
+        self.ingredients_array[index] += 1
 
 
 class ParkingTile(Tile):
