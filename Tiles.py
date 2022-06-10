@@ -1,6 +1,8 @@
 import Buttons
 import pygame
 
+import Tiles
+
 pygame.init()
 assets_path = 'Assets'
 chunk_map = [[None]]  # all the tiles in the game
@@ -83,10 +85,15 @@ def draw_restock_menu(surface, mouse, press):
     exit_menu_button.draw(surface, mouse, press, [0, 0], exit_btn_size)
     pasta_button.draw(surface, mouse, press, [0, 0], pasta_btn_size)
     pizza_button.draw(surface, mouse, press, [0, 0], pizza_btn_size)
-    ingredients_upgrade = gui_font.render('in stock: ' + str(active_restaurant.ingredients_array[0]), True, (255, 70, 50))
+    ingredients_upgrade = gui_font.render('in stock: ' + str(active_restaurant.ingredients_array[0]), True,
+                                          (255, 70, 50))
     surface.blit(ingredients_upgrade, (200, 100))
+    ingredients_upgrade = gui_font.render('price: ' + "5", True, (255, 70, 50))
+    surface.blit(ingredients_upgrade, (200, 150))
     pizza_upgrade = gui_font.render('in stock: ' + str(active_restaurant.ingredients_array[1]), True, (255, 70, 50))
     surface.blit(pizza_upgrade, (200, 300))
+    ingredients_upgrade = gui_font.render('price: ' + "5", True, (255, 70, 50))
+    surface.blit(ingredients_upgrade, (200, 350))
 
 
 def chunk_map_x(row):
@@ -253,7 +260,9 @@ class RestaurantTile(Tile):
         active_restaurant = self
 
     def restock_item(self, index):
-        self.ingredients_array[index] += 1
+        if Tiles.money > 5:  # 5 is a temporary price point
+            self.ingredients_array[index] += 1
+            Tiles.money = Tiles.money - 5
 
 
 class ParkingTile(Tile):
