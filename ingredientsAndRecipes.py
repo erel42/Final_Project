@@ -8,6 +8,7 @@ ing_dic = {
 }
 
 num_of_ingredients = len(ing_dic.keys())
+ing_price_list = [50]*num_of_ingredients
 
 
 class Recipe:

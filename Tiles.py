@@ -1,7 +1,7 @@
 import Buttons
 import pygame
 # import ingredientsAndRecipes
-
+import ingredientsAndRecipes
 
 pygame.init()
 assets_path = 'Assets'
@@ -194,7 +194,7 @@ class RestaurantTile(Tile):
         self.costumers = 0
         res_list.append(self)
         self.price_to_upgrade = 30 * pow(2, self.level)
-        self.ingredients_array = [0, 0, 0]  # 3 ingredients, each one with a corresponding index
+        self.ingredients_array = [0]*ingredientsAndRecipes.num_of_ingredients
 
     def json_ready(self):
         data = {
@@ -260,9 +260,10 @@ class RestaurantTile(Tile):
         active_restaurant = self
 
     def restock_item(self, index):
-        if Tiles.money > 5:  # 5 is a temporary price point
-            self.ingredients_array[index] += 1
-            Tiles.money = Tiles.money - 5
+        global money
+        if money > ingredientsAndRecipes.ing_price_list[index]:  # 5 is a temporary price point
+            self.ingredients_array[index] += 10
+            money = money - ingredientsAndRecipes.ing_price_list[index]
 
 
 class ParkingTile(Tile):
