@@ -1,7 +1,7 @@
 import Buttons
 import pygame
+# import ingredientsAndRecipes
 
-import Tiles
 
 pygame.init()
 assets_path = 'Assets'
