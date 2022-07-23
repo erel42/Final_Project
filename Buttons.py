@@ -79,11 +79,12 @@ class ButtonImg:
     hover = False
     func_press = None
 
-    def __init__(self, _location: [int, int], _default_img, on_press, listen_disable=True):
+    def __init__(self, _location: [int, int], _default_img, on_press, listen_disable=True, parameter_for_function=None):
         self.set_pos(_location)
         self.listen = listen_disable
         self.default_img = _default_img
         self.func_press = on_press
+        self.parameter_for_function = parameter_for_function
 
     def set_pos(self, _location: [int, int]):
         self.location = self.location_2 = _location[:]
@@ -107,7 +108,10 @@ class ButtonImg:
         return self.hover
 
     def press(self):
-        self.func_press()
+        if self.parameter_for_function is not None:
+            self.func_press(self.parameter_for_function)
+        else:
+            self.func_press()
 
     def draw(self, screen, mouse, press, offset, size):
         self.location_2 = [self.location[0] + offset[0], self.location[1] + offset[1]]

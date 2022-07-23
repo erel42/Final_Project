@@ -1,9 +1,11 @@
 import Buttons
 import pygame
+
 # import ingredientsAndRecipes
 import ingredientsAndRecipes
 
 pygame.init()
+screen_size = [750, 750]
 assets_path = 'Assets'
 chunk_map = [[None]]  # all the tiles in the game
 active_chunks = [[None]]  # 3x3 chunks representing the tiles that can be seen on screen
@@ -31,12 +33,8 @@ def restock_menu_res():
     active_restaurant.restock_menu()
 
 
-def restock_pasta_res():
-    active_restaurant.restock_item(0)
-
-
-def restock_pizza_res():
-    active_restaurant.restock_item(1)
+def restock_item(i):
+    active_restaurant.restock_item(i)
 
 
 exit_btn_size = 100
@@ -59,15 +57,15 @@ restock_pic = pygame.image.load(assets_path + '\\GUI\\upgrade.png')
 restock_pic = pygame.transform.scale(restock_pic, (restock_btn_size, restock_btn_size))
 restock_menu_button = Buttons.ButtonImg([175, 300], restock_pic, restock_menu_res, listen_disable=False)
 
-pasta_btn_size = 150
-pasta_pic = pygame.image.load(assets_path + '\\GUI\\upgrade.png')  # need to change later!!
-pasta_pic = pygame.transform.scale(pasta_pic, (pasta_btn_size, pasta_btn_size))
-pasta_button = Buttons.ButtonImg([0, 100], pasta_pic, restock_pasta_res, listen_disable=False)
+ing_btn_size = int(((screen_size[1] - 200) / ingredientsAndRecipes.num_of_ingredients) * 3 / 4)
+ing_btn_spacing = int(ing_btn_size / 3)
 
-pizza_btn_size = 150
-pizza_pic = pygame.image.load(assets_path + '\\GUI\\upgrade.png')  # need to change later!!
-pizza_pic = pygame.transform.scale(pizza_pic, (restock_btn_size, pizza_btn_size))
-pizza_button = Buttons.ButtonImg([0, 300], pizza_pic, restock_pizza_res, listen_disable=False)
+ing_pic = [pygame.transform.scale(pygame.image.load(assets_path + '\\GUI\\upgrade.png'), (ing_btn_size, ing_btn_size))
+           for i in range(0, ingredientsAndRecipes.num_of_ingredients)]
+
+ing_buttons = [
+    Buttons.ButtonImg([0, 100 + (ing_btn_size + ing_btn_spacing) * i], ing_pic[i], restock_item, listen_disable=False,
+                      parameter_for_function=i) for i in range(0, ingredientsAndRecipes.num_of_ingredients)]
 
 
 def draw_menu(surface, mouse, press):
@@ -83,17 +81,13 @@ def draw_menu(surface, mouse, press):
 
 def draw_restock_menu(surface, mouse, press):
     exit_menu_button.draw(surface, mouse, press, [0, 0], exit_btn_size)
-    pasta_button.draw(surface, mouse, press, [0, 0], pasta_btn_size)
-    pizza_button.draw(surface, mouse, press, [0, 0], pizza_btn_size)
-    ingredients_upgrade = gui_font.render('in stock: ' + str(active_restaurant.ingredients_array[0]), True,
-                                          (255, 70, 50))
-    surface.blit(ingredients_upgrade, (200, 100))
-    ingredients_upgrade = gui_font.render('price: ' + "5", True, (255, 70, 50))
-    surface.blit(ingredients_upgrade, (200, 150))
-    pizza_upgrade = gui_font.render('in stock: ' + str(active_restaurant.ingredients_array[1]), True, (255, 70, 50))
-    surface.blit(pizza_upgrade, (200, 300))
-    ingredients_upgrade = gui_font.render('price: ' + "5", True, (255, 70, 50))
-    surface.blit(ingredients_upgrade, (200, 350))
+    for i in range(0, len(ing_buttons)):
+        ingredients_upgrade = gui_font.render('in stock: ' + str(active_restaurant.ingredients_array[i]), True,
+                                              (255, 70, 50))
+        surface.blit(ingredients_upgrade, (200, 100 + (ing_btn_size + ing_btn_spacing) * i))
+        ingredients_upgrade = gui_font.render('price: ' + str(ingredientsAndRecipes.ing_price_list[i]), True, (255, 70, 50))
+        surface.blit(ingredients_upgrade, (200, 120 + (ing_btn_size + ing_btn_spacing) * i))
+        ing_buttons[i].draw(surface, mouse, press, [0, 0], ing_btn_size)
 
 
 def chunk_map_x(row):
@@ -194,7 +188,8 @@ class RestaurantTile(Tile):
         self.costumers = 0
         res_list.append(self)
         self.price_to_upgrade = 30 * pow(2, self.level)
-        self.ingredients_array = [0]*ingredientsAndRecipes.num_of_ingredients
+        self.ingredients_array = [50] * ingredientsAndRecipes.num_of_ingredients
+        self.activeRecipe = ingredientsAndRecipes.BurgerRecipe()
 
     def json_ready(self):
         data = {
@@ -212,7 +207,7 @@ class RestaurantTile(Tile):
         active_restaurant = self
 
     def get_income(self):
-        return self.costumers
+        return self.activeRecipe.use_ing(self.ingredients_array, self.costumers)
 
     def check_demand(self):
         _demand = 5
@@ -261,7 +256,7 @@ class RestaurantTile(Tile):
 
     def restock_item(self, index):
         global money
-        if money > ingredientsAndRecipes.ing_price_list[index]:  # 5 is a temporary price point
+        if money > ingredientsAndRecipes.ing_price_list[index]:
             self.ingredients_array[index] += 10
             money = money - ingredientsAndRecipes.ing_price_list[index]
 

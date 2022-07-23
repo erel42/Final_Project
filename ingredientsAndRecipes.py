@@ -10,16 +10,31 @@ ing_dic = {
 num_of_ingredients = len(ing_dic.keys())
 ing_price_list = [50]*num_of_ingredients
 
+meal_dic = {
+    "burger": 0,
+}
+
+meal_revenue = [10]*len(meal_dic)
+
 
 class Recipe:
-    ing_list = [None]*num_of_ingredients
+    ing_list = [0]*num_of_ingredients
+    meal_index = 0
 
-    def can_cook(self, stock: list):
-        result = True
+    def use_ing(self, stock: list, times_to_cook: int):
         for i in range(0, num_of_ingredients):
-            result = result and stock[i] >= self.ing_list[i]
-        return result
+            if stock[i] < times_to_cook and self.ing_list[i] != 0:
+                times_to_cook = stock[i]
+        for i in range(0, num_of_ingredients):
+            stock[i] = stock[i] - self.ing_list[i] * times_to_cook
+        return times_to_cook * meal_revenue[self.meal_index]
 
-    def use_ing(self, stock: list):
-        for i in range(0, num_of_ingredients):
-            stock[i] = stock[i] - self.ing_list[i]
+
+class BurgerRecipe(Recipe):
+    def __init__(self):
+        self.ing_list[ing_dic["tomato"]] = 1
+        self.ing_list[ing_dic["patty"]] = 1
+        self.ing_list[ing_dic["pickles"]] = 1
+        self.ing_list[ing_dic["hamburger buns"]] = 1
+
+        self.meal_index = meal_dic["burger"]
