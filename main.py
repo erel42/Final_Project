@@ -136,7 +136,7 @@ def game_loop():
     global chunk_list, money_gui, last_money_value, income_timer
     while not exit_game:
         update_active_chunks()
-        event_handler()
+        event_handler()  # checks for any button presses
         screen.fill((255, 255, 255))
         draw_tiles(screen, chunk_list)
         income_timer -= 1
@@ -146,16 +146,16 @@ def game_loop():
             Tiles.money += revenue
         update_money()
         last_money_value = Tiles.money
-        if Tiles.menu_function is not None:
+        if Tiles.menu_function is not None:  # when tile with a menu is pressed, it will change Tiles.menu_function to it's meny
             draw_rect_alpha(screen, (40, 40, 40, 160), (0, 0, 750, 750))
-            Tiles.menu_function(screen, mouse_pos, check_press)
+            Tiles.menu_function(screen, mouse_pos, check_press) #calls the menu of the pressed button
         screen.blit(money_gui, (20, 20))
         pygame.display.update()
     close_game()
 
 
 if __name__ == '__main__':
-    menu.show_menu(screen)
+    menu.show_menu(screen)  # shows opening screen, continues when player starts a game
     Gen.generate_base_tiles(chunk_list, 0, 0)
     update_money()
     game_loop()

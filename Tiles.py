@@ -75,8 +75,9 @@ def draw_menu(surface, mouse, press):
         buy_menu_button.draw(surface, mouse, press, [0, 0], buy_btn_size)
     else:
         upgrade_menu_button.draw(surface, mouse, press, [0, 0], upgrade_btn_size)
+        restock_menu_button.draw(surface, mouse, press, [0, 0], restock_btn_size)
     surface.blit(price_upgrade, (425, 460))
-    restock_menu_button.draw(surface, mouse, press, [0, 0], restock_btn_size)
+
 
 
 def draw_restock_menu(surface, mouse, press):
