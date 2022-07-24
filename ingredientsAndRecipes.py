@@ -8,7 +8,10 @@ ing_dic = {
 }
 
 num_of_ingredients = len(ing_dic.keys())
-ing_price_list = [50]*num_of_ingredients
+
+supplier_names = ["Foody", "Burgers and co", "All about that bass"]
+num_of_ing_suppliers = len(supplier_names)
+supplier_prices = [[50]*num_of_ingredients] * num_of_ing_suppliers
 
 meal_dic = {
     "burger": 0,

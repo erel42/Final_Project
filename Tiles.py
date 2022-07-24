@@ -1,7 +1,6 @@
 import Buttons
 import pygame
 
-# import ingredientsAndRecipes
 import ingredientsAndRecipes
 
 pygame.init()
@@ -77,7 +76,6 @@ def draw_menu(surface, mouse, press):
         upgrade_menu_button.draw(surface, mouse, press, [0, 0], upgrade_btn_size)
         restock_menu_button.draw(surface, mouse, press, [0, 0], restock_btn_size)
     surface.blit(price_upgrade, (425, 460))
-
 
 
 def draw_restock_menu(surface, mouse, press):
@@ -191,6 +189,7 @@ class RestaurantTile(Tile):
         self.price_to_upgrade = 30 * pow(2, self.level)
         self.ingredients_array = [50] * ingredientsAndRecipes.num_of_ingredients
         self.activeRecipe = ingredientsAndRecipes.BurgerRecipe()
+        self.supplier = 0
 
     def json_ready(self):
         data = {
@@ -257,9 +256,9 @@ class RestaurantTile(Tile):
 
     def restock_item(self, index):
         global money
-        if money > ingredientsAndRecipes.ing_price_list[index]:
+        if money > ingredientsAndRecipes.supplier_prices[self.supplier][index]:
             self.ingredients_array[index] += 10
-            money = money - ingredientsAndRecipes.ing_price_list[index]
+            money = money - ingredientsAndRecipes.supplier_prices[self.supplier][index]
 
 
 class ParkingTile(Tile):
