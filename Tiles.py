@@ -68,6 +68,35 @@ ing_buttons = [
                       parameter_for_function=i) for i in range(0, ingredientsAndRecipes.num_of_ingredients)]
 
 
+def update_buy_multiplier(new_multiplier: int):
+    global buy_multiplier
+    buy_multiplier = new_multiplier
+
+
+multiplier_btn_spacing = 20
+
+multiplier_btn_size = 100
+multiplier_1_pic = pygame.image.load(assets_path + '\\GUI\\multiplier_1.png')
+multiplier_1_pic = pygame.transform.scale(multiplier_1_pic, (multiplier_btn_size, multiplier_btn_size))
+multiplier_1_button = Buttons.ButtonImg([750 - multiplier_btn_size - exit_btn_size - multiplier_btn_spacing, 0],
+                                        multiplier_1_pic, update_buy_multiplier, listen_disable=False,
+                                        parameter_for_function=1)
+
+multiplier_btn_size = 100
+multiplier_10_pic = pygame.image.load(assets_path + '\\GUI\\multiplier_10.png')
+multiplier_10_pic = pygame.transform.scale(multiplier_10_pic, (multiplier_btn_size, multiplier_btn_size))
+multiplier_10_button = Buttons.ButtonImg(
+    [750 - exit_btn_size - ((multiplier_btn_size + multiplier_btn_spacing) * 2), 0], multiplier_10_pic,
+    update_buy_multiplier, listen_disable=False, parameter_for_function=10)
+
+multiplier_btn_size = 100
+multiplier_100_pic = pygame.image.load(assets_path + '\\GUI\\multiplier_100.png')
+multiplier_100_pic = pygame.transform.scale(multiplier_100_pic, (multiplier_btn_size, multiplier_btn_size))
+multiplier_100_button = Buttons.ButtonImg(
+    [750 - exit_btn_size - ((multiplier_btn_size + multiplier_btn_spacing) * 3), 0], multiplier_100_pic,
+    update_buy_multiplier, listen_disable=False, parameter_for_function=100)
+
+
 def draw_menu(surface, mouse, press):
     exit_menu_button.draw(surface, mouse, press, [0, 0], exit_btn_size)
     price_upgrade = gui_font.render('Cost: ' + str(active_restaurant.price_to_upgrade), True, (255, 70, 50))
@@ -81,12 +110,19 @@ def draw_menu(surface, mouse, press):
 
 def draw_restock_menu(surface, mouse, press):
     exit_menu_button.draw(surface, mouse, press, [0, 0], exit_btn_size)
+    multiplier_1_button.draw(surface, mouse, press, [0, 0], multiplier_btn_size)
+    multiplier_10_button.draw(surface, mouse, press, [0, 0], multiplier_btn_size)
+    multiplier_100_button.draw(surface, mouse, press, [0, 0], multiplier_btn_size)
+    multiplier = gui_font.render(
+        'Buy multiplier: ' + str(10 * buy_multiplier), True, (120, 0, 128))
+    surface.blit(multiplier, (20, 50))
     for i in range(0, len(ing_buttons)):
         ingredients_upgrade = gui_font.render('in stock: ' + str(active_restaurant.ingredients_array[i]), True,
                                               (255, 70, 50))
         surface.blit(ingredients_upgrade, (200, 100 + (ing_btn_size + ing_btn_spacing) * i))
         ingredients_upgrade = gui_font.render(
-            'price: ' + str(ingredientsAndRecipes.supplier_prices[active_restaurant.supplier][i] * buy_multiplier), True, (255, 70, 50))
+            'price: ' + str(ingredientsAndRecipes.supplier_prices[active_restaurant.supplier][i] * buy_multiplier),
+            True, (255, 70, 50))
         surface.blit(ingredients_upgrade, (200, 120 + (ing_btn_size + ing_btn_spacing) * i))
         ing_buttons[i].draw(surface, mouse, press, [0, 0], ing_btn_size)
 
