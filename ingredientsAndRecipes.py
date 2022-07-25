@@ -13,7 +13,11 @@ meal_dic = {
     "burger": 0,
 }
 
-meal_revenue = [10]*len(meal_dic)
+meal_count = len(meal_dic)
+
+meal_revenue = [100]*meal_count
+meal_max = [60]*meal_count  # The maximum price of a meal
+meal_min = [30]*meal_count  # The minimum price of a meal
 
 supplier_names = ["Foody", "Burgers and co", "All about that bass"]
 num_of_ing_suppliers = len(supplier_names)
@@ -32,6 +36,14 @@ def update_prices():
             elif ing < min_price:
                 ing = min_price
             price_list[i] = ing
+    for i in range(0, meal_count):
+        meal = meal_revenue[i]
+        meal = int(meal * random.uniform(0.85, 1.15))
+        if meal > meal_max[i]:
+            meal = meal_max[i]
+        elif meal < meal_min[i]:
+            meal = meal_min[i]
+        meal_revenue[i] = meal
 
 
 class Recipe:
