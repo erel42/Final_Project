@@ -84,7 +84,7 @@ def draw_restock_menu(surface, mouse, press):
         ingredients_upgrade = gui_font.render('in stock: ' + str(active_restaurant.ingredients_array[i]), True,
                                               (255, 70, 50))
         surface.blit(ingredients_upgrade, (200, 100 + (ing_btn_size + ing_btn_spacing) * i))
-        ingredients_upgrade = gui_font.render('price: ' + str(ingredientsAndRecipes.ing_price_list[i]), True, (255, 70, 50))
+        ingredients_upgrade = gui_font.render('price: ' + str(ingredientsAndRecipes.supplier_prices[active_restaurant.supplier][i]), True, (255, 70, 50))
         surface.blit(ingredients_upgrade, (200, 120 + (ing_btn_size + ing_btn_spacing) * i))
         ing_buttons[i].draw(surface, mouse, press, [0, 0], ing_btn_size)
 
