@@ -2,6 +2,7 @@ import pygame
 import os
 import Tiles
 import GenerateBuildings as Gen
+import ingredientsAndRecipes
 import menu
 
 pygame.init()
@@ -22,7 +23,8 @@ offset_change_speed = 10
 Tile_list = None
 last_money_value = 0
 revenue = 0
-income_timer = 60
+income_timer = income_timer_default = 60
+price_update_timer = price_update_timer_default = 10
 
 # Some parameters
 tile_size = screen.get_size()[0] / 8
@@ -133,7 +135,7 @@ def update_money():
 
 def game_loop():
     clock.tick(60)
-    global chunk_list, money_gui, last_money_value, income_timer
+    global chunk_list, money_gui, last_money_value, income_timer, price_update_timer, income_timer_default, price_update_timer_default
     while not exit_game:
         update_active_chunks()
         event_handler()  # checks for any button presses
@@ -141,14 +143,19 @@ def game_loop():
         draw_tiles(screen, chunk_list)
         income_timer -= 1
         if income_timer == 0:
-            income_timer = 60
+            income_timer = income_timer_default
             update_revenue()
             Tiles.money += revenue
+            price_update_timer -= 1
+            if price_update_timer == 0:
+                ingredientsAndRecipes.update_prices()
+                price_update_timer = price_update_timer_default
         update_money()
         last_money_value = Tiles.money
-        if Tiles.menu_function is not None:  # when tile with a menu is pressed, it will change Tiles.menu_function to it's meny
+        # When tile with a menu is pressed, it will change Tiles.menu_function to it's menu
+        if Tiles.menu_function is not None:
             draw_rect_alpha(screen, (40, 40, 40, 160), (0, 0, 750, 750))
-            Tiles.menu_function(screen, mouse_pos, check_press) #calls the menu of the pressed button
+            Tiles.menu_function(screen, mouse_pos, check_press)  # Calls the menu of the pressed button
         screen.blit(money_gui, (20, 20))
         pygame.display.update()
     close_game()
@@ -158,4 +165,5 @@ if __name__ == '__main__':
     menu.show_menu(screen)  # shows opening screen, continues when player starts a game
     Gen.generate_base_tiles(chunk_list, 0, 0)
     update_money()
+    ingredientsAndRecipes.update_prices()
     game_loop()
