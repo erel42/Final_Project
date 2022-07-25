@@ -27,7 +27,8 @@ min_price = 10  # The minimum price of an ingredient
 
 
 def update_prices():
-    for price_list in supplier_prices:
+    for j in range(0, num_of_ing_suppliers):
+        price_list = supplier_prices[j][:]
         for i in range(0, num_of_ingredients):
             ing = price_list[i]
             ing = int(ing * random.uniform(0.85, 1.15))
@@ -36,6 +37,7 @@ def update_prices():
             elif ing < min_price:
                 ing = min_price
             price_list[i] = ing
+        supplier_prices[j] = price_list[:]
     for i in range(0, meal_count):
         meal = meal_revenue[i]
         meal = int(meal * random.uniform(0.85, 1.15))
