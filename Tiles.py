@@ -16,6 +16,7 @@ money = 50000000
 active_restaurant = None
 gui_font = pygame.font.SysFont('Narkisim', 26)
 tile_size = 100
+buy_multiplier = 1
 
 
 def close_menu():
@@ -85,7 +86,7 @@ def draw_restock_menu(surface, mouse, press):
                                               (255, 70, 50))
         surface.blit(ingredients_upgrade, (200, 100 + (ing_btn_size + ing_btn_spacing) * i))
         ingredients_upgrade = gui_font.render(
-            'price: ' + str(ingredientsAndRecipes.supplier_prices[active_restaurant.supplier][i]), True, (255, 70, 50))
+            'price: ' + str(ingredientsAndRecipes.supplier_prices[active_restaurant.supplier][i] * buy_multiplier), True, (255, 70, 50))
         surface.blit(ingredients_upgrade, (200, 120 + (ing_btn_size + ing_btn_spacing) * i))
         ing_buttons[i].draw(surface, mouse, press, [0, 0], ing_btn_size)
 
@@ -256,10 +257,10 @@ class RestaurantTile(Tile):
         active_restaurant = self
 
     def restock_item(self, index):
-        global money
+        global money, buy_multiplier
         if money > ingredientsAndRecipes.supplier_prices[self.supplier][index]:
-            self.ingredients_array[index] += 10
-            money = money - ingredientsAndRecipes.supplier_prices[self.supplier][index]
+            self.ingredients_array[index] += buy_multiplier * 10
+            money = money - ingredientsAndRecipes.supplier_prices[self.supplier][index] * buy_multiplier
 
 
 class ParkingTile(Tile):
