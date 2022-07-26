@@ -306,7 +306,7 @@ class RestaurantTile(Tile):
         global money
         if money >= self.price_to_upgrade:
             money -= self.price_to_upgrade
-            self.max_costumers = self.max_costumers * 2 + 1
+            self.max_costumers = int(self.max_costumers * 1.2 + 5)
             self.space = self.space * 2 + 1
             self.level += 1
             self.price_to_upgrade = 10 * self.level * pow(2, self.level)

@@ -145,7 +145,7 @@ def game_loop():
         if income_timer == 0:
             income_timer = income_timer_default
             update_revenue()
-            Tiles.money += revenue
+            Tiles.money += int(revenue)
             price_update_timer -= 1
             if price_update_timer == 0:
                 ingredientsAndRecipes.update_prices()
