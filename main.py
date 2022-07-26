@@ -11,6 +11,7 @@ active_chunks = Tiles.active_chunks
 check_press = False
 mouse_pos = [0, 0]
 screen = pygame.display.set_mode(Tiles.screen_size)
+pygame.display.set_caption('Restaurant manager')
 exit_game = False
 money_gui = None
 font = pygame.font.SysFont(None, 24)
