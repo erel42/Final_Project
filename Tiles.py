@@ -146,14 +146,18 @@ def draw_restock_menu(surface, mouse, press):
     supplier = gui_font.render(ingredientsAndRecipes.supplier_names[active_restaurant.supplier], True, (225, 245, 59))
     surface.blit(supplier, (screen_size[0] - 20 - 2 * cycle_btn_size, exit_btn_size + 40))
 
+    recipe_text = gui_font.render('recipe: ' + ingredientsAndRecipes.meal_list[active_restaurant.activeRecipe.meal_index],
+        True, (43, 196, 176))
+    surface.blit(recipe_text, (250, 250))
+
     for i in range(0, len(ing_buttons)):
         ingredients_upgrade = gui_font.render('in stock: ' + str(active_restaurant.ingredients_array[i]), True,
                                               (255, 70, 50))
-        surface.blit(ingredients_upgrade, (200, 100 + (ing_btn_size + ing_btn_spacing) * i))
+        surface.blit(ingredients_upgrade, (ing_btn_size*1.2, 100 + (ing_btn_size + ing_btn_spacing) * i))
         ingredients_upgrade = gui_font.render(
             'price: ' + str(ingredientsAndRecipes.supplier_prices[active_restaurant.supplier][i] * buy_multiplier),
             True, (255, 70, 50))
-        surface.blit(ingredients_upgrade, (200, 120 + (ing_btn_size + ing_btn_spacing) * i))
+        surface.blit(ingredients_upgrade, (ing_btn_size*1.2, 120 + (ing_btn_size + ing_btn_spacing) * i))
         ing_buttons[i].draw(surface, mouse, press, [0, 0], ing_btn_size)
 
 
@@ -249,14 +253,13 @@ class RestaurantTile(Tile):
         self.btn = Buttons.ButtonImg(self.grid_location[:], picture, self.show_menu)
         self.max_costumers = 0
         self.level = 0
-        self.people_arr = []
         self.space = 0
         self.demand = 5
         self.costumers = 0
         res_list.append(self)
         self.price_to_upgrade = 30 * pow(2, self.level)
         self.ingredients_array = [50] * ingredientsAndRecipes.num_of_ingredients
-        self.activeRecipe = ingredientsAndRecipes.BurgerRecipe()
+        self.activeRecipe = ingredientsAndRecipes.recipes[ingredientsAndRecipes.meal_dic["burger"]]
         self.supplier = 0
 
     def json_ready(self):
