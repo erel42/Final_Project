@@ -33,12 +33,14 @@ move_up = move_down = move_right = move_left = False
 center_chunk_x = center_chunk_y = 0
 
 
+# A function for drawing translucent rectangles
 def draw_rect_alpha(surface, color, rect):
     shape_surf = pygame.Surface(pygame.Rect(rect).size, pygame.SRCALPHA)
     pygame.draw.rect(shape_surf, color, shape_surf.get_rect())
     surface.blit(shape_surf, rect)
 
 
+# Updates the parts of the map that are worked on, improves performance drastically
 def update_active_chunks():
     global center_chunk_x, center_chunk_y
     center_chunk_x = -int((offset[0] / Tiles.tile_size) / 5) - Tiles.chunk_map_x_bounds[0]
@@ -55,6 +57,7 @@ def update_active_chunks():
     center_chunk_y = -int((offset[1] / Tiles.tile_size) / 5) - Tiles.chunk_map_y_bounds[0]
 
 
+# Updates the amount of money earned
 def update_revenue():
     global revenue
     revenue = 0
@@ -62,6 +65,7 @@ def update_revenue():
         revenue += res.get_income()
 
 
+# Draws the map
 def draw_tiles(surface, _list):
     for i in range(center_chunk_x - 2, center_chunk_x + 3):
         for j in range(center_chunk_y - 2, center_chunk_y + 3):
@@ -129,11 +133,13 @@ def close_game():
     print('Exiting game without saving')
 
 
+# Updates the money text
 def update_money():
     global money_gui
     money_gui = font.render('money:' + str(Tiles.money), True, (41, 210, 22))
 
 
+# The actual game logic and flow. runs as long as the game runs
 def game_loop():
     clock.tick(60)
     global chunk_list, money_gui, last_money_value, income_timer, price_update_timer, income_timer_default, price_update_timer_default
