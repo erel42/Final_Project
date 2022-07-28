@@ -9,6 +9,8 @@ ing_dic = {
     "tomato_sauce": 5
 }
 
+ing_list = list(ing_dic.keys())
+
 num_of_ingredients = len(ing_dic.keys())
 
 meal_dic = {
@@ -16,7 +18,7 @@ meal_dic = {
     "pasta": 1,
 }
 
-meal_list = ["burger", "pasta"]
+meal_list = list(meal_dic.keys())
 
 meal_count = len(meal_dic)
 

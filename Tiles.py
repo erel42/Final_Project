@@ -64,7 +64,7 @@ def apply_auto_buy():
 ing_btn_size = int(((screen_size[1] - 200) / ingredientsAndRecipes.num_of_ingredients) * 3 / 4)
 ing_btn_spacing = int(ing_btn_size / 3)
 
-ing_pic = [pygame.transform.scale(pygame.image.load(assets_path + '\\GUI\\upgrade.png'), (ing_btn_size, ing_btn_size))
+ing_pic = [pygame.transform.scale(pygame.image.load(assets_path + '\\ingredients\\' + ingredientsAndRecipes.ing_list[i] + '.png'), (ing_btn_size, ing_btn_size))
            for i in range(0, ingredientsAndRecipes.num_of_ingredients)]
 
 ing_buttons = [
