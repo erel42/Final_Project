@@ -48,6 +48,10 @@ def restock_item(i):
     active_restaurant.restock_item(i)
 
 
+def sell_res():
+    active_restaurant.sell()
+
+
 def select_ing(i):
     global chosen_ing, max_price_input
     chosen_ing = i
@@ -273,6 +277,10 @@ buy_pic = pygame.image.load(assets_path + '\\GUI\\buy.png')
 buy_pic = pygame.transform.scale(buy_pic, (buy_btn_size, buy_btn_size))
 buy_menu_button = Buttons.ButtonImg(buy_upgrade_pos, buy_pic, upgrade_res, listen_disable=False)
 
+sell_pic = pygame.image.load(assets_path + '\\GUI\\sell.png')
+sell_pic = pygame.transform.scale(sell_pic, (buy_btn_size, buy_btn_size))
+sell_menu_button = Buttons.ButtonImg([screen_size[0] - buy_btn_size, screen_size[1] - buy_btn_size], sell_pic, sell_res, listen_disable=False)
+
 restock_btn_size = 150
 restock_pic = pygame.image.load(assets_path + '\\GUI\\stock.png')
 restock_pic = pygame.transform.scale(restock_pic, (restock_btn_size, restock_btn_size))
@@ -325,6 +333,7 @@ def draw_menu(surface, mouse, press):
         upgrade_menu_button.draw(surface, mouse, press, [0, 0], upgrade_btn_size)
         report_menu_button.draw(surface, mouse, press, [0, 0], upgrade_btn_size)
         restock_menu_button.draw(surface, mouse, press, [0, 0], restock_btn_size)
+        sell_menu_button.draw(surface, mouse, press, [0, 0], restock_btn_size)
     surface.blit(price_upgrade, buy_upgrade_pos_text)
 
 
@@ -544,6 +553,25 @@ class RestaurantTile(Tile):
         menu_function = draw_menu
         Buttons.disable_buttons = True
         active_restaurant = self
+
+    def sell(self):
+        global money
+        res_list.remove(self)
+        money += 10 * pow(2, self.level - 1)
+        self.max_costumers = 0
+        self.level = 0
+        self.space = 0
+        self.demand = 5
+        self.costumers = 0
+        res_list.append(self)
+        self.price_to_upgrade = 30 * pow(2, self.level)
+        self.ingredients_array = [50] * ingredientsAndRecipes.num_of_ingredients
+        self.activeRecipe = ingredientsAndRecipes.recipes[ingredientsAndRecipes.meal_dic["burger"]]
+        self.supplier = 0
+        self.report = ResReport()
+        self.demand_weights = [1] * ingredientsAndRecipes.meal_count
+        self.costumer_variance = 1
+        self.variance_timer = 60
 
     def update_report(self):
         self.report.update_report(self.level, self.demand, self.costumers, self.demand_weights)
