@@ -5,6 +5,7 @@ import GenerateBuildings as Gen
 import ingredientsAndRecipes
 import menu
 
+# Setting needed variables and initiating some things
 pygame.init()
 chunk_list = Tiles.chunk_map
 active_chunks = Tiles.active_chunks
@@ -76,6 +77,7 @@ def draw_tiles(surface, _list):
                         tile.draw(surface, mouse_pos, check_press, offset)
 
 
+# Work in progress, currently doesn't work
 def create_new_save(name: str):
     global cur_game_save_path
     # Creating a new directory
@@ -84,11 +86,13 @@ def create_new_save(name: str):
     # generate_base_tiles()
 
 
+# Work in progress, currently doesn't work
 def load_save(name: str):
     global cur_game_save_path
     cur_game_save_path = save_path + '\\' + name
 
 
+# Handles button and mouse events
 def event_handler():
     global exit_game, offset, mouse_pos, check_press, move_up, move_down, move_right, move_left
     mouse_pos = pygame.mouse.get_pos()
@@ -130,6 +134,7 @@ def event_handler():
             offset[0] += offset_change_speed
 
 
+# Closes the game
 def close_game():
     print('Exiting game without saving')
 
@@ -142,9 +147,11 @@ def update_money():
 
 # The actual game logic and flow. runs as long as the game runs
 def game_loop():
-    clock.tick(60)
+    # Some globals
     global chunk_list, money_gui, last_money_value, income_timer, price_update_timer, income_timer_default
     global price_update_timer_default, check_press, enter_menu
+
+    # As long as the game runs:
     while not exit_game:
         # Drawing the map
         update_active_chunks()  # Updates the loaded areas of the map
@@ -180,8 +187,8 @@ def game_loop():
 
 
 if __name__ == '__main__':
-    menu.show_menu(screen)  # shows opening screen, continues when player starts a game
-    Gen.generate_base_tiles(chunk_list, 0, 0)
-    update_money()
-    ingredientsAndRecipes.update_prices()
-    game_loop()
+    menu.show_menu(screen)  # Shows opening screen, continues when player starts a game
+    Gen.generate_base_tiles(chunk_list, 0, 0)  # Generating the starting area
+    update_money()  # Updating the money GUI
+    ingredientsAndRecipes.update_prices()  # Updating prices
+    game_loop()  # Starting the game

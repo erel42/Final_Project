@@ -5,17 +5,20 @@ pygame.init()
 disable_buttons = False
 
 
+# A function to draw translucent rectangles
 def draw_rect_alpha(surface, color, rect):
     shape_surf = pygame.Surface(pygame.Rect(rect).size, pygame.SRCALPHA)
     pygame.draw.rect(shape_surf, color, shape_surf.get_rect())
     surface.blit(shape_surf, rect)
 
 
+# A function to add a button
 def add_button(btn_list: [], _location: [int, int, int, int], _text, _default_color, _hover_color, on_press):
     new_btn = Button(_location, _text, _default_color, _hover_color, on_press)
     btn_list.append(new_btn)
 
 
+# The base button class
 class Button:
     location = [0, 0, 0, 0]
     location_2 = [0, 0, 0, 0]
@@ -69,6 +72,7 @@ class Button:
         screen.blit(self.text, (self.text_pos_x, self.text_pos_y))
 
 
+# A button made out of an image
 class ButtonImg:
     location = [0, 0]
     location_2 = [0, 0]
