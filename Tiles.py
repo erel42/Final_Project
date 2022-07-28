@@ -1,5 +1,6 @@
 import Buttons
 import pygame
+import random
 
 import ingredientsAndRecipes
 
@@ -526,6 +527,8 @@ class RestaurantTile(Tile):
         self.supplier = 0
         self.report = ResReport()
         self.demand_weights = [1] * ingredientsAndRecipes.meal_count
+        self.costumer_variance = 1
+        self.variance_timer = 60
 
     def json_ready(self):
         data = {
@@ -547,6 +550,11 @@ class RestaurantTile(Tile):
 
     def get_income(self):
         global money
+        self.variance_timer -= 1
+        if self.variance_timer == 0:
+            self.variance_timer = 60
+            self.costumer_variance = random.uniform(0.8, 1.2)
+            self.calc_costumers()
         if money >= 0:
             for i in range(0, ingredientsAndRecipes.num_of_ingredients):
                 desired_amount = self.activeRecipe.ing_list[i] * self.costumers
@@ -575,13 +583,13 @@ class RestaurantTile(Tile):
                         int(self.pos[1] / 5) - chunk_map_y_bounds[0] + offset_y + j][2][2].get_pop()
                 except:
                     pass
-        self.demand = _demand
+        self.demand = int(_demand * self.costumer_variance)
 
     def calc_costumers(self):
         if self.demand < self.max_costumers:
-            self.costumers = self.demand
+            self.costumers = int(self.demand * self.costumer_variance)
         else:
-            self.costumers = self.max_costumers
+            self.costumers = int(self.max_costumers * self.costumer_variance)
 
     def upgrade(self):
         global money
