@@ -54,8 +54,9 @@ def update_prices():
 
 
 class Recipe:
-    ing_list = [0]*num_of_ingredients
-    meal_index = 0
+    def __init__(self):
+        self.ing_list = [0]*num_of_ingredients
+        self.meal_index = 0
 
     def use_ing(self, stock: list, times_to_cook: int):
         for i in range(0, num_of_ingredients):
@@ -68,6 +69,7 @@ class Recipe:
 
 class BurgerRecipe(Recipe):
     def __init__(self):
+        super().__init__()
         self.ing_list[ing_dic["tomato"]] = 1
         self.ing_list[ing_dic["patty"]] = 1
         self.ing_list[ing_dic["pickles"]] = 1
@@ -78,6 +80,7 @@ class BurgerRecipe(Recipe):
 
 class PastaRecipe(Recipe):
     def __init__(self):
+        super().__init__()
         self.ing_list[ing_dic["tomato"]] = 1
         self.ing_list[ing_dic["pasta"]] = 1
         self.ing_list[ing_dic["tomato_sauce"]] = 1

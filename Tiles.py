@@ -46,6 +46,17 @@ def cycle_supplier(i):
         active_restaurant.supplier = 0
 
 
+def cycle_recipe(i):
+    global active_restaurant
+    index = active_restaurant.activeRecipe.meal_index
+    index = index + i
+    if index < 0:
+        index = ingredientsAndRecipes.meal_count - 1
+    elif index == ingredientsAndRecipes.meal_count:
+        index = 0
+    active_restaurant.activeRecipe = ingredientsAndRecipes.recipes[index]
+
+
 exit_btn_size = 100
 exit_pic = pygame.image.load(assets_path + '\\GUI\\close.png')
 exit_pic = pygame.transform.scale(exit_pic, (exit_btn_size, exit_btn_size))
@@ -117,6 +128,18 @@ cycle_left_pic = pygame.transform.scale(cycle_left_pic, (cycle_btn_size, cycle_b
 cycle_left_button = Buttons.ButtonImg([screen_size[0] - 20 - 2 * cycle_btn_size, exit_btn_size + 70], cycle_left_pic,
                                       cycle_supplier, listen_disable=False, parameter_for_function=-1)
 
+cycle_2_right_pic = pygame.image.load(assets_path + '\\GUI\\right.png')
+cycle_2_right_pic = pygame.transform.scale(cycle_2_right_pic, (cycle_btn_size, cycle_btn_size))
+cycle_2_right_button = Buttons.ButtonImg([screen_size[0] - cycle_btn_size, exit_btn_size + cycle_btn_size + 110],
+                                         cycle_2_right_pic, cycle_recipe, listen_disable=False,
+                                         parameter_for_function=1)
+
+cycle_2_left_pic = pygame.image.load(assets_path + '\\GUI\\left.png')
+cycle_2_left_pic = pygame.transform.scale(cycle_2_left_pic, (cycle_btn_size, cycle_btn_size))
+cycle_2_left_button = Buttons.ButtonImg(
+    [screen_size[0] - 20 - 2 * cycle_btn_size, exit_btn_size + cycle_btn_size + 110], cycle_2_left_pic, cycle_recipe,
+    listen_disable=False, parameter_for_function=-1)
+
 
 def draw_menu(surface, mouse, press):
     exit_menu_button.draw(surface, mouse, press, [0, 0], exit_btn_size)
@@ -146,18 +169,21 @@ def draw_restock_menu(surface, mouse, press):
     supplier = gui_font.render(ingredientsAndRecipes.supplier_names[active_restaurant.supplier], True, (225, 245, 59))
     surface.blit(supplier, (screen_size[0] - 20 - 2 * cycle_btn_size, exit_btn_size + 40))
 
-    recipe_text = gui_font.render('recipe: ' + ingredientsAndRecipes.meal_list[active_restaurant.activeRecipe.meal_index],
+    recipe_text = gui_font.render(
+        'recipe: ' + ingredientsAndRecipes.meal_list[active_restaurant.activeRecipe.meal_index],
         True, (43, 196, 176))
-    surface.blit(recipe_text, (250, 250))
+    surface.blit(recipe_text, (screen_size[0] - 20 - 2 * cycle_btn_size, exit_btn_size + cycle_btn_size + 80))
+    cycle_2_right_button.draw(surface, mouse, press, [0, 0], cycle_btn_size)
+    cycle_2_left_button.draw(surface, mouse, press, [0, 0], cycle_btn_size)
 
     for i in range(0, len(ing_buttons)):
         ingredients_upgrade = gui_font.render('in stock: ' + str(active_restaurant.ingredients_array[i]), True,
                                               (255, 70, 50))
-        surface.blit(ingredients_upgrade, (ing_btn_size*1.2, 100 + (ing_btn_size + ing_btn_spacing) * i))
+        surface.blit(ingredients_upgrade, (ing_btn_size * 1.2, 100 + (ing_btn_size + ing_btn_spacing) * i))
         ingredients_upgrade = gui_font.render(
             'price: ' + str(ingredientsAndRecipes.supplier_prices[active_restaurant.supplier][i] * buy_multiplier),
             True, (255, 70, 50))
-        surface.blit(ingredients_upgrade, (ing_btn_size*1.2, 120 + (ing_btn_size + ing_btn_spacing) * i))
+        surface.blit(ingredients_upgrade, (ing_btn_size * 1.2, 120 + (ing_btn_size + ing_btn_spacing) * i))
         ing_buttons[i].draw(surface, mouse, press, [0, 0], ing_btn_size)
 
 
