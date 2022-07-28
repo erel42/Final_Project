@@ -26,6 +26,7 @@ last_money_value = 0
 revenue = 0
 income_timer = income_timer_default = 60
 price_update_timer = price_update_timer_default = 10
+enter_menu = True
 
 # Some parameters
 tile_size = screen.get_size()[0] / 8
@@ -96,25 +97,25 @@ def event_handler():
         if event.type == pygame.QUIT:
             exit_game = True
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_DOWN:
+            if event.key == pygame.K_DOWN or event.key == pygame.K_s:
                 move_down = True
-            if event.key == pygame.K_UP:
+            if event.key == pygame.K_UP or event.key == pygame.K_w:
                 move_up = True
-            if event.key == pygame.K_RIGHT:
+            if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
                 move_right = True
-            if event.key == pygame.K_LEFT:
+            if event.key == pygame.K_LEFT or event.key == pygame.K_a:
                 move_left = True
             if event.key == pygame.K_r:
                 offset[0] = 0
                 offset[1] = 0
         if event.type == pygame.KEYUP:
-            if event.key == pygame.K_DOWN:
+            if event.key == pygame.K_DOWN or event.key == pygame.K_s:
                 move_down = False
-            if event.key == pygame.K_UP:
+            if event.key == pygame.K_UP or event.key == pygame.K_w:
                 move_up = False
-            if event.key == pygame.K_RIGHT:
+            if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
                 move_right = False
-            if event.key == pygame.K_LEFT:
+            if event.key == pygame.K_LEFT or event.key == pygame.K_a:
                 move_left = False
         if event.type == pygame.MOUSEBUTTONDOWN:
             check_press = True
@@ -142,27 +143,37 @@ def update_money():
 # The actual game logic and flow. runs as long as the game runs
 def game_loop():
     clock.tick(60)
-    global chunk_list, money_gui, last_money_value, income_timer, price_update_timer, income_timer_default, price_update_timer_default
+    global chunk_list, money_gui, last_money_value, income_timer, price_update_timer, income_timer_default
+    global price_update_timer_default, check_press, enter_menu
     while not exit_game:
-        update_active_chunks()
-        event_handler()  # checks for any button presses
-        screen.fill((255, 255, 255))
-        draw_tiles(screen, chunk_list)
+        # Drawing the map
+        update_active_chunks()  # Updates the loaded areas of the map
+        event_handler()  # Checks for any button presses
+        screen.fill((255, 255, 255))  # Clearing the screen
+        draw_tiles(screen, chunk_list)  # Drawing the tiles
+
+        # Handling money
         income_timer -= 1
         if income_timer == 0:
             income_timer = income_timer_default
-            update_revenue()
-            Tiles.money += int(revenue)
+            update_revenue()  # Checks how much money the player should make
+            Tiles.money += int(revenue)  # Adds that amount of money
             price_update_timer -= 1
             if price_update_timer == 0:
                 ingredientsAndRecipes.update_prices()
                 price_update_timer = price_update_timer_default
         update_money()
         last_money_value = Tiles.money
+
         # When tile with a menu is pressed, it will change Tiles.menu_function to it's menu
         if Tiles.menu_function is not None:
-            draw_rect_alpha(screen, (40, 40, 40, 160), (0, 0, 750, 750))
-            Tiles.menu_function(screen, mouse_pos, check_press)  # Calls the menu of the pressed button
+            if not enter_menu:
+                draw_rect_alpha(screen, (40, 40, 40, 160), (0, 0, 750, 750))
+                Tiles.menu_function(screen, mouse_pos, check_press)  # Calls the menu of the pressed button
+            else:
+                enter_menu = False
+        else:
+            enter_menu = True
         screen.blit(money_gui, (20, 20))
         pygame.display.update()
     close_game()
