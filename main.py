@@ -30,7 +30,7 @@ price_update_timer = price_update_timer_default = 10
 enter_menu = True
 
 # Some parameters
-tile_size = screen.get_size()[0] / 8
+tile_size = screen.get_size()[0] / 12
 move_up = move_down = move_right = move_left = False
 center_chunk_x = center_chunk_y = 0
 
@@ -112,6 +112,36 @@ def event_handler():
             if event.key == pygame.K_r:
                 offset[0] = 0
                 offset[1] = 0
+            if Tiles.input_enable:
+                digit = -1
+                if event.key == pygame.K_0:
+                    digit = 0
+                elif event.key == pygame.K_1:
+                    digit = 1
+                elif event.key == pygame.K_2:
+                    digit = 2
+                elif event.key == pygame.K_3:
+                    digit = 3
+                elif event.key == pygame.K_4:
+                    digit = 4
+                elif event.key == pygame.K_5:
+                    digit = 5
+                elif event.key == pygame.K_6:
+                    digit = 6
+                elif event.key == pygame.K_7:
+                    digit = 7
+                elif event.key == pygame.K_8:
+                    digit = 8
+                elif event.key == pygame.K_9:
+                    digit = 9
+                if digit != -1:
+                    Tiles.max_price_input = Tiles.max_price_input * 10 + digit
+
+                if event.key == pygame.K_ESCAPE:
+                    Tiles.input_enable = False
+                if event.key == pygame.K_BACKSPACE:
+                    Tiles.max_price_input = int(Tiles.max_price_input / 10)
+
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_DOWN or event.key == pygame.K_s:
                 move_down = False
@@ -139,12 +169,6 @@ def close_game():
     print('Exiting game without saving')
 
 
-# Updates the money text
-def update_money():
-    global money_gui
-    money_gui = font.render('money:' + str(Tiles.money), True, (41, 210, 22))
-
-
 # The actual game logic and flow. runs as long as the game runs
 def game_loop():
     # Some globals
@@ -169,7 +193,7 @@ def game_loop():
             if price_update_timer == 0:
                 ingredientsAndRecipes.update_prices()
                 price_update_timer = price_update_timer_default
-        update_money()
+        Tiles.update_money()
         last_money_value = Tiles.money
 
         # When tile with a menu is pressed, it will change Tiles.menu_function to it's menu
@@ -181,7 +205,7 @@ def game_loop():
                 enter_menu = False
         else:
             enter_menu = True
-        screen.blit(money_gui, (20, 20))
+        Tiles.draw_gui(screen, mouse_pos, check_press)
         pygame.display.update()
     close_game()
 
@@ -189,6 +213,5 @@ def game_loop():
 if __name__ == '__main__':
     menu.show_menu(screen)  # Shows opening screen, continues when player starts a game
     Gen.generate_base_tiles(chunk_list, 0, 0)  # Generating the starting area
-    update_money()  # Updating the money GUI
     ingredientsAndRecipes.update_prices()  # Updating prices
     game_loop()  # Starting the game

@@ -4,6 +4,13 @@ pygame.init()
 
 disable_buttons = False
 
+# Locations when hover and click checks should not work
+dead_areas = []
+
+
+def add_dead_area(x1, y1, x2, y2):
+    dead_areas.append([x1, y1, x2, y2])
+
 
 # A function to draw translucent rectangles
 def draw_rect_alpha(surface, color, rect):
@@ -31,7 +38,8 @@ class Button:
     text_pos_x = 0
     text_pos_y = 0
 
-    def __init__(self, _location: [int, int, int, int], _text, _default_color, _hover_color, on_press, listen_disable=True):
+    def __init__(self, _location: [int, int, int, int], _text, _default_color, _hover_color, on_press,
+                 listen_disable=True):
         self.location = _location[:]
         self.listen = listen_disable
         _location[2] = _location[2] - _location[0]
@@ -46,7 +54,12 @@ class Button:
 
     def check_hover(self, mouse_location: [int, int]):
         if self.listen and disable_buttons:
+            self.hover = False
             return
+        for area in dead_areas:
+            if area[0] <= mouse_location[0] <= area[2] and area[1] <= mouse_location[1] <= area[3]:
+                self.hover = False
+                return
         if self.location[0] <= mouse_location[0] <= self.location[2] and \
                 self.location[1] <= mouse_location[1] <= self.location[3]:
             self.active_color = self.hover_color
@@ -83,12 +96,14 @@ class ButtonImg:
     hover = False
     func_press = None
 
-    def __init__(self, _location: [int, int], _default_img, on_press, listen_disable=True, parameter_for_function=None):
+    def __init__(self, _location: [int, int], _default_img, on_press, listen_disable=True, parameter_for_function=None,
+                 dead_zones=True):
         self.set_pos(_location)
         self.listen = listen_disable
         self.default_img = _default_img
         self.func_press = on_press
         self.parameter_for_function = parameter_for_function
+        self.dead_zones = dead_zones
 
     def set_pos(self, _location: [int, int]):
         self.location = self.location_2 = _location[:]
@@ -97,6 +112,11 @@ class ButtonImg:
         if self.listen and disable_buttons:
             self.hover = False
             return
+        if self.dead_zones:
+            for area in dead_areas:
+                if area[0] <= mouse_location[0] <= area[2] and area[1] <= mouse_location[1] <= area[3]:
+                    self.hover = False
+                    return
         if self.location_2[0] <= mouse_location[0] <= self.location_2[0] + size and \
                 self.location_2[1] <= mouse_location[1] <= self.location_2[1] + size:
             self.hover = True

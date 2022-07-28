@@ -18,12 +18,229 @@ gui_font = pygame.font.SysFont('Narkisim', 26)
 tile_size = 100
 buy_multiplier = 1
 report_price = 0
+skip_gui_buttons = False
+chosen_supplier_index = 0
+chosen_ing = 0
+max_price_input = 0
+input_enable = False
+
+# Auto-buy feature. Index marks the ingredient and value marks the chosen supplier
+auto_buy = [-1] * ingredientsAndRecipes.num_of_ingredients
+stop_auto_buy = [0] * ingredientsAndRecipes.num_of_ingredients  # Index marks the ingredient and value marks max price
 
 
 def close_menu():
-    global menu_function
+    global menu_function, skip_gui_buttons
     Buttons.disable_buttons = False
     menu_function = None
+    skip_gui_buttons = True
+
+
+exit_btn_size = 100
+exit_pic = pygame.image.load(assets_path + '\\GUI\\close.png')
+exit_pic = pygame.transform.scale(exit_pic, (exit_btn_size, exit_btn_size))
+exit_menu_button = Buttons.ButtonImg([screen_size[0] - exit_btn_size, 0], exit_pic, close_menu, listen_disable=False,
+                                     dead_zones=False)
+
+
+def restock_item(i):
+    active_restaurant.restock_item(i)
+
+
+def select_ing(i):
+    global chosen_ing, max_price_input
+    chosen_ing = i
+    max_price_input = stop_auto_buy[chosen_ing]
+
+
+def cancel_auto_buy(i):
+    set_auto_buy(i, -1, 0)
+
+
+def apply_auto_buy():
+    set_auto_buy(chosen_ing, chosen_supplier_index, max_price_input)
+
+
+ing_btn_size = int(((screen_size[1] - 200) / ingredientsAndRecipes.num_of_ingredients) * 3 / 4)
+ing_btn_spacing = int(ing_btn_size / 3)
+
+ing_pic = [pygame.transform.scale(pygame.image.load(assets_path + '\\GUI\\upgrade.png'), (ing_btn_size, ing_btn_size))
+           for i in range(0, ingredientsAndRecipes.num_of_ingredients)]
+
+ing_buttons = [
+    Buttons.ButtonImg([0, 100 + (ing_btn_size + ing_btn_spacing) * i], ing_pic[i], restock_item, listen_disable=False,
+                      parameter_for_function=i) for i in range(0, ingredientsAndRecipes.num_of_ingredients)]
+
+ing_buttons_auto_buy = [
+    Buttons.ButtonImg([0, 100 + (ing_btn_size + ing_btn_spacing) * i], ing_pic[i], select_ing, listen_disable=False,
+                      parameter_for_function=i) for i in range(0, ingredientsAndRecipes.num_of_ingredients)]
+
+cancel_pic = pygame.image.load(assets_path + '\\GUI\\close.png')
+cancel_pic = pygame.transform.scale(cancel_pic, (ing_btn_size, ing_btn_size))
+
+ing_delete_auto_buy = [
+    Buttons.ButtonImg([200, 100 + (ing_btn_size + ing_btn_spacing) * i], cancel_pic, cancel_auto_buy,
+                      listen_disable=False,
+                      parameter_for_function=i) for i in range(0, ingredientsAndRecipes.num_of_ingredients)]
+
+
+def cycle_supplier(i):
+    global active_restaurant
+    active_restaurant.supplier = active_restaurant.supplier + i
+    if active_restaurant.supplier < 0:
+        active_restaurant.supplier = ingredientsAndRecipes.num_of_ing_suppliers - 1
+    elif active_restaurant.supplier == ingredientsAndRecipes.num_of_ing_suppliers:
+        active_restaurant.supplier = 0
+
+
+def cycle_supplier_auto_buy(i):
+    global chosen_supplier_index
+    chosen_supplier_index = chosen_supplier_index + i
+    if chosen_supplier_index < 0:
+        chosen_supplier_index = ingredientsAndRecipes.num_of_ing_suppliers - 1
+    elif chosen_supplier_index == ingredientsAndRecipes.num_of_ing_suppliers:
+        chosen_supplier_index = 0
+
+
+def cycle_recipe(i):
+    global active_restaurant
+    index = active_restaurant.activeRecipe.meal_index
+    index = index + i
+    if index < 0:
+        index = ingredientsAndRecipes.meal_count - 1
+    elif index == ingredientsAndRecipes.meal_count:
+        index = 0
+    active_restaurant.activeRecipe = ingredientsAndRecipes.recipes[index]
+
+
+def set_price_limit():
+    global max_price_input, input_enable
+    max_price_input = 0
+    input_enable = True
+
+
+cycle_btn_size = 100
+cycle_right_pic = pygame.image.load(assets_path + '\\GUI\\right.png')
+cycle_right_pic = pygame.transform.scale(cycle_right_pic, (cycle_btn_size, cycle_btn_size))
+cycle_right_button = Buttons.ButtonImg([screen_size[0] - cycle_btn_size, exit_btn_size + 70], cycle_right_pic,
+                                       cycle_supplier, listen_disable=False, parameter_for_function=1)
+
+cycle_left_pic = pygame.image.load(assets_path + '\\GUI\\left.png')
+cycle_left_pic = pygame.transform.scale(cycle_left_pic, (cycle_btn_size, cycle_btn_size))
+cycle_left_button = Buttons.ButtonImg([screen_size[0] - 20 - 2 * cycle_btn_size, exit_btn_size + 70], cycle_left_pic,
+                                      cycle_supplier, listen_disable=False, parameter_for_function=-1)
+
+cycle_2_right_pic = pygame.image.load(assets_path + '\\GUI\\right.png')
+cycle_2_right_pic = pygame.transform.scale(cycle_2_right_pic, (cycle_btn_size, cycle_btn_size))
+cycle_2_right_button = Buttons.ButtonImg([screen_size[0] - cycle_btn_size, exit_btn_size + cycle_btn_size + 110],
+                                         cycle_2_right_pic, cycle_recipe, listen_disable=False,
+                                         parameter_for_function=1)
+
+cycle_2_left_pic = pygame.image.load(assets_path + '\\GUI\\left.png')
+cycle_2_left_pic = pygame.transform.scale(cycle_2_left_pic, (cycle_btn_size, cycle_btn_size))
+cycle_2_left_button = Buttons.ButtonImg(
+    [screen_size[0] - 20 - 2 * cycle_btn_size, exit_btn_size + cycle_btn_size + 110], cycle_2_left_pic, cycle_recipe,
+    listen_disable=False, parameter_for_function=-1)
+
+cycle_3_right_pic = pygame.image.load(assets_path + '\\GUI\\right.png')
+cycle_3_right_pic = pygame.transform.scale(cycle_3_right_pic, (cycle_btn_size, cycle_btn_size))
+cycle_3_right_button = Buttons.ButtonImg([screen_size[0] - cycle_btn_size, exit_btn_size + 70],
+                                         cycle_3_right_pic, cycle_supplier_auto_buy, listen_disable=False,
+                                         parameter_for_function=1)
+
+cycle_3_left_pic = pygame.image.load(assets_path + '\\GUI\\left.png')
+cycle_3_left_pic = pygame.transform.scale(cycle_3_left_pic, (cycle_btn_size, cycle_btn_size))
+cycle_3_left_button = Buttons.ButtonImg(
+    [screen_size[0] - 20 - 2 * cycle_btn_size, exit_btn_size + 70], cycle_3_left_pic, cycle_supplier_auto_buy,
+    listen_disable=False, parameter_for_function=-1)
+
+max_btn_size = 100
+max_pic = pygame.image.load(assets_path + '\\GUI\\max.png')
+max_pic = pygame.transform.scale(max_pic, (max_btn_size, max_btn_size))
+max_button = Buttons.ButtonImg([screen_size[0] - max_btn_size, exit_btn_size + cycle_btn_size + 110],
+                               max_pic, set_price_limit, listen_disable=False)
+
+apply_btn_size = 100
+apply_pic = pygame.image.load(assets_path + '\\GUI\\vee.png')
+apply_pic = pygame.transform.scale(apply_pic, (apply_btn_size, apply_btn_size))
+apply_button = Buttons.ButtonImg([screen_size[0] - apply_btn_size, screen_size[0] - apply_btn_size], apply_pic,
+                                 apply_auto_buy, listen_disable=False)
+
+selected_color = (0, 233, 255)
+
+
+# Drawing auto-buy menu
+def auto_buy_menu(surface, mouse, press):
+    exit_menu_button.draw(surface, mouse, press, [0, 0], exit_btn_size)  # Exit button
+
+    # Choose supplier
+    cycle_3_right_button.draw(surface, mouse, press, [0, 0], cycle_btn_size)
+    cycle_3_left_button.draw(surface, mouse, press, [0, 0], cycle_btn_size)
+    supplier = gui_font.render('Current supplier: ', True, (245, 255, 59))
+    surface.blit(supplier, (screen_size[0] - 20 - 2 * cycle_btn_size, exit_btn_size + 10))
+    supplier = gui_font.render(ingredientsAndRecipes.supplier_names[chosen_supplier_index], True, (225, 245, 59))
+    surface.blit(supplier, (screen_size[0] - 20 - 2 * cycle_btn_size, exit_btn_size + 40))
+
+    max_button.draw(surface, mouse, press, [0, 0], max_btn_size)
+    supplier = gui_font.render('Limit: ' + str(max_price_input), True, (245, 255, 59))
+    surface.blit(supplier, (screen_size[0] - 20 - 2 * cycle_btn_size, exit_btn_size + cycle_btn_size + 80))
+
+    apply_button.draw(surface, mouse, press, [0, 0], max_btn_size)
+
+    for i in range(0, len(ing_buttons)):
+        if i is chosen_ing:
+            color = selected_color
+        else:
+            color = (255, 70, 50)
+        ingredients_upgrade = gui_font.render(
+            'price: ' + str(ingredientsAndRecipes.supplier_prices[chosen_supplier_index][i] * buy_multiplier),
+            True, color)
+        surface.blit(ingredients_upgrade, (ing_btn_size * 1.2, 120 + (ing_btn_size + ing_btn_spacing) * i))
+        ing_buttons_auto_buy[i].draw(surface, mouse, press, [0, 0], ing_btn_size)
+        if auto_buy[i] >= 0:
+            ing_delete_auto_buy[i].draw(surface, mouse, press, [0, 0], ing_btn_size)
+
+
+# Shows to auto-buy menu
+def show_auto_buy_menu():
+    global menu_function
+    Buttons.disable_buttons = True
+    menu_function = auto_buy_menu
+
+
+# Auto-buy menu button
+auto_buy_btn_size = 60
+auto_buy_pic = pygame.image.load(assets_path + '\\GUI\\autoBuy.png')
+auto_buy_pic = pygame.transform.scale(auto_buy_pic, (auto_buy_btn_size, auto_buy_btn_size))
+auto_buy_menu_button = Buttons.ButtonImg([screen_size[0] - auto_buy_btn_size, 0], auto_buy_pic, show_auto_buy_menu,
+                                         dead_zones=False)
+
+Buttons.add_dead_area(screen_size[0] - auto_buy_btn_size, 0, screen_size[0], auto_buy_btn_size)
+
+
+def set_auto_buy(ing_index: int, sup_index: int, max_price: int):
+    global auto_buy, stop_auto_buy
+    auto_buy[ing_index] = sup_index
+    stop_auto_buy[ing_index] = max_price
+
+
+# GUI colors
+money_color = (41, 210, 22)
+
+money_gui = gui_font.render('money:' + str(money), True, money_color)
+
+
+def update_money():
+    global money_gui
+    money_gui = gui_font.render('money:' + str(money), True, (41, 210, 22))
+
+
+def draw_gui(screen, mouse, press):
+    global skip_gui_buttons
+    if menu_function is None and not skip_gui_buttons:
+        auto_buy_menu_button.draw(screen, mouse, press, [0, 0], auto_buy_btn_size)
+    skip_gui_buttons = False
+    screen.blit(money_gui, (20, 20))
 
 
 def upgrade_res():
@@ -40,35 +257,6 @@ def report_menu_res():
     active_restaurant.report_menu()
     report_price = 50 * pow(2, active_restaurant.level)
 
-
-def restock_item(i):
-    active_restaurant.restock_item(i)
-
-
-def cycle_supplier(i):
-    global active_restaurant
-    active_restaurant.supplier = active_restaurant.supplier + i
-    if active_restaurant.supplier < 0:
-        active_restaurant.supplier = ingredientsAndRecipes.num_of_ing_suppliers - 1
-    elif active_restaurant.supplier == ingredientsAndRecipes.num_of_ing_suppliers:
-        active_restaurant.supplier = 0
-
-
-def cycle_recipe(i):
-    global active_restaurant
-    index = active_restaurant.activeRecipe.meal_index
-    index = index + i
-    if index < 0:
-        index = ingredientsAndRecipes.meal_count - 1
-    elif index == ingredientsAndRecipes.meal_count:
-        index = 0
-    active_restaurant.activeRecipe = ingredientsAndRecipes.recipes[index]
-
-
-exit_btn_size = 100
-exit_pic = pygame.image.load(assets_path + '\\GUI\\close.png')
-exit_pic = pygame.transform.scale(exit_pic, (exit_btn_size, exit_btn_size))
-exit_menu_button = Buttons.ButtonImg([screen_size[0] - exit_btn_size, 0], exit_pic, close_menu, listen_disable=False)
 
 upgrade_btn_size = buy_btn_size = 150
 
@@ -95,16 +283,6 @@ report_pic = pygame.image.load(assets_path + '\\GUI\\report.png')
 report_pic = pygame.transform.scale(report_pic, (report_btn_size, report_btn_size))
 report_menu_button = Buttons.ButtonImg([screen_size[0] * 0.5 - report_btn_size / 2, screen_size[1] * 0.7], report_pic,
                                        report_menu_res, listen_disable=False)
-
-ing_btn_size = int(((screen_size[1] - 200) / ingredientsAndRecipes.num_of_ingredients) * 3 / 4)
-ing_btn_spacing = int(ing_btn_size / 3)
-
-ing_pic = [pygame.transform.scale(pygame.image.load(assets_path + '\\GUI\\upgrade.png'), (ing_btn_size, ing_btn_size))
-           for i in range(0, ingredientsAndRecipes.num_of_ingredients)]
-
-ing_buttons = [
-    Buttons.ButtonImg([0, 100 + (ing_btn_size + ing_btn_spacing) * i], ing_pic[i], restock_item, listen_disable=False,
-                      parameter_for_function=i) for i in range(0, ingredientsAndRecipes.num_of_ingredients)]
 
 
 def update_buy_multiplier(new_multiplier: int):
@@ -135,29 +313,6 @@ multiplier_100_pic = pygame.transform.scale(multiplier_100_pic, (multiplier_btn_
 multiplier_100_button = Buttons.ButtonImg(
     [screen_size[0] - exit_btn_size - ((multiplier_btn_size + multiplier_btn_spacing) * 3), 0], multiplier_100_pic,
     update_buy_multiplier, listen_disable=False, parameter_for_function=100)
-
-cycle_btn_size = 100
-cycle_right_pic = pygame.image.load(assets_path + '\\GUI\\right.png')
-cycle_right_pic = pygame.transform.scale(cycle_right_pic, (cycle_btn_size, cycle_btn_size))
-cycle_right_button = Buttons.ButtonImg([screen_size[0] - cycle_btn_size, exit_btn_size + 70], cycle_right_pic,
-                                       cycle_supplier, listen_disable=False, parameter_for_function=1)
-
-cycle_left_pic = pygame.image.load(assets_path + '\\GUI\\left.png')
-cycle_left_pic = pygame.transform.scale(cycle_left_pic, (cycle_btn_size, cycle_btn_size))
-cycle_left_button = Buttons.ButtonImg([screen_size[0] - 20 - 2 * cycle_btn_size, exit_btn_size + 70], cycle_left_pic,
-                                      cycle_supplier, listen_disable=False, parameter_for_function=-1)
-
-cycle_2_right_pic = pygame.image.load(assets_path + '\\GUI\\right.png')
-cycle_2_right_pic = pygame.transform.scale(cycle_2_right_pic, (cycle_btn_size, cycle_btn_size))
-cycle_2_right_button = Buttons.ButtonImg([screen_size[0] - cycle_btn_size, exit_btn_size + cycle_btn_size + 110],
-                                         cycle_2_right_pic, cycle_recipe, listen_disable=False,
-                                         parameter_for_function=1)
-
-cycle_2_left_pic = pygame.image.load(assets_path + '\\GUI\\left.png')
-cycle_2_left_pic = pygame.transform.scale(cycle_2_left_pic, (cycle_btn_size, cycle_btn_size))
-cycle_2_left_button = Buttons.ButtonImg(
-    [screen_size[0] - 20 - 2 * cycle_btn_size, exit_btn_size + cycle_btn_size + 110], cycle_2_left_pic, cycle_recipe,
-    listen_disable=False, parameter_for_function=-1)
 
 
 def draw_menu(surface, mouse, press):
@@ -226,6 +381,7 @@ def draw_restock_menu(surface, mouse, press):
         'Buy multiplier: ' + str(10 * buy_multiplier), True, (120, 0, 128))
     surface.blit(multiplier, (20, 50))
 
+    # Supplier selection
     cycle_right_button.draw(surface, mouse, press, [0, 0], cycle_btn_size)
     cycle_left_button.draw(surface, mouse, press, [0, 0], cycle_btn_size)
     supplier = gui_font.render('Current supplier: ', True, (245, 255, 59))
@@ -233,6 +389,7 @@ def draw_restock_menu(surface, mouse, press):
     supplier = gui_font.render(ingredientsAndRecipes.supplier_names[active_restaurant.supplier], True, (225, 245, 59))
     surface.blit(supplier, (screen_size[0] - 20 - 2 * cycle_btn_size, exit_btn_size + 40))
 
+    # Recipe selection
     recipe_text = gui_font.render(
         'recipe: ' + ingredientsAndRecipes.meal_list[active_restaurant.activeRecipe.meal_index],
         True, (43, 196, 176))
@@ -389,6 +546,16 @@ class RestaurantTile(Tile):
         self.report.update_report(self.level, self.demand, self.costumers, self.demand_weights)
 
     def get_income(self):
+        global money
+        if money >= 0:
+            for i in range(0, ingredientsAndRecipes.num_of_ingredients):
+                desired_amount = self.activeRecipe.ing_list[i] * self.costumers
+                if desired_amount > 0 and auto_buy[i] != -1 and ingredientsAndRecipes.supplier_prices[auto_buy[i]][i] < \
+                        stop_auto_buy[i]:
+                    difference = self.ingredients_array[i] - desired_amount
+                    if difference < 0:
+                        self.ingredients_array[i] -= difference
+                        money = int(money - ingredientsAndRecipes.supplier_prices[auto_buy[i]][i] * (-difference / 10))
         return self.activeRecipe.use_ing(self.ingredients_array, self.costumers)
 
     def check_demand(self):
