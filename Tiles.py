@@ -69,8 +69,10 @@ def apply_auto_buy():
 ing_btn_size = int(((screen_size[1] - 200) / ingredientsAndRecipes.num_of_ingredients) * 3 / 4)
 ing_btn_spacing = int(ing_btn_size / 3)
 
-ing_pic = [pygame.transform.scale(pygame.image.load(assets_path + '\\ingredients\\' + ingredientsAndRecipes.ing_list[i] + '.png'), (ing_btn_size, ing_btn_size))
-           for i in range(0, ingredientsAndRecipes.num_of_ingredients)]
+ing_pic = [pygame.transform.scale(
+    pygame.image.load(assets_path + '\\ingredients\\' + ingredientsAndRecipes.ing_list[i] + '.png'),
+    (ing_btn_size, ing_btn_size))
+    for i in range(0, ingredientsAndRecipes.num_of_ingredients)]
 
 ing_buttons = [
     Buttons.ButtonImg([0, 100 + (ing_btn_size + ing_btn_spacing) * i], ing_pic[i], restock_item, listen_disable=False,
@@ -206,7 +208,7 @@ def auto_buy_menu(surface, mouse, press):
             ing_delete_auto_buy[i].draw(surface, mouse, press, [0, 0], ing_btn_size)
 
 
-# Shows to auto-buy menu
+# Shows the auto-buy menu
 def show_auto_buy_menu():
     global menu_function
     Buttons.disable_buttons = True
@@ -214,13 +216,26 @@ def show_auto_buy_menu():
 
 
 # Auto-buy menu button
-auto_buy_btn_size = 60
+settings_btn_size = auto_buy_btn_size = 60
 auto_buy_pic = pygame.image.load(assets_path + '\\GUI\\autoBuy.png')
 auto_buy_pic = pygame.transform.scale(auto_buy_pic, (auto_buy_btn_size, auto_buy_btn_size))
 auto_buy_menu_button = Buttons.ButtonImg([screen_size[0] - auto_buy_btn_size, 0], auto_buy_pic, show_auto_buy_menu,
                                          dead_zones=False)
 
-Buttons.add_dead_area(screen_size[0] - auto_buy_btn_size, 0, screen_size[0], auto_buy_btn_size)
+
+# Shows the settings menu
+def show_settings_menu():
+    pass
+
+
+# Settings menu button
+settings_pic = pygame.image.load(assets_path + '\\GUI\\settings.png')
+settings_pic = pygame.transform.scale(settings_pic, (settings_btn_size, settings_btn_size))
+settings_menu_button = Buttons.ButtonImg([screen_size[0] - settings_btn_size - auto_buy_btn_size, 0], settings_pic,
+                                         show_settings_menu, dead_zones=False)
+
+Buttons.add_dead_area(screen_size[0] - auto_buy_btn_size - settings_btn_size, 0, screen_size[0],
+                      max(auto_buy_btn_size, settings_btn_size))
 
 
 def set_auto_buy(ing_index: int, sup_index: int, max_price: int):
@@ -244,6 +259,7 @@ def draw_gui(screen, mouse, press):
     global skip_gui_buttons
     if menu_function is None and not skip_gui_buttons:
         auto_buy_menu_button.draw(screen, mouse, press, [0, 0], auto_buy_btn_size)
+        settings_menu_button.draw(screen, mouse, press, [0, 0], auto_buy_btn_size)
     skip_gui_buttons = False
     screen.blit(money_gui, (20, 20))
 
@@ -279,7 +295,8 @@ buy_menu_button = Buttons.ButtonImg(buy_upgrade_pos, buy_pic, upgrade_res, liste
 
 sell_pic = pygame.image.load(assets_path + '\\GUI\\sell.png')
 sell_pic = pygame.transform.scale(sell_pic, (buy_btn_size, buy_btn_size))
-sell_menu_button = Buttons.ButtonImg([screen_size[0] - buy_btn_size, screen_size[1] - buy_btn_size], sell_pic, sell_res, listen_disable=False)
+sell_menu_button = Buttons.ButtonImg([screen_size[0] - buy_btn_size, screen_size[1] - buy_btn_size], sell_pic, sell_res,
+                                     listen_disable=False)
 
 restock_btn_size = 150
 restock_pic = pygame.image.load(assets_path + '\\GUI\\stock.png')
