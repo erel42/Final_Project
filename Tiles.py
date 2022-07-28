@@ -73,7 +73,7 @@ buy_pic = pygame.transform.scale(buy_pic, (buy_btn_size, buy_btn_size))
 buy_menu_button = Buttons.ButtonImg([425, 300], buy_pic, upgrade_res, listen_disable=False)
 
 restock_btn_size = 150
-restock_pic = pygame.image.load(assets_path + '\\GUI\\upgrade.png')
+restock_pic = pygame.image.load(assets_path + '\\GUI\\stock.png')
 restock_pic = pygame.transform.scale(restock_pic, (restock_btn_size, restock_btn_size))
 restock_menu_button = Buttons.ButtonImg([175, 300], restock_pic, restock_menu_res, listen_disable=False)
 
