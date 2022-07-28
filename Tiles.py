@@ -17,6 +17,7 @@ active_restaurant = None
 gui_font = pygame.font.SysFont('Narkisim', 26)
 tile_size = 100
 buy_multiplier = 1
+report_price = 0
 
 
 def close_menu():
@@ -30,7 +31,14 @@ def upgrade_res():
 
 
 def restock_menu_res():
+    global report_price
     active_restaurant.restock_menu()
+
+
+def report_menu_res():
+    global report_price
+    active_restaurant.report_menu()
+    report_price = 50 * pow(2, active_restaurant.level)
 
 
 def restock_item(i):
@@ -62,20 +70,31 @@ exit_pic = pygame.image.load(assets_path + '\\GUI\\close.png')
 exit_pic = pygame.transform.scale(exit_pic, (exit_btn_size, exit_btn_size))
 exit_menu_button = Buttons.ButtonImg([screen_size[0] - exit_btn_size, 0], exit_pic, close_menu, listen_disable=False)
 
-upgrade_btn_size = 150
+upgrade_btn_size = buy_btn_size = 150
+
+buy_upgrade_pos = [screen_size[0] * 0.6, screen_size[1] * 0.4]
+buy_upgrade_pos_text = buy_upgrade_pos[:]
+buy_upgrade_pos_text[1] = buy_upgrade_pos_text[1] + upgrade_btn_size + 10
+
 upgrade_pic = pygame.image.load(assets_path + '\\GUI\\upgrade.png')
 upgrade_pic = pygame.transform.scale(upgrade_pic, (upgrade_btn_size, upgrade_btn_size))
-upgrade_menu_button = Buttons.ButtonImg([425, 300], upgrade_pic, upgrade_res, listen_disable=False)
+upgrade_menu_button = Buttons.ButtonImg(buy_upgrade_pos, upgrade_pic, upgrade_res, listen_disable=False)
 
-buy_btn_size = 150
 buy_pic = pygame.image.load(assets_path + '\\GUI\\buy.png')
 buy_pic = pygame.transform.scale(buy_pic, (buy_btn_size, buy_btn_size))
-buy_menu_button = Buttons.ButtonImg([425, 300], buy_pic, upgrade_res, listen_disable=False)
+buy_menu_button = Buttons.ButtonImg(buy_upgrade_pos, buy_pic, upgrade_res, listen_disable=False)
 
 restock_btn_size = 150
 restock_pic = pygame.image.load(assets_path + '\\GUI\\stock.png')
 restock_pic = pygame.transform.scale(restock_pic, (restock_btn_size, restock_btn_size))
-restock_menu_button = Buttons.ButtonImg([175, 300], restock_pic, restock_menu_res, listen_disable=False)
+restock_menu_button = Buttons.ButtonImg([screen_size[0] * 0.2, screen_size[1] * 0.4], restock_pic, restock_menu_res,
+                                        listen_disable=False)
+
+report_btn_size = 150
+report_pic = pygame.image.load(assets_path + '\\GUI\\report.png')
+report_pic = pygame.transform.scale(report_pic, (report_btn_size, report_btn_size))
+report_menu_button = Buttons.ButtonImg([screen_size[0] * 0.5 - report_btn_size / 2, screen_size[1] * 0.7], report_pic,
+                                       report_menu_res, listen_disable=False)
 
 ing_btn_size = int(((screen_size[1] - 200) / ingredientsAndRecipes.num_of_ingredients) * 3 / 4)
 ing_btn_spacing = int(ing_btn_size / 3)
@@ -148,12 +167,57 @@ def draw_menu(surface, mouse, press):
         buy_menu_button.draw(surface, mouse, press, [0, 0], buy_btn_size)
     else:
         upgrade_menu_button.draw(surface, mouse, press, [0, 0], upgrade_btn_size)
+        report_menu_button.draw(surface, mouse, press, [0, 0], upgrade_btn_size)
         restock_menu_button.draw(surface, mouse, press, [0, 0], restock_btn_size)
-    surface.blit(price_upgrade, (425, 460))
+    surface.blit(price_upgrade, buy_upgrade_pos_text)
 
 
+def update_report():
+    global money, report_price
+    if money >= report_price:
+        money -= report_price
+        active_restaurant.update_report()
+
+
+create_report_btn = Buttons.ButtonImg([screen_size[0] * 0.5 - report_btn_size / 2, exit_btn_size], report_pic,
+                                      update_report, listen_disable=False)
+
+report_spacing = 40
+report_stats_color = (104, 145, 27)
+
+
+# Drawing the report menu
+def draw_report_menu(surface, mouse, press):
+    exit_menu_button.draw(surface, mouse, press, [0, 0], exit_btn_size)  # Exit button
+
+    create_report_btn.draw(surface, mouse, press, [0, 0], report_btn_size)  # Create report button
+
+    # Price of issuing a report
+    report_price_text = gui_font.render('Cost: ' + str(report_price), True, (255, 70, 50))
+    surface.blit(report_price_text, (screen_size[0] / 2, exit_btn_size + report_btn_size))
+
+    # Showing the report details
+    report_text = gui_font.render('Restaurant level: ' + str(active_restaurant.report.level), True, report_stats_color)
+    surface.blit(report_text, (50, exit_btn_size + report_btn_size + 10 + report_spacing))
+
+    report_text = gui_font.render('Maximum demand: ' + str(active_restaurant.report.potential_demand), True,
+                                  report_stats_color)
+    surface.blit(report_text, (50, exit_btn_size + report_btn_size + 10 + 2 * report_spacing))
+
+    report_text = gui_font.render('Current demand: ' + str(active_restaurant.report.current_demand), True,
+                                  report_stats_color)
+    surface.blit(report_text, (50, exit_btn_size + report_btn_size + 10 + 3 * report_spacing))
+
+    for index in range(0, ingredientsAndRecipes.meal_count):
+        report_text = gui_font.render(str(ingredientsAndRecipes.meal_list[index]) + "  -  Revenue: " + str(
+            active_restaurant.report.meal_revenues[index]) + ", Weight: " + str(
+            active_restaurant.report.demand_weights[index]), True, report_stats_color)
+        surface.blit(report_text, (50, exit_btn_size + report_btn_size + 10 + report_spacing * (index + 4)))
+
+
+# Drawing the restock menu
 def draw_restock_menu(surface, mouse, press):
-    exit_menu_button.draw(surface, mouse, press, [0, 0], exit_btn_size)
+    exit_menu_button.draw(surface, mouse, press, [0, 0], exit_btn_size)  # Exit menu
 
     multiplier_1_button.draw(surface, mouse, press, [0, 0], multiplier_btn_size)
     multiplier_10_button.draw(surface, mouse, press, [0, 0], multiplier_btn_size)
@@ -207,6 +271,22 @@ def chunk_map_y(col):
         for row in chunk_map:
             row.insert(0, None)
         chunk_map_y_bounds[0] = chunk_map_y_bounds[0] - 1
+
+
+class ResReport:
+    def __init__(self):
+        self.level = 0
+        self.potential_demand = 0
+        self.current_demand = 0
+        self.demand_weights = [0] * ingredientsAndRecipes.meal_count
+        self.meal_revenues = [0] * ingredientsAndRecipes.meal_count
+
+    def update_report(self, lvl, pot_demand, cur_demand, weights):
+        self.level = lvl
+        self.potential_demand = pot_demand
+        self.current_demand = cur_demand
+        self.demand_weights = weights[:]
+        self.meal_revenues = ingredientsAndRecipes.meal_revenue[:]
 
 
 class Tile:
@@ -287,6 +367,8 @@ class RestaurantTile(Tile):
         self.ingredients_array = [50] * ingredientsAndRecipes.num_of_ingredients
         self.activeRecipe = ingredientsAndRecipes.recipes[ingredientsAndRecipes.meal_dic["burger"]]
         self.supplier = 0
+        self.report = ResReport()
+        self.demand_weights = [1] * ingredientsAndRecipes.meal_count
 
     def json_ready(self):
         data = {
@@ -302,6 +384,9 @@ class RestaurantTile(Tile):
         menu_function = draw_menu
         Buttons.disable_buttons = True
         active_restaurant = self
+
+    def update_report(self):
+        self.report.update_report(self.level, self.demand, self.costumers, self.demand_weights)
 
     def get_income(self):
         return self.activeRecipe.use_ing(self.ingredients_array, self.costumers)
@@ -348,6 +433,12 @@ class RestaurantTile(Tile):
     def restock_menu(self):
         global menu_function, active_restaurant
         menu_function = draw_restock_menu
+        Buttons.disable_buttons = True
+        active_restaurant = self
+
+    def report_menu(self):
+        global menu_function, active_restaurant
+        menu_function = draw_report_menu
         Buttons.disable_buttons = True
         active_restaurant = self
 
