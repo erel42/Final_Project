@@ -25,6 +25,9 @@ chosen_ing = 0
 max_price_input = 0
 input_enable = False
 
+max_demand_weight = 1
+min_demand_weight = 0.5
+
 # Auto-buy feature. Index marks the ingredient and value marks the chosen supplier
 auto_buy = [-1] * ingredientsAndRecipes.num_of_ingredients
 stop_auto_buy = [0] * ingredientsAndRecipes.num_of_ingredients  # Index marks the ingredient and value marks max price
@@ -391,9 +394,9 @@ def draw_report_menu(surface, mouse, press):
     surface.blit(report_text, (50, exit_btn_size + report_btn_size + 10 + 3 * report_spacing))
 
     for index in range(0, ingredientsAndRecipes.meal_count):
+        formatted_float = "{:.3f}".format(active_restaurant.report.demand_weights[index])
         report_text = gui_font.render(str(ingredientsAndRecipes.meal_list[index]) + "  -  Revenue: " + str(
-            active_restaurant.report.meal_revenues[index]) + ", Weight: " + str(
-            active_restaurant.report.demand_weights[index]), True, report_stats_color)
+            active_restaurant.report.meal_revenues[index]) + ", Weight: " + formatted_float, True, report_stats_color)
         surface.blit(report_text, (50, exit_btn_size + report_btn_size + 10 + report_spacing * (index + 4)))
 
 
@@ -552,7 +555,7 @@ class RestaurantTile(Tile):
         self.activeRecipe = ingredientsAndRecipes.recipes[ingredientsAndRecipes.meal_dic["burger"]]
         self.supplier = 0
         self.report = ResReport()
-        self.demand_weights = [1] * ingredientsAndRecipes.meal_count
+        self.demand_weights = [random.uniform(min_demand_weight, max_demand_weight) for i in range(0, ingredientsAndRecipes.meal_count)]
         self.costumer_variance = 1
         self.variance_timer = 60
 
@@ -586,7 +589,7 @@ class RestaurantTile(Tile):
         self.activeRecipe = ingredientsAndRecipes.recipes[ingredientsAndRecipes.meal_dic["burger"]]
         self.supplier = 0
         self.report = ResReport()
-        self.demand_weights = [1] * ingredientsAndRecipes.meal_count
+        self.demand_weights = [random.uniform(min_demand_weight, max_demand_weight) for i in range(0, ingredientsAndRecipes.meal_count)] * ingredientsAndRecipes.meal_count
         self.costumer_variance = 1
         self.variance_timer = 60
 
@@ -609,7 +612,7 @@ class RestaurantTile(Tile):
                     if difference < 0:
                         self.ingredients_array[i] -= difference
                         money = int(money - ingredientsAndRecipes.supplier_prices[auto_buy[i]][i] * (-difference / 10))
-        return self.activeRecipe.use_ing(self.ingredients_array, self.costumers)
+        return self.activeRecipe.use_ing(self.ingredients_array, int(self.costumers * self.demand_weights[self.activeRecipe.meal_index]))
 
     def check_demand(self):
         _demand = 5

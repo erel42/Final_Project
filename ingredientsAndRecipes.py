@@ -22,7 +22,7 @@ meal_list = list(meal_dic.keys())
 
 meal_count = len(meal_dic)
 
-meal_revenue = [100]*meal_count
+meal_revenue = [50]*meal_count
 meal_max = [60]*meal_count  # The maximum price of a meal
 meal_min = [30]*meal_count  # The minimum price of a meal
 
