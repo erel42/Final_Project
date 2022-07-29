@@ -474,8 +474,11 @@ def draw_menu(surface, mouse, press):
 def update_report():
     global money, report_price
     if money >= report_price:
-        money -= report_price
+        if not active_restaurant.hasReport:
+            active_restaurant.hasReport = True
+            money -= report_price
         active_restaurant.update_report()
+
 
 
 def update_create_report_btn():
@@ -558,6 +561,7 @@ def draw_restock_menu(surface, mouse, press):
 
 
 def chunk_map_x(row):
+    global chunk_map
     global chunk_map
     while row > chunk_map_x_bounds[1]:
         chunk_map.append([None] * (chunk_map_y_bounds[1] - chunk_map_y_bounds[0] + 1))
@@ -668,6 +672,7 @@ class RestaurantTile(Tile):
         self.space = 0
         self.demand = 5
         self.costumers = 0
+        self.hasReport = False
         res_list.append(self)
         self.price_to_upgrade = 30 * pow(2, self.level)
         self.ingredients_array = [50] * ingredientsAndRecipes.num_of_ingredients
