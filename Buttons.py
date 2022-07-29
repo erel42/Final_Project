@@ -7,6 +7,8 @@ disable_buttons = False
 # Locations when hover and click checks should not work
 dead_areas = []
 
+update_location = False
+
 
 def add_dead_area(x1, y1, x2, y2):
     dead_areas.append([x1, y1, x2, y2])
@@ -97,13 +99,15 @@ class ButtonImg:
     func_press = None
 
     def __init__(self, _location: [int, int], _default_img, on_press, listen_disable=True, parameter_for_function=None,
-                 dead_zones=True):
+                 dead_zones=True, btn_update_func=None, parameter_for_update=None):
         self.set_pos(_location)
         self.listen = listen_disable
         self.default_img = _default_img
         self.func_press = on_press
         self.parameter_for_function = parameter_for_function
         self.dead_zones = dead_zones
+        self.update_func = btn_update_func
+        self.parameter_for_update = parameter_for_update
 
     def set_pos(self, _location: [int, int]):
         self.location = self.location_2 = _location[:]
@@ -138,6 +142,11 @@ class ButtonImg:
             self.func_press()
 
     def draw(self, screen, mouse, press, offset, size):
+        if update_location and self.update_func is not None:
+            if self.parameter_for_update is None:
+                self.set_pos(self.update_func())
+            else:
+                self.set_pos(self.update_func(self.parameter_for_update))
         self.location_2 = [self.location[0] + offset[0], self.location[1] + offset[1]]
         self.check_hover(mouse, press, size)
         screen.blit(self.default_img, (self.location[0] + offset[0], self.location[1] + offset[1]))

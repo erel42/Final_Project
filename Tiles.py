@@ -24,9 +24,11 @@ chosen_supplier_index = 0
 chosen_ing = 0
 max_price_input = 0
 input_enable = False
+force_update_screen = False
 
 max_demand_weight = 1
 min_demand_weight = 0.5
+buy_upgrade_pos_text = []
 
 # Auto-buy feature. Index marks the ingredient and value marks the chosen supplier
 auto_buy = [-1] * ingredientsAndRecipes.num_of_ingredients
@@ -34,17 +36,24 @@ stop_auto_buy = [0] * ingredientsAndRecipes.num_of_ingredients  # Index marks th
 
 
 def close_menu():
-    global menu_function, skip_gui_buttons
+    global menu_function, skip_gui_buttons, force_update_screen
     Buttons.disable_buttons = False
     menu_function = None
     skip_gui_buttons = True
+    force_update_screen = True
 
 
 exit_btn_size = 100
+
+
+def update_exit_btn():
+    return [screen_size[0] - exit_btn_size, 0]
+
+
 exit_pic = pygame.image.load(assets_path + '\\GUI\\close.png')
 exit_pic = pygame.transform.scale(exit_pic, (exit_btn_size, exit_btn_size))
 exit_menu_button = Buttons.ButtonImg([screen_size[0] - exit_btn_size, 0], exit_pic, close_menu, listen_disable=False,
-                                     dead_zones=False)
+                                     dead_zones=False, btn_update_func=update_exit_btn)
 
 
 def restock_item(i):
@@ -72,6 +81,11 @@ def apply_auto_buy():
 ing_btn_size = int(((screen_size[1] - 200) / ingredientsAndRecipes.num_of_ingredients) * 3 / 4)
 ing_btn_spacing = int(ing_btn_size / 3)
 
+
+def update_ing_btn(i):
+    return [0, 100 + (ing_btn_size + ing_btn_spacing) * i]
+
+
 ing_pic = [pygame.transform.scale(
     pygame.image.load(assets_path + '\\ingredients\\' + ingredientsAndRecipes.ing_list[i] + '.png'),
     (ing_btn_size, ing_btn_size))
@@ -79,19 +93,27 @@ ing_pic = [pygame.transform.scale(
 
 ing_buttons = [
     Buttons.ButtonImg([0, 100 + (ing_btn_size + ing_btn_spacing) * i], ing_pic[i], restock_item, listen_disable=False,
-                      parameter_for_function=i) for i in range(0, ingredientsAndRecipes.num_of_ingredients)]
+                      parameter_for_function=i, btn_update_func=update_ing_btn, parameter_for_update=i) for i in
+    range(0, ingredientsAndRecipes.num_of_ingredients)]
 
 ing_buttons_auto_buy = [
     Buttons.ButtonImg([0, 100 + (ing_btn_size + ing_btn_spacing) * i], ing_pic[i], select_ing, listen_disable=False,
-                      parameter_for_function=i) for i in range(0, ingredientsAndRecipes.num_of_ingredients)]
+                      parameter_for_function=i, btn_update_func=update_ing_btn, parameter_for_update=i) for i in
+    range(0, ingredientsAndRecipes.num_of_ingredients)]
 
 cancel_pic = pygame.image.load(assets_path + '\\GUI\\close.png')
 cancel_pic = pygame.transform.scale(cancel_pic, (ing_btn_size, ing_btn_size))
 
+
+def update_cancel_btn(i):
+    return [200, 100 + (ing_btn_size + ing_btn_spacing) * i]
+
+
 ing_delete_auto_buy = [
     Buttons.ButtonImg([200, 100 + (ing_btn_size + ing_btn_spacing) * i], cancel_pic, cancel_auto_buy,
-                      listen_disable=False,
-                      parameter_for_function=i) for i in range(0, ingredientsAndRecipes.num_of_ingredients)]
+                      listen_disable=False, parameter_for_function=i, btn_update_func=update_cancel_btn,
+                      parameter_for_update=i) for i in
+    range(0, ingredientsAndRecipes.num_of_ingredients)]
 
 
 def cycle_supplier(i):
@@ -130,51 +152,85 @@ def set_price_limit():
 
 
 cycle_btn_size = 100
+
+
+def update_cycle_right_btn():
+    return [screen_size[0] - cycle_btn_size, exit_btn_size + 70]
+
+
 cycle_right_pic = pygame.image.load(assets_path + '\\GUI\\right.png')
 cycle_right_pic = pygame.transform.scale(cycle_right_pic, (cycle_btn_size, cycle_btn_size))
 cycle_right_button = Buttons.ButtonImg([screen_size[0] - cycle_btn_size, exit_btn_size + 70], cycle_right_pic,
-                                       cycle_supplier, listen_disable=False, parameter_for_function=1)
+                                       cycle_supplier, listen_disable=False, parameter_for_function=1,
+                                       btn_update_func=update_cycle_right_btn)
+
+
+def update_cycle_left_btn():
+    return [screen_size[0] - 20 - 2 * cycle_btn_size, exit_btn_size + 70]
+
 
 cycle_left_pic = pygame.image.load(assets_path + '\\GUI\\left.png')
 cycle_left_pic = pygame.transform.scale(cycle_left_pic, (cycle_btn_size, cycle_btn_size))
 cycle_left_button = Buttons.ButtonImg([screen_size[0] - 20 - 2 * cycle_btn_size, exit_btn_size + 70], cycle_left_pic,
-                                      cycle_supplier, listen_disable=False, parameter_for_function=-1)
+                                      cycle_supplier, listen_disable=False, parameter_for_function=-1,
+                                      btn_update_func=update_cycle_left_btn)
+
+
+def update_cycle_2_right_btn():
+    return [screen_size[0] - cycle_btn_size, exit_btn_size + cycle_btn_size + 110]
+
 
 cycle_2_right_pic = pygame.image.load(assets_path + '\\GUI\\right.png')
 cycle_2_right_pic = pygame.transform.scale(cycle_2_right_pic, (cycle_btn_size, cycle_btn_size))
 cycle_2_right_button = Buttons.ButtonImg([screen_size[0] - cycle_btn_size, exit_btn_size + cycle_btn_size + 110],
                                          cycle_2_right_pic, cycle_recipe, listen_disable=False,
-                                         parameter_for_function=1)
+                                         parameter_for_function=1, btn_update_func=update_cycle_2_right_btn)
+
+
+def update_cycle_2_left_btn():
+    return [screen_size[0] - 20 - 2 * cycle_btn_size, exit_btn_size + cycle_btn_size + 110]
+
 
 cycle_2_left_pic = pygame.image.load(assets_path + '\\GUI\\left.png')
 cycle_2_left_pic = pygame.transform.scale(cycle_2_left_pic, (cycle_btn_size, cycle_btn_size))
 cycle_2_left_button = Buttons.ButtonImg(
     [screen_size[0] - 20 - 2 * cycle_btn_size, exit_btn_size + cycle_btn_size + 110], cycle_2_left_pic, cycle_recipe,
-    listen_disable=False, parameter_for_function=-1)
+    listen_disable=False, parameter_for_function=-1, btn_update_func=update_cycle_2_left_btn)
 
 cycle_3_right_pic = pygame.image.load(assets_path + '\\GUI\\right.png')
 cycle_3_right_pic = pygame.transform.scale(cycle_3_right_pic, (cycle_btn_size, cycle_btn_size))
 cycle_3_right_button = Buttons.ButtonImg([screen_size[0] - cycle_btn_size, exit_btn_size + 70],
                                          cycle_3_right_pic, cycle_supplier_auto_buy, listen_disable=False,
-                                         parameter_for_function=1)
+                                         parameter_for_function=1, btn_update_func=update_cycle_right_btn)
 
 cycle_3_left_pic = pygame.image.load(assets_path + '\\GUI\\left.png')
 cycle_3_left_pic = pygame.transform.scale(cycle_3_left_pic, (cycle_btn_size, cycle_btn_size))
 cycle_3_left_button = Buttons.ButtonImg(
     [screen_size[0] - 20 - 2 * cycle_btn_size, exit_btn_size + 70], cycle_3_left_pic, cycle_supplier_auto_buy,
-    listen_disable=False, parameter_for_function=-1)
+    listen_disable=False, parameter_for_function=-1, btn_update_func=update_cycle_left_btn)
 
 max_btn_size = 100
+
+
+def update_max_btn():
+    return [screen_size[0] - max_btn_size, exit_btn_size + cycle_btn_size + 110]
+
+
 max_pic = pygame.image.load(assets_path + '\\GUI\\max.png')
 max_pic = pygame.transform.scale(max_pic, (max_btn_size, max_btn_size))
 max_button = Buttons.ButtonImg([screen_size[0] - max_btn_size, exit_btn_size + cycle_btn_size + 110],
-                               max_pic, set_price_limit, listen_disable=False)
+                               max_pic, set_price_limit, listen_disable=False, btn_update_func=update_max_btn)
+
+
+def update_apply_btn():
+    return [screen_size[0] - apply_btn_size, screen_size[0] - apply_btn_size]
+
 
 apply_btn_size = 100
 apply_pic = pygame.image.load(assets_path + '\\GUI\\vee.png')
 apply_pic = pygame.transform.scale(apply_pic, (apply_btn_size, apply_btn_size))
 apply_button = Buttons.ButtonImg([screen_size[0] - apply_btn_size, screen_size[0] - apply_btn_size], apply_pic,
-                                 apply_auto_buy, listen_disable=False)
+                                 apply_auto_buy, listen_disable=False, btn_update_func=update_apply_btn)
 
 selected_color = (0, 233, 255)
 
@@ -220,10 +276,16 @@ def show_auto_buy_menu():
 
 # Auto-buy menu button
 settings_btn_size = auto_buy_btn_size = 60
+
+
+def update_auto_buy_btn():
+    return [screen_size[0] - auto_buy_btn_size, 0]
+
+
 auto_buy_pic = pygame.image.load(assets_path + '\\GUI\\autoBuy.png')
 auto_buy_pic = pygame.transform.scale(auto_buy_pic, (auto_buy_btn_size, auto_buy_btn_size))
 auto_buy_menu_button = Buttons.ButtonImg([screen_size[0] - auto_buy_btn_size, 0], auto_buy_pic, show_auto_buy_menu,
-                                         dead_zones=False)
+                                         dead_zones=False, btn_update_func=update_auto_buy_btn)
 
 
 # Shows the settings menu
@@ -231,14 +293,24 @@ def show_settings_menu():
     pass
 
 
+def update_settings_btn():
+    return [screen_size[0] - settings_btn_size - auto_buy_btn_size, 0]
+
+
 # Settings menu button
 settings_pic = pygame.image.load(assets_path + '\\GUI\\settings.png')
 settings_pic = pygame.transform.scale(settings_pic, (settings_btn_size, settings_btn_size))
 settings_menu_button = Buttons.ButtonImg([screen_size[0] - settings_btn_size - auto_buy_btn_size, 0], settings_pic,
-                                         show_settings_menu, dead_zones=False)
+                                         show_settings_menu, dead_zones=False, btn_update_func=update_settings_btn)
 
-Buttons.add_dead_area(screen_size[0] - auto_buy_btn_size - settings_btn_size, 0, screen_size[0],
-                      max(auto_buy_btn_size, settings_btn_size))
+
+def update_dead_area():
+    Buttons.dead_areas = []
+    Buttons.add_dead_area(screen_size[0] - auto_buy_btn_size - settings_btn_size, 0, screen_size[0],
+                          max(auto_buy_btn_size, settings_btn_size))
+
+
+update_dead_area()
 
 
 def set_auto_buy(ing_index: int, sup_index: int, max_price: int):
@@ -284,34 +356,62 @@ def report_menu_res():
 
 upgrade_btn_size = buy_btn_size = 150
 
-buy_upgrade_pos = [screen_size[0] * 0.6, screen_size[1] * 0.4]
+
+def update_upgrade_btn():
+    global buy_upgrade_pos_text
+    temp = [int(screen_size[0] * 2 / 3 - (upgrade_btn_size / 2)), screen_size[1] * 0.4]
+    buy_upgrade_pos_text = temp[:]
+    buy_upgrade_pos_text[1] = buy_upgrade_pos_text[1] + upgrade_btn_size + 10
+    return temp
+
+
+buy_upgrade_pos = [int(screen_size[0] * 2 / 3 - (upgrade_btn_size / 2)), screen_size[1] * 0.4]
 buy_upgrade_pos_text = buy_upgrade_pos[:]
 buy_upgrade_pos_text[1] = buy_upgrade_pos_text[1] + upgrade_btn_size + 10
 
 upgrade_pic = pygame.image.load(assets_path + '\\GUI\\upgrade.png')
 upgrade_pic = pygame.transform.scale(upgrade_pic, (upgrade_btn_size, upgrade_btn_size))
-upgrade_menu_button = Buttons.ButtonImg(buy_upgrade_pos, upgrade_pic, upgrade_res, listen_disable=False)
+upgrade_menu_button = Buttons.ButtonImg(buy_upgrade_pos, upgrade_pic, upgrade_res, listen_disable=False,
+                                        btn_update_func=update_upgrade_btn)
 
 buy_pic = pygame.image.load(assets_path + '\\GUI\\buy.png')
 buy_pic = pygame.transform.scale(buy_pic, (buy_btn_size, buy_btn_size))
-buy_menu_button = Buttons.ButtonImg(buy_upgrade_pos, buy_pic, upgrade_res, listen_disable=False)
+buy_menu_button = Buttons.ButtonImg(buy_upgrade_pos, buy_pic, upgrade_res, listen_disable=False,
+                                    btn_update_func=update_upgrade_btn)
+
+
+def update_sell_btn():
+    return [screen_size[0] - buy_btn_size, screen_size[1] - buy_btn_size]
+
 
 sell_pic = pygame.image.load(assets_path + '\\GUI\\sell.png')
 sell_pic = pygame.transform.scale(sell_pic, (buy_btn_size, buy_btn_size))
 sell_menu_button = Buttons.ButtonImg([screen_size[0] - buy_btn_size, screen_size[1] - buy_btn_size], sell_pic, sell_res,
-                                     listen_disable=False)
+                                     listen_disable=False, btn_update_func=update_sell_btn)
 
 restock_btn_size = 150
+
+
+def update_restock_btn():
+    return [int(screen_size[0] / 3 - (upgrade_btn_size / 2)), screen_size[1] * 0.4]
+
+
 restock_pic = pygame.image.load(assets_path + '\\GUI\\stock.png')
 restock_pic = pygame.transform.scale(restock_pic, (restock_btn_size, restock_btn_size))
 restock_menu_button = Buttons.ButtonImg([screen_size[0] * 0.2, screen_size[1] * 0.4], restock_pic, restock_menu_res,
-                                        listen_disable=False)
+                                        listen_disable=False, btn_update_func=update_restock_btn)
 
 report_btn_size = 150
+
+
+def update_report_btn():
+    return [screen_size[0] * 0.5 - report_btn_size / 2, screen_size[1] * 0.7]
+
+
 report_pic = pygame.image.load(assets_path + '\\GUI\\report.png')
 report_pic = pygame.transform.scale(report_pic, (report_btn_size, report_btn_size))
 report_menu_button = Buttons.ButtonImg([screen_size[0] * 0.5 - report_btn_size / 2, screen_size[1] * 0.7], report_pic,
-                                       report_menu_res, listen_disable=False)
+                                       report_menu_res, listen_disable=False, btn_update_func=update_report_btn)
 
 
 def update_buy_multiplier(new_multiplier: int):
@@ -322,26 +422,40 @@ def update_buy_multiplier(new_multiplier: int):
 multiplier_btn_spacing = 20
 
 multiplier_btn_size = 100
+
+
+def update_multiplier_1_btn():
+    return [screen_size[0] - multiplier_btn_size - exit_btn_size - multiplier_btn_spacing, 0]
+
+
 multiplier_1_pic = pygame.image.load(assets_path + '\\GUI\\multiplier_1.png')
 multiplier_1_pic = pygame.transform.scale(multiplier_1_pic, (multiplier_btn_size, multiplier_btn_size))
 multiplier_1_button = Buttons.ButtonImg(
     [screen_size[0] - multiplier_btn_size - exit_btn_size - multiplier_btn_spacing, 0],
     multiplier_1_pic, update_buy_multiplier, listen_disable=False,
-    parameter_for_function=1)
+    parameter_for_function=1, btn_update_func=update_multiplier_1_btn)
 
-multiplier_btn_size = 100
+
+def update_multiplier_10_btn():
+    return [screen_size[0] - exit_btn_size - ((multiplier_btn_size + multiplier_btn_spacing) * 2), 0]
+
+
 multiplier_10_pic = pygame.image.load(assets_path + '\\GUI\\multiplier_10.png')
 multiplier_10_pic = pygame.transform.scale(multiplier_10_pic, (multiplier_btn_size, multiplier_btn_size))
 multiplier_10_button = Buttons.ButtonImg(
     [screen_size[0] - exit_btn_size - ((multiplier_btn_size + multiplier_btn_spacing) * 2), 0], multiplier_10_pic,
-    update_buy_multiplier, listen_disable=False, parameter_for_function=10)
+    update_buy_multiplier, listen_disable=False, parameter_for_function=10, btn_update_func=update_multiplier_10_btn)
 
-multiplier_btn_size = 100
+
+def update_multiplier_100_btn():
+    return [screen_size[0] - exit_btn_size - ((multiplier_btn_size + multiplier_btn_spacing) * 3), 0]
+
+
 multiplier_100_pic = pygame.image.load(assets_path + '\\GUI\\multiplier_100.png')
 multiplier_100_pic = pygame.transform.scale(multiplier_100_pic, (multiplier_btn_size, multiplier_btn_size))
 multiplier_100_button = Buttons.ButtonImg(
     [screen_size[0] - exit_btn_size - ((multiplier_btn_size + multiplier_btn_spacing) * 3), 0], multiplier_100_pic,
-    update_buy_multiplier, listen_disable=False, parameter_for_function=100)
+    update_buy_multiplier, listen_disable=False, parameter_for_function=100, btn_update_func=update_multiplier_100_btn)
 
 
 def draw_menu(surface, mouse, press):
@@ -364,8 +478,12 @@ def update_report():
         active_restaurant.update_report()
 
 
+def update_create_report_btn():
+    return [screen_size[0] * 0.5 - report_btn_size / 2, exit_btn_size]
+
+
 create_report_btn = Buttons.ButtonImg([screen_size[0] * 0.5 - report_btn_size / 2, exit_btn_size], report_pic,
-                                      update_report, listen_disable=False)
+                                      update_report, listen_disable=False, btn_update_func=update_create_report_btn)
 
 report_spacing = 40
 report_stats_color = (104, 145, 27)
@@ -379,7 +497,8 @@ def draw_report_menu(surface, mouse, press):
 
     # Price of issuing a report
     report_price_text = gui_font.render('Cost: ' + str(report_price), True, (255, 70, 50))
-    surface.blit(report_price_text, (screen_size[0] / 2, exit_btn_size + report_btn_size))
+    surface.blit(report_price_text,
+                 (int(screen_size[0] / 2 - report_price_text.get_width() / 2), exit_btn_size + report_btn_size))
 
     # Showing the report details
     report_text = gui_font.render('Restaurant level: ' + str(active_restaurant.report.level), True, report_stats_color)
@@ -555,7 +674,8 @@ class RestaurantTile(Tile):
         self.activeRecipe = ingredientsAndRecipes.recipes[ingredientsAndRecipes.meal_dic["burger"]]
         self.supplier = 0
         self.report = ResReport()
-        self.demand_weights = [random.uniform(min_demand_weight, max_demand_weight) for i in range(0, ingredientsAndRecipes.meal_count)]
+        self.demand_weights = [random.uniform(min_demand_weight, max_demand_weight) for i in
+                               range(0, ingredientsAndRecipes.meal_count)]
         self.costumer_variance = 1
         self.variance_timer = 60
 
@@ -589,7 +709,8 @@ class RestaurantTile(Tile):
         self.activeRecipe = ingredientsAndRecipes.recipes[ingredientsAndRecipes.meal_dic["burger"]]
         self.supplier = 0
         self.report = ResReport()
-        self.demand_weights = [random.uniform(min_demand_weight, max_demand_weight) for i in range(0, ingredientsAndRecipes.meal_count)] * ingredientsAndRecipes.meal_count
+        self.demand_weights = [random.uniform(min_demand_weight, max_demand_weight) for i in
+                               range(0, ingredientsAndRecipes.meal_count)] * ingredientsAndRecipes.meal_count
         self.costumer_variance = 1
         self.variance_timer = 60
 
@@ -612,7 +733,8 @@ class RestaurantTile(Tile):
                     if difference < 0:
                         self.ingredients_array[i] -= difference
                         money = int(money - ingredientsAndRecipes.supplier_prices[auto_buy[i]][i] * (-difference / 10))
-        return self.activeRecipe.use_ing(self.ingredients_array, int(self.costumers * self.demand_weights[self.activeRecipe.meal_index]))
+        return self.activeRecipe.use_ing(self.ingredients_array,
+                                         int(self.costumers * self.demand_weights[self.activeRecipe.meal_index]))
 
     def check_demand(self):
         _demand = 5

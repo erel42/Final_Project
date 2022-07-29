@@ -1,5 +1,7 @@
 import pygame
 import os
+
+import Buttons
 import Tiles
 import GenerateBuildings as Gen
 import ingredientsAndRecipes
@@ -51,7 +53,7 @@ def update_active_chunks():
     Tiles.chunk_map_y(center_chunk_y - 1)
     Tiles.chunk_map_x(center_chunk_x + 1)
     Tiles.chunk_map_x(center_chunk_x - 1)
-    for i in range(center_chunk_x - 2, center_chunk_x + 3):
+    for i in range(center_chunk_x - 5, center_chunk_x + 6):
         for j in range(center_chunk_y - 2, center_chunk_y + 3):
             if chunk_list[i][j] is None:
                 Gen.generate_chunk(chunk_list, i + Tiles.chunk_map_x_bounds[0], j + Tiles.chunk_map_y_bounds[0])
@@ -67,14 +69,27 @@ def update_revenue():
         revenue += res.get_income()
 
 
+def update_screen_size():
+    if screen.get_width() != Tiles.screen_size[0] or screen.get_height() != Tiles.screen_size[1] or Tiles.force_update_screen:
+        Tiles.screen_size = [screen.get_width(), screen.get_height()]
+        Tiles.update_dead_area()
+        Buttons.update_location = True
+        force_update_screen = False
+    else:
+        Buttons.update_location = False
+
+
 # Draws the map
 def draw_tiles(surface, _list):
-    for i in range(center_chunk_x - 2, center_chunk_x + 3):
+    for i in range(center_chunk_x - 5, center_chunk_x + 6):
         for j in range(center_chunk_y - 2, center_chunk_y + 3):
-            if _list[i][j] is not None:
-                for _sub_list in _list[i][j]:
-                    for tile in _sub_list:
-                        tile.draw(surface, mouse_pos, check_press, offset)
+            try:
+                if _list[i][j] is not None:
+                    for _sub_list in _list[i][j]:
+                        for tile in _sub_list:
+                            tile.draw(surface, mouse_pos, check_press, offset)
+            except:
+                pass
 
 
 # Work in progress, currently doesn't work
@@ -178,6 +193,7 @@ def game_loop():
     # As long as the game runs:
     while not exit_game:
         # Drawing the map
+        update_screen_size()
         update_active_chunks()  # Updates the loaded areas of the map
         event_handler()  # Checks for any button presses
         screen.fill((255, 255, 255))  # Clearing the screen
@@ -199,9 +215,10 @@ def game_loop():
         # When tile with a menu is pressed, it will change Tiles.menu_function to it's menu
         if Tiles.menu_function is not None:
             if not enter_menu:
-                draw_rect_alpha(screen, (40, 40, 40, 160), (0, 0, 750, 750))
+                draw_rect_alpha(screen, (40, 40, 40, 160), (0, 0, screen.get_width(), screen.get_height()))
                 Tiles.menu_function(screen, mouse_pos, check_press)  # Calls the menu of the pressed button
             else:
+                Tiles.force_update_screen = True
                 enter_menu = False
         else:
             enter_menu = True
