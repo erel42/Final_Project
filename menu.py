@@ -22,7 +22,7 @@ def return_to_game():
 
 
 # Showing the main menu
-def show_menu(screen=pygame.display.set_mode((1500, 800))):
+def show_menu(screen=pygame.display.set_mode((1500, 800), pygame.RESIZABLE)):
     global exit_menu
     width = screen.get_width()
     height = screen.get_height()
