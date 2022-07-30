@@ -2,14 +2,17 @@ import pygame
 
 pygame.init()
 
+# If True - buttons with listen_disable property won't check hover and click
 disable_buttons = False
 
 # Locations when hover and click checks should not work
 dead_areas = []
 
+# If True buttons with btn_update_func property not None would update their location
 update_location = False
 
 
+# Adds a dead area - location when button checks won't apply, unless that button ignores dead areas
 def add_dead_area(x1, y1, x2, y2):
     dead_areas.append([x1, y1, x2, y2])
 

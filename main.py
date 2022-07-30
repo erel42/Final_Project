@@ -32,7 +32,7 @@ price_update_timer = price_update_timer_default = 10
 enter_menu = True
 
 # Some parameters
-tile_size = screen.get_size()[0] / 12
+tile_size = Tiles.tile_size
 move_up = move_down = move_right = move_left = False
 center_chunk_x = center_chunk_y = 0
 

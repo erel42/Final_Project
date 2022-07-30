@@ -1,7 +1,11 @@
 import Tiles
 import random
 
+# The map is made out of chunks, each chunk is 5*5 set of tiles.
+# A chunk is a 3*3 building surrounded by roads from all directions
 
+
+# This function initializes a new chunk, it creates the road tiles and arranges them
 def init_chunk(chunk_list, x: int, y: int):
     Tiles.chunk_map_x(x + 1)
     Tiles.chunk_map_x(x - 1)
@@ -51,8 +55,7 @@ def init_chunk(chunk_list, x: int, y: int):
     chunk_list[x - Tiles.chunk_map_x_bounds[0]][y - Tiles.chunk_map_y_bounds[0]] = finished_list
 
 
-# 3 X 3 placements
-# All possible structure placements
+# All possible structure placements, all structures are created through here
 
 def restaurant_3x3_var_1(chunk_list, x: int, y: int):
     chunk_list[x - Tiles.chunk_map_x_bounds[0]][y - Tiles.chunk_map_y_bounds[0]][1][1] = Tiles.EmptyTile(5 * x + 1,
@@ -88,7 +91,6 @@ def generate_restaurant(tile_list, x, y):
     restaurant_dic[random.randint(1, restaurant_dic_size)](tile_list, x, y)
 
 
-# Incorrect need to fix!
 def house_3x3_var_1(chunk_list, x: int, y: int):
     chunk_list[x - Tiles.chunk_map_x_bounds[0]][y - Tiles.chunk_map_y_bounds[0]][1][1] = Tiles.HouseTile(5 * x + 1,
                                                                                                          5 * y + 1, 6)
@@ -153,7 +155,7 @@ def generate_blank(chunk_list, x, y):
                                                                                                          5 * y + 3)
 
 
-# Sets a chunk to only roads, for debug purposes
+# A debug function, creates a chunk made only of road tiles. Not used in the actual game
 def demo_chunk(tile_list, x, y):
     _list = []
     for i in range(1, 6):
@@ -164,6 +166,7 @@ def demo_chunk(tile_list, x, y):
     tile_list[x - Tiles.chunk_map_x_bounds[0]][y - Tiles.chunk_map_y_bounds[0]] = _list
 
 
+# Generates the starting chunk
 def generate_base_tiles(chunk_list, x, y):
     init_chunk(chunk_list, x, y)
     chunk_list[x - Tiles.chunk_map_x_bounds[0]][y - Tiles.chunk_map_y_bounds[0]][1][1] = Tiles.ParkingTile(1, 1)
@@ -179,10 +182,12 @@ def generate_base_tiles(chunk_list, x, y):
     chunk_list[x - Tiles.chunk_map_x_bounds[0]][y - Tiles.chunk_map_y_bounds[0]][3][3] = Tiles.ParkingTile(3, 3)
 
 
+# Defines how likely a structure is to generate
 restaurant_odds = 7
 house_odds = 60
 
 
+# Generates a new chunk
 def generate_chunk(chunk_list, x, y):
     init_chunk(chunk_list, x, y)
     result = random.randint(1, 100)
