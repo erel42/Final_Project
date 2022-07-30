@@ -53,8 +53,8 @@ def update_active_chunks():
     Tiles.chunk_map_y(center_chunk_y - 1)
     Tiles.chunk_map_x(center_chunk_x + 1)
     Tiles.chunk_map_x(center_chunk_x - 1)
-    for i in range(center_chunk_x - 5, center_chunk_x + 6):
-        for j in range(center_chunk_y - 2, center_chunk_y + 3):
+    for i in range(center_chunk_x - (Tiles.chunks_x_on_screen - 1), center_chunk_x + Tiles.chunks_x_on_screen):
+        for j in range(center_chunk_y - (Tiles.chunks_y_on_screen - 1), center_chunk_y + Tiles.chunks_y_on_screen):
             if chunk_list[i][j] is None:
                 Gen.generate_chunk(chunk_list, i + Tiles.chunk_map_x_bounds[0], j + Tiles.chunk_map_y_bounds[0])
     center_chunk_x = -int((offset[0] / Tiles.tile_size) / 5) - Tiles.chunk_map_x_bounds[0]
@@ -73,16 +73,17 @@ def update_screen_size():
     if screen.get_width() != Tiles.screen_size[0] or screen.get_height() != Tiles.screen_size[1] or Tiles.force_update_screen:
         Tiles.screen_size = [screen.get_width(), screen.get_height()]
         Tiles.update_dead_area()
+        Tiles.update_chunks_on_screen()
         Buttons.update_location = True
-        force_update_screen = False
+        Tiles.force_update_screen = False
     else:
         Buttons.update_location = False
 
 
 # Draws the map
 def draw_tiles(surface, _list):
-    for i in range(center_chunk_x - 5, center_chunk_x + 6):
-        for j in range(center_chunk_y - 2, center_chunk_y + 3):
+    for i in range(center_chunk_x - (Tiles.chunks_x_on_screen - 1), center_chunk_x + Tiles.chunks_x_on_screen):
+        for j in range(center_chunk_y - (Tiles.chunks_y_on_screen - 1), center_chunk_y + Tiles.chunks_y_on_screen):
             try:
                 if _list[i][j] is not None:
                     for _sub_list in _list[i][j]:

@@ -11,6 +11,10 @@ dead_areas = []
 # If True buttons with btn_update_func property not None would update their location
 update_location = False
 
+# True if tile_size changed
+update_size = False
+t_size = 0
+
 
 # Adds a dead area - location when button checks won't apply, unless that button ignores dead areas
 def add_dead_area(x1, y1, x2, y2):
@@ -103,17 +107,20 @@ class ButtonImg:
 
     def __init__(self, _location: [int, int], _default_img, on_press, listen_disable=True, parameter_for_function=None,
                  dead_zones=True, btn_update_func=None, parameter_for_update=None):
-        self.set_pos(_location)
+        self.dead_zones = dead_zones
         self.listen = listen_disable
+        self.set_pos(_location)
         self.default_img = _default_img
         self.func_press = on_press
         self.parameter_for_function = parameter_for_function
-        self.dead_zones = dead_zones
         self.update_func = btn_update_func
         self.parameter_for_update = parameter_for_update
 
     def set_pos(self, _location: [int, int]):
-        self.location = self.location_2 = _location[:]
+        if not self.dead_zones or not self.listen:
+            self.location = self.location_2 = _location[:]
+        else:
+            self.location = self.location_2 = [_location[0] / t_size, _location[1] / t_size][:]
 
     def check_hover(self, mouse_location: [int, int], press, size):
         if self.listen and disable_buttons:
@@ -150,6 +157,10 @@ class ButtonImg:
                 self.set_pos(self.update_func())
             else:
                 self.set_pos(self.update_func(self.parameter_for_update))
+        if update_size:
+            self.default_img = pygame.transform.scale(self.default_img, (size, size))
+        if self.dead_zones and self.listen:
+            self.location = [self.location[0] * size, self.location[1] * size]
         self.location_2 = [self.location[0] + offset[0], self.location[1] + offset[1]]
         self.check_hover(mouse, press, size)
         screen.blit(self.default_img, (self.location[0] + offset[0], self.location[1] + offset[1]))
@@ -159,3 +170,5 @@ class ButtonImg:
             if self.location_2[1] < 0:
                 self.location_2[1] = 0
             draw_rect_alpha(screen, (125, 125, 125, 160), (self.location_2[0], self.location_2[1], size, size))
+        if self.dead_zones and self.listen:
+            self.location = [self.location[0] / size, self.location[1] / size]

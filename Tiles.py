@@ -23,6 +23,28 @@ gui_font = pygame.font.SysFont('Narkisim', 26)  # A font for GUI elements
 # Sets the size and amount of tiles on screen
 tiles_on_screen = 8
 tile_size = int(screen_size[0] / tiles_on_screen)
+Buttons.t_size = tile_size
+
+
+def update_tiles_on_screen(i: int):
+    global tiles_on_screen, tile_size
+    tiles_on_screen += i
+    tile_size = int(screen_size[0] / tiles_on_screen)
+    Buttons.update_size = True
+    Buttons.t_size = tile_size
+
+
+chunks_x_on_screen = chunks_y_on_screen = 0
+
+
+# Calculates the number of chunks displayed (so that they can be drawn)
+def update_chunks_on_screen():
+    global chunks_x_on_screen, chunks_y_on_screen
+    chunks_x_on_screen = int((screen_size[0] / tile_size) / 5 + 2)
+    chunks_y_on_screen = int((screen_size[1] / tile_size) / 5 + 2)
+
+
+update_chunks_on_screen()
 
 buy_multiplier = 1  # For restock menu
 report_price = 0  # The price of issuing a report
@@ -54,6 +76,7 @@ def close_menu():
     menu_function = None
     skip_gui_buttons = True
     force_update_screen = True
+    Buttons.update_size = False
 
 
 # Exit button:
@@ -206,10 +229,8 @@ def update_cycle_2_right_btn():
     return [screen_size[0] - cycle_btn_size, exit_btn_size + cycle_btn_size + 110]
 
 
-cycle_2_right_pic = pygame.image.load(assets_path + '\\GUI\\right.png')
-cycle_2_right_pic = pygame.transform.scale(cycle_2_right_pic, (cycle_btn_size, cycle_btn_size))
 cycle_2_right_button = Buttons.ButtonImg([screen_size[0] - cycle_btn_size, exit_btn_size + cycle_btn_size + 110],
-                                         cycle_2_right_pic, cycle_recipe, listen_disable=False,
+                                         cycle_right_pic, cycle_recipe, listen_disable=False,
                                          parameter_for_function=1, btn_update_func=update_cycle_2_right_btn)
 
 
@@ -217,23 +238,25 @@ def update_cycle_2_left_btn():
     return [screen_size[0] - 20 - 2 * cycle_btn_size, exit_btn_size + cycle_btn_size + 110]
 
 
-cycle_2_left_pic = pygame.image.load(assets_path + '\\GUI\\left.png')
-cycle_2_left_pic = pygame.transform.scale(cycle_2_left_pic, (cycle_btn_size, cycle_btn_size))
 cycle_2_left_button = Buttons.ButtonImg(
-    [screen_size[0] - 20 - 2 * cycle_btn_size, exit_btn_size + cycle_btn_size + 110], cycle_2_left_pic, cycle_recipe,
+    [screen_size[0] - 20 - 2 * cycle_btn_size, exit_btn_size + cycle_btn_size + 110], cycle_left_pic, cycle_recipe,
     listen_disable=False, parameter_for_function=-1, btn_update_func=update_cycle_2_left_btn)
 
-cycle_3_right_pic = pygame.image.load(assets_path + '\\GUI\\right.png')
-cycle_3_right_pic = pygame.transform.scale(cycle_3_right_pic, (cycle_btn_size, cycle_btn_size))
 cycle_3_right_button = Buttons.ButtonImg([screen_size[0] - cycle_btn_size, exit_btn_size + 70],
-                                         cycle_3_right_pic, cycle_supplier_auto_buy, listen_disable=False,
+                                         cycle_right_pic, cycle_supplier_auto_buy, listen_disable=False,
                                          parameter_for_function=1, btn_update_func=update_cycle_right_btn)
 
-cycle_3_left_pic = pygame.image.load(assets_path + '\\GUI\\left.png')
-cycle_3_left_pic = pygame.transform.scale(cycle_3_left_pic, (cycle_btn_size, cycle_btn_size))
 cycle_3_left_button = Buttons.ButtonImg(
-    [screen_size[0] - 20 - 2 * cycle_btn_size, exit_btn_size + 70], cycle_3_left_pic, cycle_supplier_auto_buy,
+    [screen_size[0] - 20 - 2 * cycle_btn_size, exit_btn_size + 70], cycle_left_pic, cycle_supplier_auto_buy,
     listen_disable=False, parameter_for_function=-1, btn_update_func=update_cycle_left_btn)
+
+cycle_4_right_button = Buttons.ButtonImg([screen_size[0] - cycle_btn_size, exit_btn_size + 70], cycle_right_pic,
+                                         update_tiles_on_screen, listen_disable=False, parameter_for_function=1,
+                                         btn_update_func=update_cycle_right_btn)
+
+cycle_4_left_button = Buttons.ButtonImg([screen_size[0] - 20 - 2 * cycle_btn_size, exit_btn_size + 70], cycle_left_pic,
+                                        update_tiles_on_screen, listen_disable=False, parameter_for_function=-1,
+                                        btn_update_func=update_cycle_left_btn)
 
 # Max button, AKA price limit for auto buy:
 max_btn_size = 100
@@ -323,7 +346,9 @@ auto_buy_menu_button = Buttons.ButtonImg([screen_size[0] - auto_buy_btn_size, 0]
 
 # Shows the settings menu
 def show_settings_menu():
-    pass
+    global menu_function
+    Buttons.disable_buttons = True
+    menu_function = draw_settings_menu
 
 
 def update_settings_btn():
@@ -378,7 +403,9 @@ def draw_gui(screen, mouse, press):
 
 # Upgrades a restaurant
 def upgrade_res():
+    global force_update_screen
     active_restaurant.upgrade()
+    force_update_screen = True
 
 
 def restock_menu_res():
@@ -512,6 +539,15 @@ def draw_menu(surface, mouse, press):
         restock_menu_button.draw(surface, mouse, press, [0, 0], restock_btn_size)
         sell_menu_button.draw(surface, mouse, press, [0, 0], restock_btn_size)
     surface.blit(price_upgrade, buy_upgrade_pos_text)
+
+
+# Draws the settings menu
+def draw_settings_menu(surface, mouse, press):
+    exit_menu_button.draw(surface, mouse, press, [0, 0], exit_btn_size)
+    _text = gui_font.render('Change zoom:', True, (245, 255, 59))
+    surface.blit(_text, (screen_size[0] - 20 - 2 * cycle_btn_size, exit_btn_size + 10))
+    cycle_4_left_button.draw(surface, mouse, press, [0, 0], exit_btn_size)
+    cycle_4_right_button.draw(surface, mouse, press, [0, 0], exit_btn_size)
 
 
 # Updates the report
