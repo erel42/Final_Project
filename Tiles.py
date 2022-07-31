@@ -18,6 +18,7 @@ menu_function = None  # If None no menu is to be displayed, other wise it holds 
 res_list = []  # A list of all restaurants the player owns
 money = 50000000  # The player's money
 active_restaurant = None  # The last restaurant the player clicked on
+active_house = None # The last house the player clicked on
 gui_font = pygame.font.SysFont('Narkisim', 26)  # A font for GUI elements
 
 # Sets the size and amount of tiles on screen
@@ -415,7 +416,7 @@ def restock_menu_res():
 
 def upgrade_building_res():
     global force_update_screen
-    active_building.upgrade()
+    active_house.upgrade()
     force_update_screen = True
 
 def report_menu_res():
@@ -450,7 +451,7 @@ buy_pic = pygame.transform.scale(buy_pic, (buy_btn_size, buy_btn_size))
 buy_menu_button = Buttons.ButtonImg(buy_upgrade_pos, buy_pic, upgrade_res, listen_disable=False,
                                     btn_update_func=update_upgrade_btn)
 
-buy_building_upgrade_button = Buttons.ButtonImg(buy_upgrade_pos, buy_pic, upgrade_res, listen_disable=False,
+buy_building_upgrade_button = Buttons.ButtonImg(buy_upgrade_pos, buy_pic, upgrade_building_res, listen_disable=False,
                                     btn_update_func=update_upgrade_btn)
 
 def update_sell_btn():
@@ -552,7 +553,9 @@ def draw_menu(surface, mouse, press):
 def draw_house_menu(surface, mouse,press):
     exit_menu_button.draw(surface, mouse, press, [0, 0], exit_btn_size)
     price_upgrade = gui_font.render('Cost: ' + '10', True, (255, 70, 50)) # Need to change to an actual value!
-    buy_menu_button.draw(surface, mouse, press, [0, 0], buy_btn_size)
+    population = gui_font.render('population- ' + str(active_house.get_pop()), True, (255, 70, 50))
+    surface.blit(population, [screen_size[0] - buy_btn_size, screen_size[1] - buy_btn_size * 1.2])
+    buy_building_upgrade_button.draw(surface, mouse, press, [0, 0], buy_btn_size)
     surface.blit(price_upgrade, buy_upgrade_pos_text)
 
 
@@ -982,10 +985,14 @@ class HouseTile(Tile):
         return self.population
 
     def show_menu(self):
-        global menu_function
+        global menu_function, active_house
+        active_house = self
         menu_function = draw_house_menu
         menu_function = draw_house_menu
         Buttons.disable_buttons = True
+
+    def upgrade(self):
+        self.population = self.population+5
 
 class EmptyTile(Tile):
 
