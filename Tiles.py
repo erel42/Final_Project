@@ -344,6 +344,7 @@ auto_buy_menu_button = Buttons.ButtonImg([screen_size[0] - auto_buy_btn_size, 0]
                                          dead_zones=False, btn_update_func=update_auto_buy_btn)
 
 
+
 # Shows the settings menu
 def show_settings_menu():
     global menu_function
@@ -412,6 +413,10 @@ def restock_menu_res():
     global report_price
     active_restaurant.restock_menu()
 
+def upgrade_building_res():
+    global force_update_screen
+    active_building.upgrade()
+    force_update_screen = True
 
 def report_menu_res():
     global report_price
@@ -445,6 +450,8 @@ buy_pic = pygame.transform.scale(buy_pic, (buy_btn_size, buy_btn_size))
 buy_menu_button = Buttons.ButtonImg(buy_upgrade_pos, buy_pic, upgrade_res, listen_disable=False,
                                     btn_update_func=update_upgrade_btn)
 
+buy_building_upgrade_button = Buttons.ButtonImg(buy_upgrade_pos, buy_pic, upgrade_res, listen_disable=False,
+                                    btn_update_func=update_upgrade_btn)
 
 def update_sell_btn():
     return [screen_size[0] - buy_btn_size, screen_size[1] - buy_btn_size]
@@ -540,6 +547,12 @@ def draw_menu(surface, mouse, press):
         restock_menu_button.draw(surface, mouse, press, [0, 0], restock_btn_size)
         sell_menu_button.draw(surface, mouse, press, [0, 0], restock_btn_size)
         surface.blit(price_sell, [screen_size[0] - buy_btn_size, screen_size[1] - buy_btn_size * 1.2])
+    surface.blit(price_upgrade, buy_upgrade_pos_text)
+
+def draw_house_menu(surface, mouse,press):
+    exit_menu_button.draw(surface, mouse, press, [0, 0], exit_btn_size)
+    price_upgrade = gui_font.render('Cost: ' + '10', True, (255, 70, 50)) # Need to change to an actual value!
+    buy_menu_button.draw(surface, mouse, press, [0, 0], buy_btn_size)
     surface.blit(price_upgrade, buy_upgrade_pos_text)
 
 
@@ -968,6 +981,11 @@ class HouseTile(Tile):
     def get_pop(self):
         return self.population
 
+    def show_menu(self):
+        global menu_function
+        menu_function = draw_house_menu
+        menu_function = draw_house_menu
+        Buttons.disable_buttons = True
 
 class EmptyTile(Tile):
 
