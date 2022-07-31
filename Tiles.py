@@ -538,8 +538,8 @@ multiplier_100_button = Buttons.ButtonImg(
 # Draws the menu... pretty self explanatory
 def draw_menu(surface, mouse, press):
     exit_menu_button.draw(surface, mouse, press, [0, 0], exit_btn_size)
-    price_upgrade = gui_font.render('Cost: ' + str(10 * pow(2, active_restaurant.level - 1)), True, (255, 70, 50))
-    price_sell = gui_font.render('sell for: ' + str(active_restaurant.price_to_upgrade), True, (255, 70, 50))
+    price_upgrade = gui_font.render('Cost: ' + str(int(active_restaurant.price_to_upgrade)), True, (255, 70, 50))
+    price_sell = gui_font.render('sell for: ' + str(int(10 * pow(2, active_restaurant.level - 1))), True, (255, 70, 50))
     if active_restaurant.level == 0:
         buy_menu_button.draw(surface, mouse, press, [0, 0], buy_btn_size)
     else:
