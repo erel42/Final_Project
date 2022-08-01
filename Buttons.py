@@ -104,6 +104,7 @@ class ButtonImg:
     active_img = None
     hover = False
     func_press = None
+    disable = False
 
     def __init__(self, _location: [int, int], _default_img, on_press, listen_disable=True, parameter_for_function=None,
                  dead_zones=True, btn_update_func=None, parameter_for_update=None):
@@ -123,7 +124,7 @@ class ButtonImg:
             self.location = self.location_2 = [_location[0] / t_size, _location[1] / t_size][:]
 
     def check_hover(self, mouse_location: [int, int], press, size):
-        if self.listen and disable_buttons:
+        if (self.listen and disable_buttons) or self.disable:
             self.hover = False
             return
         if self.dead_zones:

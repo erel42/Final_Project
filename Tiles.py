@@ -18,7 +18,7 @@ menu_function = None  # If None no menu is to be displayed, other wise it holds 
 res_list = []  # A list of all restaurants the player owns
 money = 50000000  # The player's money
 active_restaurant = None  # The last restaurant the player clicked on
-active_house = None # The last house the player clicked on
+active_house = None  # The last house the player clicked on
 gui_font = pygame.font.SysFont('Narkisim', 26)  # A font for GUI elements
 
 # Sets the size and amount of tiles on screen
@@ -345,7 +345,6 @@ auto_buy_menu_button = Buttons.ButtonImg([screen_size[0] - auto_buy_btn_size, 0]
                                          dead_zones=False, btn_update_func=update_auto_buy_btn)
 
 
-
 # Shows the settings menu
 def show_settings_menu():
     global menu_function
@@ -414,10 +413,12 @@ def restock_menu_res():
     global report_price
     active_restaurant.restock_menu()
 
+
 def upgrade_building_res():
     global force_update_screen
     active_house.upgrade()
     force_update_screen = True
+
 
 def report_menu_res():
     global report_price
@@ -451,8 +452,9 @@ buy_pic = pygame.transform.scale(buy_pic, (buy_btn_size, buy_btn_size))
 buy_menu_button = Buttons.ButtonImg(buy_upgrade_pos, buy_pic, upgrade_res, listen_disable=False,
                                     btn_update_func=update_upgrade_btn)
 
-buy_building_upgrade_button = Buttons.ButtonImg(buy_upgrade_pos, buy_pic, upgrade_building_res, listen_disable=False,
-                                    btn_update_func=update_upgrade_btn)
+buy_building_upgrade_button = Buttons.ButtonImg(buy_upgrade_pos, upgrade_pic, upgrade_building_res,
+                                                listen_disable=False, btn_update_func=update_upgrade_btn)
+
 
 def update_sell_btn():
     return [screen_size[0] - buy_btn_size, screen_size[1] - buy_btn_size]
@@ -550,13 +552,19 @@ def draw_menu(surface, mouse, press):
         surface.blit(price_sell, [screen_size[0] - buy_btn_size, screen_size[1] - buy_btn_size * 1.2])
     surface.blit(price_upgrade, buy_upgrade_pos_text)
 
-def draw_house_menu(surface, mouse,press):
+
+def draw_house_menu(surface, mouse, press):
     exit_menu_button.draw(surface, mouse, press, [0, 0], exit_btn_size)
-    price_upgrade = gui_font.render('Cost: ' + '10', True, (255, 70, 50)) # Need to change to an actual value!
+    if active_house.can_upgrade():
+        price_upgrade = gui_font.render('Cost: ' + str(active_house.price_to_upgrade), True, (60, 207, 70))
+    else:
+        price_upgrade = gui_font.render('Max level reached!', True, (255, 69, 69))
+        buy_building_upgrade_button.disable = True
     population = gui_font.render('population- ' + str(active_house.get_pop()), True, (255, 70, 50))
     surface.blit(population, [screen_size[0] - buy_btn_size, screen_size[1] - buy_btn_size * 1.2])
     buy_building_upgrade_button.draw(surface, mouse, press, [0, 0], buy_btn_size)
     surface.blit(price_upgrade, buy_upgrade_pos_text)
+    buy_building_upgrade_button.disable = False
 
 
 # Draws the settings menu
@@ -956,13 +964,16 @@ class ParkTile(Tile):
                     self.population += chunk_map[int(self.pos[0] / 5) - chunk_map_x_bounds[0] + offset_x][
                         int(self.pos[1] / 5) - chunk_map_y_bounds[0] + offset_y][i][j].get_pop()
 
+    def update_tile(self):
+        self.update_pop()
+
     def get_pop(self):
         return self.population
 
 
 class HouseTile(Tile):
 
-    def __init__(self, x: int, y: int, population: int, texture: str = '1'):
+    def __init__(self, x: int, y: int, population: int, texture: str = '1', max_level: int = 1):
         super().__init__(x, y)
         global tile_size
         self.set_type('house')
@@ -971,6 +982,9 @@ class HouseTile(Tile):
         picture = pygame.image.load(self.texture + '.png')
         picture = pygame.transform.scale(picture, (tile_size, tile_size))
         self.btn = Buttons.ButtonImg(self.grid_location[:], picture, self.show_menu)
+        self.level = 1
+        self.max_level = max_level
+        self.price_to_upgrade = 30
 
     def json_ready(self):
         data = {
@@ -992,7 +1006,29 @@ class HouseTile(Tile):
         Buttons.disable_buttons = True
 
     def upgrade(self):
-        self.population = self.population+5
+        global money
+        if self.can_upgrade():
+            self.population = self.population + 5
+            self.level += 1
+            money -= self.price_to_upgrade
+            self.price_to_upgrade = 10 * pow(3, self.level)
+
+            chunk_map[int(self.pos[0] / 5) - chunk_map_x_bounds[0]][int(self.pos[1] / 5) - chunk_map_y_bounds[0]][2][
+                2].update_tile()
+
+            for i in range(-2, 3):
+                for j in range(-2, 3):
+                    try:
+                        if chunk_map[int(self.pos[0] / 5) - chunk_map_x_bounds[0] + i][
+                            int(self.pos[1] / 5) - chunk_map_y_bounds[0] + j] is not None:
+                            chunk_map[int(self.pos[0] / 5) - chunk_map_x_bounds[0] + i][
+                                int(self.pos[1] / 5) - chunk_map_y_bounds[0] + j][2][2].update_tile()
+                    except:
+                        pass
+
+    def can_upgrade(self):
+        return self.level < self.max_level
+
 
 class EmptyTile(Tile):
 
