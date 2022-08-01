@@ -16,15 +16,23 @@ chunk_map_y_bounds = [0, 0]
 
 menu_function = None  # If None no menu is to be displayed, other wise it holds a reference to the drawing function
 res_list = []  # A list of all restaurants the player owns
-money = 50000000  # The player's money
+money = 50  # The player's money
 active_restaurant = None  # The last restaurant the player clicked on
 active_house = None  # The last house the player clicked on
 gui_font = pygame.font.SysFont('Narkisim', 26)  # A font for GUI elements
+auto_buy_unlocked = False
+auto_buy_unlock_price = 2500
 
 # Sets the size and amount of tiles on screen
 tiles_on_screen = 8
 tile_size = int(screen_size[0] / tiles_on_screen)
 Buttons.t_size = tile_size
+
+# Select mode
+dev_mode = True
+if dev_mode:
+    money = 50000000
+    auto_buy_unlocked = True
 
 
 def update_tiles_on_screen(i: int):
@@ -331,6 +339,13 @@ def show_auto_buy_menu():
     menu_function = auto_buy_menu
 
 
+def buy_auto_buy():
+    global auto_buy_unlock_price, auto_buy_unlocked, money
+    if money >= auto_buy_unlock_price:
+        money -= auto_buy_unlock_price
+        auto_buy_unlocked = True
+
+
 # Auto-buy menu button
 settings_btn_size = auto_buy_btn_size = 60
 
@@ -342,6 +357,11 @@ def update_auto_buy_btn():
 auto_buy_pic = pygame.image.load(assets_path + '\\GUI\\autoBuy.png')
 auto_buy_pic = pygame.transform.scale(auto_buy_pic, (auto_buy_btn_size, auto_buy_btn_size))
 auto_buy_menu_button = Buttons.ButtonImg([screen_size[0] - auto_buy_btn_size, 0], auto_buy_pic, show_auto_buy_menu,
+                                         dead_zones=False, btn_update_func=update_auto_buy_btn)
+
+buy_pic = pygame.image.load(assets_path + '\\GUI\\buy.png')
+buy_auto_buy_pic = pygame.transform.scale(buy_pic, (auto_buy_btn_size, auto_buy_btn_size))
+buy_auto_buy_button = Buttons.ButtonImg([screen_size[0] - auto_buy_btn_size, 0], buy_auto_buy_pic, buy_auto_buy,
                                          dead_zones=False, btn_update_func=update_auto_buy_btn)
 
 
@@ -394,9 +414,12 @@ def update_money():
 
 # Draws the gui elements
 def draw_gui(screen, mouse, press):
-    global skip_gui_buttons
+    global skip_gui_buttons, auto_buy_unlocked
     if menu_function is None and not skip_gui_buttons:
-        auto_buy_menu_button.draw(screen, mouse, press, [0, 0], auto_buy_btn_size)
+        if auto_buy_unlocked:
+            auto_buy_menu_button.draw(screen, mouse, press, [0, 0], auto_buy_btn_size)
+        else:
+            buy_auto_buy_button.draw(screen, mouse, press, [0, 0], auto_buy_btn_size)
         settings_menu_button.draw(screen, mouse, press, [0, 0], auto_buy_btn_size)
     skip_gui_buttons = False
     screen.blit(money_gui, (20, 20))
@@ -447,7 +470,6 @@ upgrade_pic = pygame.transform.scale(upgrade_pic, (upgrade_btn_size, upgrade_btn
 upgrade_menu_button = Buttons.ButtonImg(buy_upgrade_pos, upgrade_pic, upgrade_res, listen_disable=False,
                                         btn_update_func=update_upgrade_btn)
 
-buy_pic = pygame.image.load(assets_path + '\\GUI\\buy.png')
 buy_pic = pygame.transform.scale(buy_pic, (buy_btn_size, buy_btn_size))
 buy_menu_button = Buttons.ButtonImg(buy_upgrade_pos, buy_pic, upgrade_res, listen_disable=False,
                                     btn_update_func=update_upgrade_btn)
