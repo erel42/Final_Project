@@ -27,6 +27,8 @@ auto_buy_unlock_price = 2500
 tiles_on_screen = 8
 tile_size = int(screen_size[0] / tiles_on_screen)
 Buttons.t_size = tile_size
+min_tiles_on_screen = 4
+max_tiles_on_screen = 25
 
 # Select mode
 dev_mode = True
@@ -38,6 +40,10 @@ if dev_mode:
 def update_tiles_on_screen(i: int):
     global tiles_on_screen, tile_size
     tiles_on_screen += i
+    if tiles_on_screen < min_tiles_on_screen:
+        tiles_on_screen = min_tiles_on_screen
+    if tiles_on_screen > max_tiles_on_screen:
+        tiles_on_screen = max_tiles_on_screen
     tile_size = int(screen_size[0] / tiles_on_screen)
     Buttons.update_size = True
     Buttons.t_size = tile_size

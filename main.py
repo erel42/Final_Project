@@ -168,7 +168,14 @@ def event_handler():
             if event.key == pygame.K_LEFT or event.key == pygame.K_a:
                 move_left = False
         if event.type == pygame.MOUSEBUTTONDOWN:
-            check_press = True
+            if event.button == 1:
+                check_press = True
+            elif event.button == 4:
+                Tiles.update_tiles_on_screen(-1)
+                Tiles.force_update_screen = True
+            elif event.button == 5:
+                Tiles.update_tiles_on_screen(1)
+                Tiles.force_update_screen = True
     if Tiles.menu_function is None:
         if move_up:
             offset[1] += offset_change_speed
