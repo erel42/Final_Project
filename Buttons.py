@@ -111,7 +111,7 @@ class ButtonImg:
         self.dead_zones = dead_zones
         self.listen = listen_disable
         self.set_pos(_location)
-        self.default_img = _default_img
+        self.default_img = self.original_image = _default_img
         self.func_press = on_press
         self.parameter_for_function = parameter_for_function
         self.update_func = btn_update_func
@@ -159,7 +159,7 @@ class ButtonImg:
             else:
                 self.set_pos(self.update_func(self.parameter_for_update))
         if update_size:
-            self.default_img = pygame.transform.scale(self.default_img, (size, size))
+            self.default_img = pygame.transform.scale(self.original_image, (size, size))
         if self.dead_zones and self.listen:
             self.location = [self.location[0] * size, self.location[1] * size]
         self.location_2 = [self.location[0] + offset[0], self.location[1] + offset[1]]
