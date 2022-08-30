@@ -6,13 +6,13 @@ pygame.init()
 
 exit_menu = False
 
+value_to_return = -1  # -1 means a new game, every other value means the selected game to load
+
 
 def existing_game():
-    print('need to implement')
-
-
-def new_game():
-    print('need to implement')
+    global value_to_return
+    value_to_return = 0
+    return_to_game()
 
 
 # Returns to main
@@ -23,7 +23,7 @@ def return_to_game():
 
 # Showing the main menu
 def show_menu(screen=pygame.display.set_mode((1500, 800), pygame.RESIZABLE)):
-    global exit_menu
+    global exit_menu, value_to_return
     width = screen.get_width()
     height = screen.get_height()
 
@@ -77,3 +77,4 @@ def show_menu(screen=pygame.display.set_mode((1500, 800), pygame.RESIZABLE)):
                         btn.press()
 
         pygame.display.update()
+    return value_to_return

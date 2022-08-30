@@ -1,6 +1,112 @@
 import pygame
+import ingredientsAndRecipes
 
 pygame.init()
+
+assets_path = 'Assets'
+screen_size = [750, 750]
+
+# 0 - Close btn, 1 - cancel btn, 2 - right, 3 - left, 4 - max, 5 - apply, 6 - auto buy, 7 - buy, 8 - settings,
+# 9 - upgrade, 10 - buy, 11 - sell, 12 - restock, 13 - report, 14 - multi 1, 15 - multi 10, 16 - multi 100,
+# 17 - road center, 18 - road hor, 19 - road ver, 20 - res 1, 21 - parking 1, 22 - park, 23 - house 1, 24 - house 2,
+# 25 - house 3, 26 - empty
+
+original_images = [
+    pygame.image.load(assets_path + '\\GUI\\close.png'),
+    pygame.image.load(assets_path + '\\GUI\\close.png'),
+    pygame.image.load(assets_path + '\\GUI\\right.png'),
+    pygame.image.load(assets_path + '\\GUI\\left.png'),
+    pygame.image.load(assets_path + '\\GUI\\max.png'),
+    pygame.image.load(assets_path + '\\GUI\\vee.png'),
+    pygame.image.load(assets_path + '\\GUI\\autoBuy.png'),
+    pygame.image.load(assets_path + '\\GUI\\buy.png'),
+    pygame.image.load(assets_path + '\\GUI\\settings.png'),
+    pygame.image.load(assets_path + '\\GUI\\upgrade.png'),
+    pygame.image.load(assets_path + '\\GUI\\buy.png'),
+    pygame.image.load(assets_path + '\\GUI\\sell.png'),
+    pygame.image.load(assets_path + '\\GUI\\stock.png'),
+    pygame.image.load(assets_path + '\\GUI\\report.png'),
+    pygame.image.load(assets_path + '\\GUI\\multiplier_1.png'),
+    pygame.image.load(assets_path + '\\GUI\\multiplier_10.png'),
+    pygame.image.load(assets_path + '\\GUI\\multiplier_100.png'),
+    pygame.image.load(assets_path + '\\Roads\\center.png'),
+    pygame.image.load(assets_path + '\\Roads\\horizontal.png'),
+    pygame.image.load(assets_path + '\\Roads\\vertical.png'),
+    pygame.image.load(assets_path + '\\Resturants\\1.png'),
+    pygame.image.load(assets_path + '\\Parking\\1.png'),
+    pygame.image.load(assets_path + '\\Parks\\1.png'),
+    pygame.image.load(assets_path + '\\Houses\\1.png'),
+    pygame.image.load(assets_path + '\\Houses\\2.png'),
+    pygame.image.load(assets_path + '\\Houses\\3.png'),
+    pygame.image.load(assets_path + '\\Empty\\1.png'),
+
+]
+
+constant_img_list_size = len(original_images)
+
+ing_imgs = [pygame.image.load(assets_path + '\\ingredients\\' + ingredientsAndRecipes.ing_list[i] + '.png') for i in
+            range(0, ingredientsAndRecipes.num_of_ingredients)]
+
+original_images = original_images + ing_imgs
+
+exit_btn_size = 100
+ing_btn_size = int(((screen_size[1] - 200) / ingredientsAndRecipes.num_of_ingredients) * 3 / 4)
+cycle_btn_size = 100
+max_btn_size = 100
+apply_btn_size = 100
+gui_btn_size = 60
+buy_btn_size = 150
+restock_btn_size = 150
+report_btn_size = 150
+multiplier_btn_size = 100
+tiles_on_screen = 8
+tile_size = int(screen_size[0] / tiles_on_screen)
+
+image_size = [
+    (exit_btn_size, exit_btn_size),
+    (ing_btn_size, ing_btn_size),
+    (cycle_btn_size, cycle_btn_size),
+    (cycle_btn_size, cycle_btn_size),
+    (max_btn_size, max_btn_size),
+    (apply_btn_size, apply_btn_size),
+    (gui_btn_size, gui_btn_size),
+    (gui_btn_size, gui_btn_size),
+    (gui_btn_size, gui_btn_size),
+    (buy_btn_size, buy_btn_size),
+    (buy_btn_size, buy_btn_size),
+    (buy_btn_size, buy_btn_size),
+    (restock_btn_size, restock_btn_size),
+    (report_btn_size, report_btn_size),
+    (multiplier_btn_size, multiplier_btn_size),
+    (multiplier_btn_size, multiplier_btn_size),
+    (multiplier_btn_size, multiplier_btn_size),
+    (tile_size, tile_size),
+    (tile_size, tile_size),
+    (tile_size, tile_size),
+    (tile_size, tile_size),
+    (tile_size, tile_size),
+    (tile_size, tile_size),
+    (tile_size, tile_size),
+    (tile_size, tile_size),
+    (tile_size, tile_size),
+    (tile_size, tile_size),
+
+]
+
+ing_sizes = [(ing_btn_size, ing_btn_size) for i in range(0, ingredientsAndRecipes.num_of_ingredients)]
+
+image_size = image_size + ing_sizes
+
+images = original_images[:]
+
+
+def update_img_size(img_id, new_x, new_y):
+    image_size[img_id] = (new_x, new_y)
+    images[img_id] = pygame.transform.scale(original_images[img_id], (new_x, new_y))
+
+
+for i in range(0, len(original_images)):
+    update_img_size(i, image_size[i][0], image_size[i][1])
 
 # If True - buttons with listen_disable property won't check hover and click
 disable_buttons = False
@@ -99,19 +205,16 @@ class ButtonImg:
     location = [0, 0]
     location_2 = [0, 0]
     size = 200
-    default_img = None
-    hover_img = None
-    active_img = None
     hover = False
     func_press = None
     disable = False
 
-    def __init__(self, _location: [int, int], _default_img, on_press, listen_disable=True, parameter_for_function=None,
+    def __init__(self, _location: [int, int], _img_id: int, on_press, listen_disable=True, parameter_for_function=None,
                  dead_zones=True, btn_update_func=None, parameter_for_update=None):
         self.dead_zones = dead_zones
         self.listen = listen_disable
         self.set_pos(_location)
-        self.default_img = self.original_image = _default_img
+        self.img_id = _img_id
         self.func_press = on_press
         self.parameter_for_function = parameter_for_function
         self.update_func = btn_update_func
@@ -159,12 +262,12 @@ class ButtonImg:
             else:
                 self.set_pos(self.update_func(self.parameter_for_update))
         if update_size:
-            self.default_img = pygame.transform.scale(self.original_image, (size, size))
+            update_img_size(self.img_id, size, size)
         if self.dead_zones and self.listen:
             self.location = [self.location[0] * size, self.location[1] * size]
         self.location_2 = [self.location[0] + offset[0], self.location[1] + offset[1]]
         self.check_hover(mouse, press, size)
-        screen.blit(self.default_img, (self.location[0] + offset[0], self.location[1] + offset[1]))
+        screen.blit(images[self.img_id], (self.location[0] + offset[0], self.location[1] + offset[1]))
         if self.hover:
             if self.location_2[0] < 0:
                 self.location_2[0] = 0

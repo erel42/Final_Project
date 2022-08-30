@@ -1,5 +1,8 @@
 import pygame
+import pickle
 import os
+import json
+from datetime import datetime
 
 import Buttons
 import Tiles
@@ -9,7 +12,6 @@ import menu
 
 # Setting needed variables and initiating some things
 pygame.init()
-chunk_list = Tiles.chunk_map
 active_chunks = Tiles.active_chunks
 check_press = False
 mouse_pos = [0, 0]
@@ -19,12 +21,9 @@ exit_game = False
 money_gui = None
 font = pygame.font.SysFont(None, 24)
 clock = pygame.time.Clock()
-save_path = 'Saves'
-cur_game_save_path = None
 left_lower_corner = [-3, -3]
 offset = [0, 0]
 offset_change_speed = 10
-Tile_list = None
 last_money_value = 0
 revenue = 0
 income_timer = income_timer_default = 60
@@ -35,6 +34,15 @@ enter_menu = True
 tile_size = Tiles.tile_size
 move_up = move_down = move_right = move_left = False
 center_chunk_x = center_chunk_y = 0
+
+# Saves data
+save_path = 'Saves\\'
+f = open(save_path + 'saves_settings.json', "r")
+saves_settings = json.loads(f.read())
+f.close()
+num_of_saves = saves_settings["number_of_saves"]
+now = datetime.now()
+last_played = now.strftime("%d-%m-%Y_%H-%M-%S")
 
 
 # A function for drawing translucent rectangles
@@ -55,8 +63,8 @@ def update_active_chunks():
     Tiles.chunk_map_x(center_chunk_x - 1)
     for i in range(center_chunk_x - (Tiles.chunks_x_on_screen - 1), center_chunk_x + Tiles.chunks_x_on_screen):
         for j in range(center_chunk_y - (Tiles.chunks_y_on_screen - 1), center_chunk_y + Tiles.chunks_y_on_screen):
-            if chunk_list[i][j] is None:
-                Gen.generate_chunk(chunk_list, i + Tiles.chunk_map_x_bounds[0], j + Tiles.chunk_map_y_bounds[0])
+            if Tiles.chunk_map[i][j] is None:
+                Gen.generate_chunk(Tiles.chunk_map, i + Tiles.chunk_map_x_bounds[0], j + Tiles.chunk_map_y_bounds[0])
     center_chunk_x = -int((offset[0] / Tiles.tile_size) / 5) - Tiles.chunk_map_x_bounds[0]
     center_chunk_y = -int((offset[1] / Tiles.tile_size) / 5) - Tiles.chunk_map_y_bounds[0]
 
@@ -70,7 +78,8 @@ def update_revenue():
 
 
 def update_screen_size():
-    if screen.get_width() != Tiles.screen_size[0] or screen.get_height() != Tiles.screen_size[1] or Tiles.force_update_screen:
+    if screen.get_width() != Tiles.screen_size[0] or screen.get_height() != Tiles.screen_size[
+        1] or Tiles.force_update_screen:
         Tiles.screen_size = [screen.get_width(), screen.get_height()]
         Tiles.update_dead_area()
         Tiles.update_chunks_on_screen()
@@ -93,19 +102,42 @@ def draw_tiles(surface, _list):
                 pass
 
 
+# Saves the game
+def save_game():
+    global now, last_played, save_path
+    with open(save_path, "wb") as fp:  # Pickling
+        now = datetime.now()
+        last_played = now.strftime("%d-%m-%Y_%H-%M-%S")
+        pickle.dump([Tiles.chunk_map, Tiles.active_chunks, Tiles.money, Tiles.chunk_map_x_bounds,
+                     Tiles.chunk_map_y_bounds, Tiles.res_list, Tiles.auto_buy_unlocked, last_played], fp)
+
+
 # Work in progress, currently doesn't work
-def create_new_save(name: str):
-    global cur_game_save_path
-    # Creating a new directory
-    cur_game_save_path = save_path + '\\' + name
-    os.mkdir(cur_game_save_path)
-    # generate_base_tiles()
+def create_new_save():
+    global num_of_saves, saves_settings, save_path
+    num_of_saves = num_of_saves + 1
+    saves_settings["number_of_saves"] = num_of_saves
+    with open(save_path + 'saves_settings.json', 'w', encoding='utf-8') as file:
+        json.dump(saves_settings, file, ensure_ascii=False, indent=4)
+    save_path += str(num_of_saves - 1)
 
 
 # Work in progress, currently doesn't work
 def load_save(name: str):
-    global cur_game_save_path
-    cur_game_save_path = save_path + '\\' + name
+    global last_played, offset, save_path
+    with open(save_path + name, "rb") as fp:  # Unpickling
+        data = pickle.load(fp)
+        Tiles.chunk_map = data[0]
+        Tiles.active_chunks = data[1]
+        Tiles.money = data[2]
+        Tiles.chunk_map_x_bounds = data[3]
+        Tiles.chunk_map_y_bounds = data[4]
+        Tiles.res_list = data[5]
+        Tiles.auto_buy_unlocked = data[6]
+        last_played = data[7]
+        offset = [0, 0]
+        Tiles.force_update_screen = True
+    save_path += name
 
 
 # Handles button and mouse events
@@ -128,6 +160,10 @@ def event_handler():
             if event.key == pygame.K_r:
                 offset[0] = 0
                 offset[1] = 0
+
+            if event.key == pygame.K_o:
+                save_game()
+
             if Tiles.input_enable:
                 digit = -1
                 if event.key == pygame.K_0:
@@ -189,13 +225,13 @@ def event_handler():
 
 # Closes the game
 def close_game():
-    print('Exiting game without saving')
+    save_game()
 
 
 # The actual game logic and flow. runs as long as the game runs
 def game_loop():
     # Some globals
-    global chunk_list, money_gui, last_money_value, income_timer, price_update_timer, income_timer_default
+    global money_gui, last_money_value, income_timer, price_update_timer, income_timer_default
     global price_update_timer_default, check_press, enter_menu
 
     # As long as the game runs:
@@ -205,7 +241,7 @@ def game_loop():
         update_active_chunks()  # Updates the loaded areas of the map
         event_handler()  # Checks for any button presses
         screen.fill((255, 255, 255))  # Clearing the screen
-        draw_tiles(screen, chunk_list)  # Drawing the tiles
+        draw_tiles(screen, Tiles.chunk_map)  # Drawing the tiles
 
         # Handling money
         income_timer -= 1
@@ -236,7 +272,11 @@ def game_loop():
 
 
 if __name__ == '__main__':
-    menu.show_menu(screen)  # Shows opening screen, continues when player starts a game
-    Gen.generate_base_tiles(chunk_list, 0, 0)  # Generating the starting area
+    save_value = menu.show_menu(screen)  # Shows opening screen, continues when player starts a game
+    if save_value == -1:
+        create_new_save()
+        Gen.generate_base_tiles(Tiles.chunk_map, 0, 0)  # Generating the starting area
+    else:
+        load_save(str(save_value))
     ingredientsAndRecipes.update_prices()  # Updating prices
     game_loop()  # Starting the game
