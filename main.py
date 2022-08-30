@@ -164,6 +164,15 @@ def event_handler():
             if event.key == pygame.K_o:
                 save_game()
 
+            if event.key == pygame.K_F2:
+                with open('Screenshots\\screenshot_data.json', "r") as file:
+                    screenshots = json.loads(file.read())
+                    num_of_pics = screenshots["number_of_screenshots"]
+                pygame.image.save(screen, "Screenshots\\screenshot" + str(num_of_pics) + ".jpg")
+                screenshots["number_of_screenshots"] = num_of_pics + 1
+                with open('Screenshots\\screenshot_data.json', 'w', encoding='utf-8') as file:
+                    json.dump(screenshots, file, ensure_ascii=False, indent=4)
+
             if Tiles.input_enable:
                 digit = -1
                 if event.key == pygame.K_0:
