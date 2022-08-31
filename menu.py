@@ -74,6 +74,7 @@ def show_menu(num_of_saves, screen=pygame.display.set_mode((1500, 800), pygame.R
             data = pickle.load(fp)
             last_played = data[7]
         text_game_time = smallfont.render('Last played: ' + last_played, True, (0, 0, 0))
+        text_game_id = smallfont.render('Save 0', True, (0, 0, 0))
 
     # Displays the menu until closing
     while not exit_menu:
@@ -118,6 +119,7 @@ def show_menu(num_of_saves, screen=pygame.display.set_mode((1500, 800), pygame.R
                         data = pickle.load(fp)
                         last_played = data[7]
                     text_game_time = smallfont.render('Last played: ' + last_played, True, (0, 0, 0))
+                    text_game_id = smallfont.render('Save ' + str(value_to_return), True, (0, 0, 0))
 
         if not choose_save:
             # Checking hover and drawing all the buttons
@@ -128,6 +130,7 @@ def show_menu(num_of_saves, screen=pygame.display.set_mode((1500, 800), pygame.R
             # Select file
             screen.blit(text_select_game, (10, 10))
             screen.blit(text_game_time, (10, height - 10 - text_select_game.get_height()))
+            screen.blit(text_game_id, (width - 10 - text_game_id.get_width(), height - 10 - text_game_id.get_height()))
             screen.blit(pic, (int((width * 0.15) / 2), int((height * 0.15) / 2)))
 
         pygame.display.update()
