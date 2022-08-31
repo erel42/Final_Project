@@ -107,9 +107,10 @@ def save_game():
     global now, last_played, save_path
     with open(save_path, "wb") as fp:  # Pickling
         now = datetime.now()
-        last_played = now.strftime("%d-%m-%Y_%H-%M-%S")
+        last_played = now.strftime("%H:%M:%S %d/%m/%Y")
         pickle.dump([Tiles.chunk_map, Tiles.active_chunks, Tiles.money, Tiles.chunk_map_x_bounds,
                      Tiles.chunk_map_y_bounds, Tiles.res_list, Tiles.auto_buy_unlocked, last_played], fp)
+    pygame.image.save(screen, save_path + "screenshot.jpg")
 
 
 # Work in progress, currently doesn't work
@@ -281,7 +282,7 @@ def game_loop():
 
 
 if __name__ == '__main__':
-    save_value = menu.show_menu(screen)  # Shows opening screen, continues when player starts a game
+    save_value = menu.show_menu(num_of_saves, screen)  # Shows opening screen, continues when player starts a game
     if save_value == -1:
         create_new_save()
         Gen.generate_base_tiles(Tiles.chunk_map, 0, 0)  # Generating the starting area
