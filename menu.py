@@ -9,6 +9,8 @@ exit_menu = False
 
 choose_save = False
 
+dev_status = False
+
 value_to_return = -1  # -1 means a new game, every other value means the selected game to load
 
 pic = None
@@ -33,7 +35,7 @@ def return_to_game():
 
 # Showing the main menu
 def show_menu(num_of_saves, screen=pygame.display.set_mode((1500, 800), pygame.RESIZABLE)):
-    global exit_menu, value_to_return, num_saves, pic
+    global exit_menu, value_to_return, num_saves, pic, dev_status
     num_saves = num_of_saves
     width = screen.get_width()
     height = screen.get_height()
@@ -91,27 +93,31 @@ def show_menu(num_of_saves, screen=pygame.display.set_mode((1500, 800), pygame.R
                     if btn.get_hover():
                         btn.press()
 
-            if choose_save and ev.type == pygame.KEYDOWN:
-                if ev.key == pygame.K_RIGHT:
-                    value_to_return = value_to_return + 1
-                    if value_to_return == num_of_saves:
-                        value_to_return = 0
+            if ev.type == pygame.KEYDOWN:
+                if ev.key == pygame.K_d:
+                    dev_status = True
 
-                if ev.key == pygame.K_LEFT:
-                    value_to_return = value_to_return - 1
-                    if value_to_return == -1:
-                        value_to_return = num_of_saves - 1
+                if choose_save:
+                    if ev.key == pygame.K_RIGHT:
+                        value_to_return = value_to_return + 1
+                        if value_to_return == num_of_saves:
+                            value_to_return = 0
 
-                if ev.key == pygame.K_RETURN:
-                    return_to_game()
+                    if ev.key == pygame.K_LEFT:
+                        value_to_return = value_to_return - 1
+                        if value_to_return == -1:
+                            value_to_return = num_of_saves - 1
 
-                pic = pygame.image.load('Saves\\' + str(value_to_return) + 'screenshot.jpg')
-                pic = pygame.transform.scale(pic, (int(width * 0.85), int(height * 0.85)))
+                    if ev.key == pygame.K_RETURN:
+                        return_to_game()
 
-                with open('Saves\\' + str(value_to_return), "rb") as fp:  # Unpickling
-                    data = pickle.load(fp)
-                    last_played = data[7]
-                text_game_time = smallfont.render('Last played: ' + last_played, True, (0, 0, 0))
+                    pic = pygame.image.load('Saves\\' + str(value_to_return) + 'screenshot.jpg')
+                    pic = pygame.transform.scale(pic, (int(width * 0.85), int(height * 0.85)))
+
+                    with open('Saves\\' + str(value_to_return), "rb") as fp:  # Unpickling
+                        data = pickle.load(fp)
+                        last_played = data[7]
+                    text_game_time = smallfont.render('Last played: ' + last_played, True, (0, 0, 0))
 
         if not choose_save:
             # Checking hover and drawing all the buttons
@@ -125,4 +131,4 @@ def show_menu(num_of_saves, screen=pygame.display.set_mode((1500, 800), pygame.R
             screen.blit(pic, (int((width * 0.15) / 2), int((height * 0.15) / 2)))
 
         pygame.display.update()
-    return value_to_return
+    return value_to_return, dev_status

@@ -282,7 +282,12 @@ def game_loop():
 
 
 if __name__ == '__main__':
-    save_value = menu.show_menu(num_of_saves, screen)  # Shows opening screen, continues when player starts a game
+    # Shows opening screen, continues when player starts a game
+    save_value, dev_status = menu.show_menu(num_of_saves, screen)
+
+    if dev_status:
+        Tiles.dev_mode()
+
     if save_value == -1:
         create_new_save()
         Gen.generate_base_tiles(Tiles.chunk_map, 0, 0)  # Generating the starting area

@@ -30,9 +30,9 @@ Buttons.t_size = tile_size
 min_tiles_on_screen = 4
 max_tiles_on_screen = 25
 
-# Select mode
-dev_mode = True
-if dev_mode:
+
+def dev_mode():
+    global money, auto_buy_unlocked
     money = 50000000
     auto_buy_unlocked = True
 
