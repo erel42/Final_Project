@@ -1,6 +1,5 @@
 import pygame
 import pickle
-import os
 import json
 from datetime import datetime
 
