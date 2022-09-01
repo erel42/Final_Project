@@ -327,10 +327,11 @@ def show_auto_buy_menu():
 
 
 def buy_auto_buy():
-    global auto_buy_unlock_price, auto_buy_unlocked, money
+    global auto_buy_unlock_price, auto_buy_unlocked, money, force_update_screen
     if money >= auto_buy_unlock_price:
         money -= auto_buy_unlock_price
         auto_buy_unlocked = True
+        force_update_screen = True
 
 
 # Auto-buy menu button
@@ -584,6 +585,9 @@ report_stats_color = (104, 145, 27)
 
 # Drawing the report menu
 def draw_report_menu(surface, mouse, press):
+    global force_update_screen
+    force_update_screen = True
+
     exit_menu_button.draw(surface, mouse, press, [0, 0], exit_btn_size)  # Exit button
 
     create_report_btn.draw(surface, mouse, press, [0, 0], report_btn_size)  # Create report button
@@ -865,16 +869,18 @@ class RestaurantTile(Tile):
         self.calc_costumers()
 
     def restock_menu(self):
-        global menu_function, active_restaurant
+        global menu_function, active_restaurant, force_update_screen
         menu_function = draw_restock_menu
         Buttons.disable_buttons = True
         active_restaurant = self
+        force_update_screen = True
 
     def report_menu(self):
-        global menu_function, active_restaurant
+        global menu_function, active_restaurant, force_update_screen
         menu_function = draw_report_menu
         Buttons.disable_buttons = True
         active_restaurant = self
+        force_update_screen = True
 
     def restock_item(self, index):
         global money, buy_multiplier

@@ -108,7 +108,8 @@ def save_game():
         now = datetime.now()
         last_played = now.strftime("%H:%M:%S %d/%m/%Y")
         pickle.dump([Tiles.chunk_map, Tiles.active_chunks, Tiles.money, Tiles.chunk_map_x_bounds,
-                     Tiles.chunk_map_y_bounds, Tiles.res_list, Tiles.auto_buy_unlocked, last_played], fp)
+                     Tiles.chunk_map_y_bounds, Tiles.res_list, Tiles.auto_buy_unlocked, last_played,
+                     Tiles.tiles_on_screen, offset], fp)
     pygame.image.save(screen, save_path + "screenshot.jpg")
 
 
@@ -135,7 +136,9 @@ def load_save(name: str):
         Tiles.res_list = data[5]
         Tiles.auto_buy_unlocked = data[6]
         last_played = data[7]
-        offset = [0, 0]
+        Tiles.update_tiles_on_screen(data[8] - Tiles.tiles_on_screen)
+        offset = data[9]
+        Buttons.update_all_imgs()
         Tiles.force_update_screen = True
     save_path += name
 

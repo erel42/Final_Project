@@ -105,8 +105,12 @@ def update_img_size(img_id, new_x, new_y):
     images[img_id] = pygame.transform.scale(original_images[img_id], (new_x, new_y))
 
 
-for i in range(0, len(original_images)):
-    update_img_size(i, image_size[i][0], image_size[i][1])
+def update_all_imgs():
+    for i in range(0, len(original_images)):
+        update_img_size(i, image_size[i][0], image_size[i][1])
+
+
+update_all_imgs()
 
 # If True - buttons with listen_disable property won't check hover and click
 disable_buttons = False
