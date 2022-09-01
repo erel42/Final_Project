@@ -30,6 +30,11 @@ Buttons.t_size = tile_size
 min_tiles_on_screen = 4
 max_tiles_on_screen = 25
 
+# Movement
+offset_change_speed = 10
+min_offset_change_speed = 5
+max_offset_change_speed = 40
+
 
 def dev_mode():
     global money, auto_buy_unlocked
@@ -47,6 +52,15 @@ def update_tiles_on_screen(i: int):
     tile_size = int(screen_size[0] / tiles_on_screen)
     Buttons.update_size = True
     Buttons.t_size = tile_size
+
+
+def update_speed(i: int):
+    global offset_change_speed
+    offset_change_speed += i
+    if offset_change_speed < min_offset_change_speed:
+        offset_change_speed = min_tiles_on_screen
+    if offset_change_speed > max_offset_change_speed:
+        offset_change_speed = max_offset_change_speed
 
 
 chunks_x_on_screen = chunks_y_on_screen = 0
@@ -257,6 +271,14 @@ cycle_4_right_button = Buttons.ButtonImg([screen_size[0] - cycle_btn_size, exit_
 cycle_4_left_button = Buttons.ButtonImg([screen_size[0] - 20 - 2 * cycle_btn_size, exit_btn_size + 70], 3,
                                         update_tiles_on_screen, listen_disable=False, parameter_for_function=-1,
                                         btn_update_func=update_cycle_left_btn)
+
+cycle_5_right_button = Buttons.ButtonImg([screen_size[0] - cycle_btn_size, exit_btn_size + cycle_btn_size + 110], 2,
+                                         update_speed, listen_disable=False, parameter_for_function=1,
+                                         btn_update_func=update_cycle_2_right_btn)
+
+cycle_5_left_button = Buttons.ButtonImg([screen_size[0] - 20 - 2 * cycle_btn_size, exit_btn_size + cycle_btn_size + 110]
+                                        , 3, update_speed, listen_disable=False, parameter_for_function=-1,
+                                        btn_update_func=update_cycle_2_left_btn)
 
 # Max button, AKA price limit for auto buy:
 max_btn_size = Buttons.max_btn_size
@@ -560,8 +582,13 @@ def draw_settings_menu(surface, mouse, press):
     exit_menu_button.draw(surface, mouse, press, [0, 0], exit_btn_size)
     _text = gui_font.render('Change zoom:', True, (245, 255, 59))
     surface.blit(_text, (screen_size[0] - 20 - 2 * cycle_btn_size, exit_btn_size + 10))
-    cycle_4_left_button.draw(surface, mouse, press, [0, 0], exit_btn_size)
-    cycle_4_right_button.draw(surface, mouse, press, [0, 0], exit_btn_size)
+    cycle_4_left_button.draw(surface, mouse, press, [0, 0], cycle_btn_size)
+    cycle_4_right_button.draw(surface, mouse, press, [0, 0], cycle_btn_size)
+
+    _text = gui_font.render('Change speed:', True, (245, 255, 59))
+    surface.blit(_text, (screen_size[0] - 20 - 2 * cycle_btn_size, exit_btn_size + 80 + cycle_btn_size))
+    cycle_5_left_button.draw(surface, mouse, press, [0, 0], cycle_btn_size)
+    cycle_5_right_button.draw(surface, mouse, press, [0, 0], cycle_btn_size)
 
 
 # Updates the report

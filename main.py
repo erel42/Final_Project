@@ -24,7 +24,6 @@ money_gui = None
 font = pygame.font.SysFont(None, 24)
 left_lower_corner = [-3, -3]
 offset = [0, 0]
-offset_change_speed = 10
 last_money_value = 0
 revenue = 0
 income_timer = income_timer_default = 60
@@ -112,7 +111,7 @@ def save_game():
         last_played = now.strftime("%H:%M:%S %d/%m/%Y")
         pickle.dump([Tiles.chunk_map, Tiles.active_chunks, Tiles.money, Tiles.chunk_map_x_bounds,
                      Tiles.chunk_map_y_bounds, Tiles.res_list, Tiles.auto_buy_unlocked, last_played,
-                     Tiles.tiles_on_screen, offset], fp)
+                     Tiles.tiles_on_screen, offset, Tiles.offset_change_speed], fp)
     pygame.image.save(screen, save_path + "screenshot.jpg")
 
 
@@ -141,6 +140,7 @@ def load_save(name: str):
         last_played = data[7]
         Tiles.update_tiles_on_screen(data[8] - Tiles.tiles_on_screen)
         offset = data[9]
+        Tiles.offset_change_speed = data[10]
         Buttons.update_all_imgs()
         Tiles.force_update_screen = True
     save_path += name
@@ -178,6 +178,12 @@ def event_handler():
                 screenshots["number_of_screenshots"] = num_of_pics + 1
                 with open('Screenshots\\screenshot_data.json', 'w', encoding='utf-8') as file:
                     json.dump(screenshots, file, ensure_ascii=False, indent=4)
+
+            if event.key == pygame.K_F9:
+                Tiles.update_speed(-2)
+
+            if event.key == pygame.K_F10:
+                Tiles.update_speed(2)
 
             if Tiles.input_enable:
                 digit = -1
@@ -229,13 +235,13 @@ def event_handler():
                 Tiles.force_update_screen = True
     if Tiles.menu_function is None:
         if move_up:
-            offset[1] += offset_change_speed * (dt * 0.06)
+            offset[1] += Tiles.offset_change_speed * (dt * 0.06)
         if move_down:
-            offset[1] -= offset_change_speed * (dt * 0.06)
+            offset[1] -= Tiles.offset_change_speed * (dt * 0.06)
         if move_right:
-            offset[0] -= offset_change_speed * (dt * 0.06)
+            offset[0] -= Tiles.offset_change_speed * (dt * 0.06)
         if move_left:
-            offset[0] += offset_change_speed * (dt * 0.06)
+            offset[0] += Tiles.offset_change_speed * (dt * 0.06)
 
 
 # Closes the game
