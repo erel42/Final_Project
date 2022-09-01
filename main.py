@@ -22,7 +22,6 @@ pygame.display.set_caption('Restaurant manager')
 exit_game = False
 money_gui = None
 font = pygame.font.SysFont(None, 24)
-clock = pygame.time.Clock()
 left_lower_corner = [-3, -3]
 offset = [0, 0]
 offset_change_speed = 10
