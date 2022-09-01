@@ -34,7 +34,7 @@ def return_to_game():
 
 
 # Showing the main menu
-def show_menu(num_of_saves, screen=pygame.display.set_mode((1500, 800), pygame.RESIZABLE)):
+def show_menu(num_of_saves, screen):
     global exit_menu, value_to_return, num_saves, pic, dev_status
     num_saves = num_of_saves
     width = screen.get_width()

@@ -9,12 +9,15 @@ import GenerateBuildings as Gen
 import ingredientsAndRecipes
 import menu
 
-# Setting needed variables and initiating some things
 pygame.init()
+screen = Buttons.screen
+clock = pygame.time.Clock()
+
+# Setting needed variables and initiating some things
 active_chunks = Tiles.active_chunks
 check_press = False
 mouse_pos = [0, 0]
-screen = pygame.display.set_mode(Tiles.screen_size, pygame.RESIZABLE)
+
 pygame.display.set_caption('Restaurant manager')
 exit_game = False
 money_gui = None
@@ -28,6 +31,7 @@ revenue = 0
 income_timer = income_timer_default = 60
 price_update_timer = price_update_timer_default = 10
 enter_menu = True
+dt = 1
 
 # Some parameters
 tile_size = Tiles.tile_size
@@ -226,13 +230,13 @@ def event_handler():
                 Tiles.force_update_screen = True
     if Tiles.menu_function is None:
         if move_up:
-            offset[1] += offset_change_speed
+            offset[1] += offset_change_speed * (dt * 0.06)
         if move_down:
-            offset[1] -= offset_change_speed
+            offset[1] -= offset_change_speed * (dt * 0.06)
         if move_right:
-            offset[0] -= offset_change_speed
+            offset[0] -= offset_change_speed * (dt * 0.06)
         if move_left:
-            offset[0] += offset_change_speed
+            offset[0] += offset_change_speed * (dt * 0.06)
 
 
 # Closes the game
@@ -243,12 +247,13 @@ def close_game():
 # The actual game logic and flow. runs as long as the game runs
 def game_loop():
     # Some globals
-    global money_gui, last_money_value, income_timer, price_update_timer, income_timer_default
+    global money_gui, last_money_value, income_timer, price_update_timer, income_timer_default, dt
     global price_update_timer_default, check_press, enter_menu
 
     # As long as the game runs:
     while not exit_game:
         # Drawing the map
+        dt = clock.tick(60)
         update_screen_size()
         update_active_chunks()  # Updates the loaded areas of the map
         event_handler()  # Checks for any button presses
